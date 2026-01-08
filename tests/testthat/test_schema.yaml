@@ -1,0 +1,9 @@
+check_duplicates: FALSE
+check_completeness: FALSE
+columns:
+  a:
+    type: double
+    optional: true
+  b:
+    type: character
+    optional: true

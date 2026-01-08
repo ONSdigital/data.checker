@@ -1,0 +1,35 @@
+check_duplicates: false
+check_completeness: false
+columns:
+  id:
+    type: integer
+    optional: false
+    min_val: 0 
+    max_val: 1000
+    allow_na: false
+  age:
+    type: double
+    optional: false
+    min_val: 0.0
+    max_val: 120.0
+    min_decimal: 0
+    max_decimal: 2
+    allow_na: false
+  sex:
+    type: character
+    optional: false
+    min_length: 1
+    max_length: 10
+    allowed_strings: ["M", "F"]
+    allow_na: false
+  country:
+    type: factor
+    optional: false
+    levels: ["England", "Scotland", "Wales", "Northern Ireland"]
+    allow_na: false
+  date:
+    type: Date
+    optional: false
+    min_date: "2020-01-01"
+    max_date: "2023-12-31"
+    allow_na: false

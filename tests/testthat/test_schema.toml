@@ -1,0 +1,10 @@
+check_completeness = false
+check_duplicates = false
+
+[columns.a]
+type = "double"
+optional = true
+
+[columns.b]
+type = "character"
+optional = true

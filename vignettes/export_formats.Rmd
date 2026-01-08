@@ -1,0 +1,48 @@
+---
+title: "Export formats"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{export_options}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(data.checker)
+```
+
+## Exporting results
+
+The results from `data.checker` can be exported in html, csv, yaml or json formats and can form part of your QA (quality assurance) logs. We strongly recommend exporting these results along with your analysis outputs so you have a record of which automated checks were done and what they found. Examples of export formats are shown below.
+
+### html
+
+<div class="figure">
+<img src="../man/figures/html_example.png" alt="Example of a html export of the data.check results log, with system info removed" width="100%"/>
+</div>
+
+### csv
+
+<div class="figure">
+<img src="../man/figures/csv_example.png" alt="Example of a csv export of the data.check results log, with system info removed" width="100%"/>
+</div>
+
+
+### json
+
+<div class="figure">
+<img src="../man/figures/json_example.png" alt="Example of a json export of the data.check results log, with system info removed" width="100%"/>
+</div>
+
+### yaml
+
+<div class="figure">
+<img src="../man/figures/yaml_example.png" alt="Example of a yaml export of the data.check results log, with system info removed" width="100%"/>
+</div>
