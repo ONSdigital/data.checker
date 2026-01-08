@@ -19,9 +19,12 @@ Imports:
     tools,
     yaml,
     tomledit,
-    utils
+    utils,
+    cli,
+    rlang
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://onsdigital.github.io/data.checker/

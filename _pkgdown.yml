@@ -1,0 +1,17 @@
+url: https://onsdigital.github.io/data.checker/
+
+template:
+  bootstrap: 5
+
+  bslib:
+    base_font: {google: "Roboto"}
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - getting_started
+  - export_formats
+
+
+
