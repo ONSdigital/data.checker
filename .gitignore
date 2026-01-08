@@ -1,0 +1,10 @@
+.Rproj.user
+inst/doc
+.RData
+.Rhistory
+*.csv
+*.html
+*.yaml
+*.json
+/doc/
+/Meta/
