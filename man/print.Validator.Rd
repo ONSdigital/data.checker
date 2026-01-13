@@ -4,10 +4,12 @@
 \alias{print.Validator}
 \title{Print Validator Log}
 \usage{
-\method{print}{Validator}(validator)
+\method{print}{Validator}(x, ...)
 }
 \arguments{
-\item{validator}{A \code{Validator} object containing a log to be printed.}
+\item{x}{A \code{Validator} object containing a log to be printed.}
+
+\item{...}{Additional arguments passed to specific methods.}
 }
 \value{
 A markdown-formatted table of the validator log.

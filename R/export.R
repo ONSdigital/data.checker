@@ -2,16 +2,19 @@
 #'
 #' This function exports the log of a `Validator` object to a file in the specified format.
 #'
-#' @param validator A `Validator` object containing the log to be exported.
+#' @param object A `Validator` object containing the log to be exported.
 #' @param file A string specifying the file path where the log will be exported.
 #'   The file extension must match the specified format.
 #' @param format A string specifying the format of the output file.
 #'   Supported formats are `"yaml"`, `"json"`, `"html"`, and `"csv"`.
+#' @param ... Additional arguments passed to specific methods.
 #'
 #' @return Writes the log to the specified file. No value is returned.
 
 #' @export
-export.Validator <- function(validator, file, format = c("yaml", "json", "html", "csv")) {
+export.Validator <- function(object, file, format = c("yaml", "json", "html", "csv"), ...) {
+
+
   format <- match.arg(format)
 
   file_extension <- tools::file_ext(file)
@@ -21,18 +24,18 @@ export.Validator <- function(validator, file, format = c("yaml", "json", "html",
   }
 
   if (format == "yaml") {
-    yaml::write_yaml(validator$log, file)
+    yaml::write_yaml(object$log, file)
   } else if (format == "json") {
-    jsonlite::write_json(validator$log, file, pretty = TRUE)
+    jsonlite::write_json(object$log, file, pretty = TRUE)
   } else if (format == "html") {
-    html_content <- log_html(validator$log)
+    html_content <- log_html(object$log)
     writeLines(html_content, file)
   } else if (format == "csv") {
-    log_table <- log_to_table(validator$log)
+    log_table <- log_to_table(object$log)
     log_table$Outcome <- gsub("[^\x20-\x7F]", "", log_table$Outcome)
     utils::write.csv(log_table, file, row.names = FALSE)
   }
-  return(validator)
+  return(object)
 }
 
 #' Convert Validator Log to Table
@@ -62,13 +65,14 @@ log_to_table <- function(log) {
 #'
 #' This function prints the log of a `Validator` object in a markdown table format.
 #'
-#' @param validator A `Validator` object containing a log to be printed.
+#' @param x A `Validator` object containing a log to be printed.
+#' @param ... Additional arguments passed to specific methods.
 #'
 #' @return A markdown-formatted table of the validator log.
 #' @export
-print.Validator <- function(validator) {
-  if (length(validator$log) > 1) {
-    text_log <- log_to_table(validator$log[2:length(validator$log)]) # Skip the first entry which is system info
+print.Validator <- function(x, ...) {
+  if (length(x$log) > 1) {
+    text_log <- log_to_table(x$log[2:length(x$log)]) # Skip the first entry which is system info
     text_log <- knitr::kable(text_log, format = "simple") |>
       as.character() |>
       paste0(collapse = "\n")
@@ -76,7 +80,7 @@ print.Validator <- function(validator) {
     text_log <- ""
   }
 
-  info <- knitr::kable( validator$log[[1]]$description, col.names = "System information", format  = "simple") |>
+  info <- knitr::kable( x$log[[1]]$description, col.names = "System information", format  = "simple") |>
     as.character() |>
     paste0(collapse = "\n")
   cat(info, "\n\n", text_log, "\n")

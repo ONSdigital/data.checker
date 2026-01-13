@@ -4,16 +4,18 @@
 \alias{export.Validator}
 \title{Export Validator Log}
 \usage{
-\method{export}{Validator}(validator, file, format = c("yaml", "json", "html", "csv"))
+\method{export}{Validator}(object, file, format = c("yaml", "json", "html", "csv"), ...)
 }
 \arguments{
-\item{validator}{A \code{Validator} object containing the log to be exported.}
+\item{object}{A \code{Validator} object containing the log to be exported.}
 
 \item{file}{A string specifying the file path where the log will be exported.
 The file extension must match the specified format.}
 
 \item{format}{A string specifying the format of the output file.
 Supported formats are \code{"yaml"}, \code{"json"}, \code{"html"}, and \code{"csv"}.}
+
+\item{...}{Additional arguments passed to specific methods.}
 }
 \value{
 Writes the log to the specified file. No value is returned.
