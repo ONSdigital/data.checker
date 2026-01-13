@@ -7,14 +7,18 @@ format.
 
 ``` r
 # S3 method for class 'Validator'
-print(validator)
+print(x, ...)
 ```
 
 ## Arguments
 
-- validator:
+- x:
 
   A `Validator` object containing a log to be printed.
+
+- ...:
+
+  Additional arguments passed to specific methods.
 
 ## Value
 

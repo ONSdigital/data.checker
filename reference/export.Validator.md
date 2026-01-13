@@ -7,12 +7,12 @@ specified format.
 
 ``` r
 # S3 method for class 'Validator'
-export(validator, file, format = c("yaml", "json", "html", "csv"))
+export(object, file, format = c("yaml", "json", "html", "csv"), ...)
 ```
 
 ## Arguments
 
-- validator:
+- object:
 
   A `Validator` object containing the log to be exported.
 
@@ -25,6 +25,10 @@ export(validator, file, format = c("yaml", "json", "html", "csv"))
 
   A string specifying the format of the output file. Supported formats
   are `"yaml"`, `"json"`, `"html"`, and `"csv"`.
+
+- ...:
+
+  Additional arguments passed to specific methods.
 
 ## Value
 
