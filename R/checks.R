@@ -364,14 +364,15 @@ add_check <- function(validator, description, outcome, condition, type = c("erro
 #' Error if there are any errors and `hard_check` is TRUE.
 #' @export
 hard_checks_status <- function(validator, hard_check){
+
   # intitalising error and warning counters
   error_counter <- 0
   warning_counter <- 0
   for (entry in validator$log) {
-    if (entry$entry_type == "error" && entry$outcome == "fail") {
+    if (entry$entry_type == "error" && entry$outcome == "\U000274C fail") {
       error_counter <- error_counter + 1
     }
-    else if (entry$entry_type == "warning" && entry$outcome == "fail") {
+    else if (entry$entry_type == "warning" && entry$outcome == "\U000274C fail") {
       warning_counter <- warning_counter + 1
     }
   }
