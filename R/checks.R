@@ -369,10 +369,10 @@ hard_checks_status <- function(validator, hard_check){
   error_counter <- 0
   warning_counter <- 0
   for (entry in validator$log) {
-    if (entry$entry_type == "error" && entry$outcome == "\U000274C fail") {
+    if (entry$entry_type == "error" && (entry$outcome == "\U000274C fail" || entry$outcome == "fail")) {
       error_counter <- error_counter + 1
     }
-    else if (entry$entry_type == "warning" && entry$outcome == "\U000274C fail") {
+    else if (entry$entry_type == "warning" && (entry$outcome == "\U000274C fail" || entry$outcome == "fail")) {
       warning_counter <- warning_counter + 1
     }
   }
