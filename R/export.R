@@ -153,3 +153,29 @@ log_html <- function(log) {
 
   return(html)
 }
+
+
+#' Log pointblank validation outcomes to a validator log
+#'
+#' This function extracts validation results from a pointblank agent and appends them to the validator's log.
+#'
+#' @param validator A list containing a pointblank agent and a log. The agent should have a validation_set from a pointblank interrogation.
+#' @return The updated validator list with new log entries appended.
+#' @details Each entry in the log will contain the timestamp, description, outcome, failing row indices, number of failures, and entry type for each validation step.
+log_pointblank_outcomes <- function(validator){
+  entries <- apply(validator$agent$validation_set, 1, function(x) {
+    list(
+      timestamp = x$time_processed,
+      description = x$label,
+      outcome = x$all_passed ,
+      failing_ids = which(x$tbl_checked[[1]]$pb_is_good_ == FALSE),
+      n_failing = x$n_failed,
+      entry_type = "error"
+    )
+  })
+ 
+  validator$log <- append(validator$log, entries)
+ 
+  return(validator)
+ }
+ 
