@@ -187,6 +187,8 @@ changes.
   : Check if the schema is valid
 - [`log_html()`](https://onsdigital.github.io/data.checker/reference/log_html.md)
   : Generate HTML Representation of a Log
+- [`log_pointblank_outcomes()`](https://onsdigital.github.io/data.checker/reference/log_pointblank_outcomes.md)
+  : Log pointblank validation outcomes to a validator log
 - [`log_to_table()`](https://onsdigital.github.io/data.checker/reference/log_to_table.md)
   : Convert Validator Log to Table
 - [`new_validator()`](https://onsdigital.github.io/data.checker/reference/new_validator.md)
