@@ -26,7 +26,6 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE) {
 #'
 #' @export
 new_validator <- function(data, schema) {
-
   if (is.character(schema)) {
     if (grepl("\\.json$", schema)) {
       schema <- jsonlite::fromJSON(schema)
@@ -55,7 +54,7 @@ new_validator <- function(data, schema) {
   }
 
   validator$log <- list()  # Initialize an empty log for validation results
-
+  
   class(validator) <- "Validator"
 
   info <- paste0(
@@ -65,13 +64,14 @@ new_validator <- function(data, schema) {
     "data.checker version: ", as.character(utils::packageVersion("data.checker")), "\n"
   )
 
-
   validator <- add_qa_entry(
     validator,
     description = info,
     outcome = NA,
     entry_type = "info"
   )
+
+  agent <- pointblank::create_agent(tbl = data)
 
   return(validator)
 }
