@@ -44,6 +44,18 @@ check_completeness <- function(validator) {
 #'
 #' @export
 decimal_places <- function(x) {
+  sf_check <- abs(signif(x, 15) - x) < .Machine$double.eps
+
+  sf_check <- sf_check[!is.na(sf_check)]
+
+  if (all(sf_check) != TRUE) {
+    stop(
+      message="Input data contains double precision floating points with more than 15 significant digits.
+      The number of decimal places cannot be determined.",
+      call. = FALSE
+    )
+  }
+
   ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
 }
 
