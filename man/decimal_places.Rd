@@ -4,10 +4,12 @@
 \alias{decimal_places}
 \title{Check Decimal Places in Numeric Columns}
 \usage{
-decimal_places(x)
+decimal_places(x, column_name)
 }
 \arguments{
 \item{x}{A numeric vector.}
+
+\item{column_name}{A string passed from a DataFrame}
 }
 \value{
 A vector of the same length as \code{x}, indicating the number of decimal

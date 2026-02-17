@@ -39,6 +39,7 @@ check_completeness <- function(validator) {
 #'
 #' This function calculates the number of decimal places in a numeric vector.
 #' @param x A numeric vector.
+#' @param column_name A string passed from a DataFrame
 #' @return A vector of the same length as `x`, indicating the number of decimal
 #' places for each element. If an element is `NA`, it returns `NA`.
 #'
@@ -50,9 +51,13 @@ decimal_places <- function(x, column_name) {
 
   if (all(sf_check) != TRUE) {
     stop(
-      message=sprintf("Report generation failed: Input data contains double-precision floating-point 
-      with more than 15 significant digits in column: %s. Please remove decimal places evaluation 
-      from the schema or truncate data.", column_name),
+      message=sprintf(
+        "Report generation failed: Input data contains 
+        double-precision floating-point with more than 
+        15 significant digits in column: %s. 
+        Please remove decimal places evaluation 
+        from the schema or truncate data.", 
+      column_name),
       call. = FALSE
     )
   }
