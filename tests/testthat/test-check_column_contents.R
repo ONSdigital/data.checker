@@ -194,6 +194,21 @@ test_that("duplicate checks return correct outcomes", {
   expect_equal(validator$log[[2]]$outcome, "pass")
 })
 
+test_that("Doubles with more than 15 significant digits throw an error", {
+  df <- data.frame(a = c(108, 1.1, 1.2, 123456789.1234567))
+  columns <- list(
+    a = list(type = "double", optional=FALSE, max_decimal = 5, min_decimal = 0)
+  )
+
+  expect_error(
+    validator <- new_validator(
+      schema = list(columns = columns, check_completeness = FALSE, check_duplicates = FALSE),
+      data = df
+    ) %>% check_column_contents()
+  )
+
+})
+
 convert_to_regex <- function(forbidden_strings) {
   escaped_strings <- gsub("([\\^$.|?*+(){}\\[\\]])", "\\\\\\1", forbidden_strings)
   regex_pattern <- paste0("^", escaped_strings, "$", collapse = "|")

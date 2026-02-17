@@ -50,8 +50,9 @@ decimal_places <- function(x) {
 
   if (all(sf_check) != TRUE) {
     stop(
-      message="Input data contains double precision floating points with more than 15 significant digits.
-      The number of decimal places cannot be determined.",
+      message="Report generation failed: Input data contains double-precision floating-point 
+      with more than 15 significant digits. The number of decimal places cannot be determined.
+      Please remove decimal places evaluation from the schema or truncate input data.",
       call. = FALSE
     )
   }
