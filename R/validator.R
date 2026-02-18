@@ -71,25 +71,13 @@ new_validator <- function(data, schema) {
     entry_type = "info"
   )
 
-  validator$agent <- create_pointblank_agent(validator$data, validator$schema)
+  validator$agent <- pointblank::create_agent(tbl = validator$data)
 
   return(validator)
 }
 
 
-#' create_pointblank_agent
-#'
-#' creates pointblank agent with validation steps based on schema column types. Can be
-#' appended for boilerplate checks.
-#'
-#' @param data A data frame to validate against the schema.
-#' @param schema A schema object that defines the validation rules, including column types.
-#'
-#' @return A pointblank agent object with validation steps based on the schema.
-#'
-#' @export
-create_pointblank_agent <- function(data, schema){
-  agent <- pointblank::create_agent(tbl = data)
+assign_agent_typechecks <- function(agent,schema){
   int_columns <- c()
   factor_columns <- c()
   numeric_columns <- c()
