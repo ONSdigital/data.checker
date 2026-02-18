@@ -71,10 +71,46 @@ new_validator <- function(data, schema) {
     entry_type = "info"
   )
 
-  agent <- pointblank::create_agent(tbl = data)
+  validator$agent <- create_pointblank_agent(validator$data, validator$schema)
 
   return(validator)
 }
+
+create_pointblank_agent <- function(data, schema){
+  agent <- pointblank::create_agent(tbl = data)
+  int_columns <- c()
+  factor_columns <- c()
+  numeric_columns <- c()
+  date_columns <- c()
+  logical_columns <- c()
+  char_columns <- c()
+  for (col in names(schema$columns)) {
+    col_info <- schema$columns[[col]]
+    if (col_info$type == "integer") {
+      int_columns <- c(int_columns, col)
+    } else if (col_info$type == "factor") {
+      factor_columns <- c(factor_columns, col)
+    } else if (col_info$type == "double") {
+      numeric_columns <- c(numeric_columns, col)
+    } else if (col_info$type == "Date") {
+      date_columns <- c(date_columns, col)
+    } else if (col_info$type == "logical") {
+      logical_columns <- c(logical_columns, col)
+    } else if (col_info$type == "character") {
+      char_columns <- c(char_columns, col)
+    }
+  }
+
+  agent <- agent |>
+    pointblank::col_is_integer(columns = eval(int_columns)) |>
+    pointblank::col_is_date(columns = eval(date_columns)) |>
+    pointblank::col_is_logical(columns = eval(logical_columns)) |>
+    pointblank::col_is_numeric(columns = eval(numeric_columns)) |>
+    pointblank::col_is_character(columns = eval(char_columns))
+
+  return(agent)
+}
+
 
 #' Validate a Validator Object
 #'
