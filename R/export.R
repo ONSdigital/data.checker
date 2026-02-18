@@ -167,7 +167,7 @@ log_pointblank_outcomes <- function(validator){
     list(
       timestamp = x$time_processed,
       description = x$label,
-      outcome = x$all_passed ,
+      outcome = ifelse(x$all_passed, "pass", "fail"),
       failing_ids = which(x$tbl_checked[[1]]$pb_is_good_ == FALSE),
       n_failing = x$n_failed,
       entry_type = "error"

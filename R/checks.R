@@ -5,9 +5,22 @@
 #' @return NULL
 #' @export
 check_duplicates <- function(validator) {
-  duplicated_idx <- !duplicated(validator$data)
+  if (is.null(validator$schema$check_duplicates_cols)) {
+      validator$agent <- pointblank::rows_distinct(
+      validator$agent,
+      columns = tidyselect::everything(),
+      label = "There are no duplicated rows"
+    ) |> pointblank::interrogate()
+  } else {
+      validator$agent <- pointblank::rows_distinct(
+      validator$agent,
+      columns = tidyselect::all_of(validator$schema$check_duplicates_cols),
+      label = "There are no duplicated rows"
+    ) |> pointblank::interrogate()
+  }
 
-  validator <- add_check(validator, "There are no duplicated rows", outcome = duplicated_idx, type = "error", rowwise = TRUE)
+  validator <- log_pointblank_outcomes(validator)
+
   return(validator)
 }
 
