@@ -61,8 +61,11 @@ check_column_contents <- function(validator) {
   for (i in names(validator$data)) {
     if (i %in% names(validator$schema$columns)) {
       validator <- run_checks(validator, i)
+      validator$agent <- validator$agent |> pointblank::interrogate()
     }
   }
+
+  validator <- log_pointblank_outcomes(validator)
 
   return(validator)
 }
@@ -125,13 +128,24 @@ run_checks <- function(validator, i) {
     }
 
     if (exists("min_val")) {
-      validator <- add_check(validator, sprintf("Column %s: values are above or equal to %s", i, min_val),
-                             validator$data[[i]] >= min_val, type = "error")
+      validator$agent <- pointblank::col_vals_gte(
+        validator$agent,
+        columns = i,
+        value = min_val,
+        label = sprintf("Column %s: values are above or equal to %s", i, min_val)
+      )
+      # validator <- add_check(validator, sprintf("Column %s: values are above or equal to %s", i, min_val),
+      #   validator$data[[i]] >= min_val, type = "error")
+
     }
 
     if (exists("max_val")) {
-      validator <- add_check(validator, sprintf("Column %s: values are below or equal to %s", i, max_val),
-                             validator$data[[i]] <= max_val, type = "error")
+        validator$agent <- pointblank::col_vals_lte(
+        validator$agent,
+        columns = i,
+        value = max_val,
+        label = sprintf("Column %s: values are below or equal to %s", i, max_val)
+      )
     }
 
     if (exists("min_decimal")) {
@@ -172,7 +186,7 @@ run_checks <- function(validator, i) {
                              allowed_strings, type = "error")
     }
   }
-
+  # if (validator$agent$validation_set$i > 0) {
   return(validator)
 }
 
