@@ -71,10 +71,39 @@ new_validator <- function(data, schema) {
     entry_type = "info"
   )
 
-  agent <- pointblank::create_agent(tbl = data)
+  validator$agent <- pointblank::create_agent(tbl = validator$data)
 
   return(validator)
 }
+
+
+assign_agent_typechecks <- function(agent,schema){
+  int_columns <- c()
+  factor_columns <- c()
+  numeric_columns <- c()
+  date_columns <- c()
+  logical_columns <- c()
+  char_columns <- c()
+  for (col in names(schema$columns)) {
+    col_info <- schema$columns[[col]]
+    if (col_info$type == "integer") {
+      int_columns <- c(int_columns, col)
+    } else if (col_info$type == "factor") {
+      factor_columns <- c(factor_columns, col)
+    } else if (col_info$type == "double") {
+      numeric_columns <- c(numeric_columns, col)
+    } else if (col_info$type == "date") {
+      date_columns <- c(date_columns, col)
+    } else if (col_info$type == "logical") {
+      logical_columns <- c(logical_columns, col)
+    } else if (col_info$type == "character") {
+      char_columns <- c(char_columns, col)
+    }
+  }
+
+  return(agent)
+}
+
 
 #' Validate a Validator Object
 #'
