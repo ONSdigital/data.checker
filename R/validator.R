@@ -106,6 +106,7 @@ create_pointblank_agent <- function(data, schema){
     pointblank::col_is_date(columns = eval(date_columns)) |>
     pointblank::col_is_logical(columns = eval(logical_columns)) |>
     pointblank::col_is_numeric(columns = eval(numeric_columns)) |>
+    pointblank::col_is_factor(columns = eval(factor_columns)) |>
     pointblank::col_is_character(columns = eval(char_columns))
 
   return(agent)
