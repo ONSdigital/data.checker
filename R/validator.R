@@ -104,7 +104,7 @@ create_pointblank_agent <- function(data, schema){
       factor_columns <- c(factor_columns, col)
     } else if (col_info$type == "double") {
       numeric_columns <- c(numeric_columns, col)
-    } else if (col_info$type == "Date") {
+    } else if (col_info$type == "date") {
       date_columns <- c(date_columns, col)
     } else if (col_info$type == "logical") {
       logical_columns <- c(logical_columns, col)
