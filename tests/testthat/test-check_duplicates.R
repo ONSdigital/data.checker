@@ -35,8 +35,6 @@ test_that("Checks correctly identifies lack of duplicates", {
   expect_equal(validator$log[[2]]$outcome, "pass")
 })
 
-
-#AI generated - check!
 test_that("check_duplicates respects check_duplicates_cols in schema", {
   df <- data.frame(
     a = c(1, 1, 2, 2),
@@ -46,7 +44,7 @@ test_that("check_duplicates respects check_duplicates_cols in schema", {
 
   schema <- list(
     check_duplicates = TRUE,
-    check_duplicates_cols = c("a", "b"),
+    duplicates_cols = c("a", "b"),
     check_completeness = FALSE,
     columns = list(
       a = list(type = "numeric"),
