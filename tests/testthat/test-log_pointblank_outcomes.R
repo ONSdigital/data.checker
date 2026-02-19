@@ -9,7 +9,7 @@ agent <-
   pointblank::col_exists(columns = pointblank::vars(x, y)) |>
   pointblank::col_is_numeric(columns = pointblank::vars(x)) |>
   pointblank::col_is_numeric(columns = pointblank::vars(y)) |>
-  pointblank::interrogate()
+  pointblank::interrogate( progress = FALSE)
 
 validator <- list(
   agent = agent,

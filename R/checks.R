@@ -64,7 +64,7 @@ check_column_contents <- function(validator) {
     }
   }
   if (nrow(validator$agent$validation_set) > 0) {
-      validator$agent <- validator$agent |> pointblank::interrogate()
+      validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
   }
   validator <- log_pointblank_outcomes(validator)
 
@@ -108,24 +108,50 @@ run_checks <- function(validator, i) {
 
     } else if (is.character(class) && length(class) == 1 && class == "Date") {
       if (exists("min_date")) {
-        validator <- add_check(validator, sprintf("Column %s: dates are after %s", i, min_date),
-                               validator$data[[i]] >= lubridate::ymd(min_date), type = "error")
+        validator$agent <- pointblank::col_vals_gte(
+          validator$agent,
+          columns = i,
+          value = lubridate::ymd(min_date),
+          label = sprintf("Column %s: dates are after %s", i, min_date),
+          na_pass = TRUE
+        )
       }
       if (exists("max_date")) {
-        validator <- add_check(validator, sprintf("Column %s: dates are before %s", i, max_date),
-                               validator$data[[i]] <= lubridate::ymd(max_date), type = "error")
+        validator$agent <- pointblank::col_vals_lte(
+          validator$agent,
+          columns = i,
+          value = lubridate::ymd(max_date),
+          label = sprintf("Column %s: dates are before %s", i, max_date),
+          na_pass = TRUE
+        )
       }
 
     } else if (is.character(class) && all(class %in% c("POSIXct", "POSIXt", "POSIXlt"))) {
       if (exists("min_datetime")) {
-        min_datetime <- lubridate::parse_date_time(min_datetime, orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS"))
-        validator <- add_check(validator, sprintf("Column %s: datetimes are after %s", i, min_datetime),
-                               validator$data[[i]] >= min_datetime, type = "error")
+        min_datetime <- lubridate::parse_date_time(
+          min_datetime,
+          orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS")
+        )
+        validator$agent <- pointblank::col_vals_gte(
+          validator$agent,
+          columns = i,
+          value = min_datetime,
+          label = sprintf("Column %s: datetimes are after %s", i, min_datetime),
+          na_pass = TRUE
+        )
       }
       if (exists("max_datetime")) {
-        max_datetime <- lubridate::parse_date_time(max_datetime, orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS"))
-        validator <- add_check(validator, sprintf("Column %s: datetimes are before %s", i, max_datetime),
-                               validator$data[[i]] <= max_datetime, type = "error")
+        max_datetime <- lubridate::parse_date_time(
+          max_datetime,
+          orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS")
+        )
+        validator$agent <- pointblank::col_vals_lte(
+          validator$agent,
+          columns = i,
+          value = max_datetime,
+          label = sprintf("Column %s: datetimes are before %s", i, max_datetime),
+          na_pass = TRUE
+        )
       }
     }
 
@@ -137,8 +163,6 @@ run_checks <- function(validator, i) {
         label = sprintf("Column %s: values are above or equal to %s", i, min_val),
         na_pass = TRUE
       )
-      # validator <- add_check(validator, sprintf("Column %s: values are above or equal to %s", i, min_val),
-      #   validator$data[[i]] >= min_val, type = "error")
 
     }
 
@@ -189,21 +213,23 @@ run_checks <- function(validator, i) {
 
     if (exists("forbidden_strings")) {
       if (is.character(forbidden_strings) && length(forbidden_strings) > 1) {
-        forbidden_strings <- paste0("^", forbidden_strings, "$", collapse = "|")
+        validator$agent <- pointblank::col_vals_not_in_set(
+          validator$agent,
+          columns = i,
+          set = forbidden_strings,
+          label = sprintf("Column %s does not contain forbidden strings", i)
+        )
+      } else if (is.character(forbidden_strings) && length(forbidden_strings) == 1) {
+        validator$agent <- pointblank::col_vals_expr(
+          validator$agent,
+          expr = rlang::expr(!stringr::str_detect(.data[[!!i]], !!forbidden_strings)),
+          label = sprintf("Column %s does not contain forbidden characters", i),
+          na_pass = TRUE
+        )
       }
-      forbidden_strings <- !grepl(forbidden_strings, validator$data[[i]])
-      validator <- add_check(validator, sprintf("Column %s does not contain forbidden characters", i),
-                             forbidden_strings, type = "error")
     }
 
     if (exists("allowed_strings")) {
-      # if (is.character(allowed_strings) && length(allowed_strings) > 1) {
-      #   allowed_strings <- paste0("^", allowed_strings, "$", collapse = "|")
-      # }
-      # allowed_strings <- grepl(allowed_strings, validator$data[[i]])
-
-      # validator <- add_check(validator, sprintf("Column %s only contains allowed strings", i),
-      #                        allowed_strings, type = "error")
       if (is.character(allowed_strings) && length(allowed_strings) == 1) {
         validator$agent <- pointblank::col_vals_regex(
           validator$agent,
