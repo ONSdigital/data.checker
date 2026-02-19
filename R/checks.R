@@ -65,8 +65,10 @@ check_column_contents <- function(validator) {
   }
   if (nrow(validator$agent$validation_set) > 0) {
       validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
+      validator <- log_pointblank_outcomes(validator)
   }
-  validator <- log_pointblank_outcomes(validator)
+
+  # validator <- log_pointblank_outcomes(validator)
 
 
   return(validator)
