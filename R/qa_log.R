@@ -19,10 +19,7 @@ add_qa_entry <- function(
   entry_type = c("info", "warning", "error")
 ) {
 
-  pass <- ifelse(cli::is_utf8_output(), "\U0002705 pass", "pass")
-  fail <- ifelse(cli::is_utf8_output(), "\U000274C fail", "fail")
-  outcome <- ifelse(outcome, pass, fail)
-
+  outcome <- convert_bool_pass_fail(outcome)
 
   entry_type <- match.arg(entry_type)
 
@@ -54,4 +51,11 @@ add_qa_entry <- function(
   validator$log <- append(validator$log, list(entry))
   return(validator)
 
+}
+
+convert_bool_pass_fail <- function(x) {
+  pass <- ifelse(cli::is_utf8_output(), "\U0002705 pass", "pass")
+  fail <- ifelse(cli::is_utf8_output(), "\U000274C fail", "fail")
+  x <- ifelse(x, pass, fail)
+  return(x)
 }

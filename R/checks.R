@@ -149,13 +149,19 @@ run_checks <- function(validator, i) {
     }
 
     if (exists("min_decimal")) {
-      validator <- add_check(validator, sprintf("Column %s: decimal places above or equal to %s", i, min_decimal),
-                             decimal_places(validator$data[[i]]) >= min_decimal, type = "error")
+      validator$agent <-pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(decimal_places(.data[[!!i]]) >= !!min_decimal),
+        label = sprintf("Column %s: decimal places above or equal to %s", i, min_decimal)
+      )
     }
 
     if (exists("max_decimal")) {
-      validator <- add_check(validator, sprintf("Column %s: decimal places below or equal to %s", i, max_decimal),
-                             decimal_places(validator$data[[i]]) <= max_decimal, type = "error")
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(decimal_places(.data[[!!i]]) <= !!max_decimal),
+        label = sprintf("Column %s: decimal places below or equal to %s", i, max_decimal)
+      )
     }
   } else if (type == "character") {
     if (exists("min_string_length")) {

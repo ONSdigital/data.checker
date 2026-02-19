@@ -173,7 +173,12 @@ log_pointblank_outcomes <- function(validator){
       entry_type = "error"
     )
   })
- 
+
+  entries <- lapply(entries, function(entry) {
+    entry$outcome <- convert_bool_pass_fail(entry$outcome)
+    entry
+  })
+
   validator$log <- append(validator$log, entries)
  
   return(validator)
