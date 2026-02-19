@@ -61,11 +61,13 @@ check_column_contents <- function(validator) {
   for (i in names(validator$data)) {
     if (i %in% names(validator$schema$columns)) {
       validator <- run_checks(validator, i)
-      validator$agent <- validator$agent |> pointblank::interrogate()
     }
   }
-
+  if (nrow(validator$agent$validation_set) > 0) {
+      validator$agent <- validator$agent |> pointblank::interrogate()
+  }
   validator <- log_pointblank_outcomes(validator)
+
 
   return(validator)
 }
@@ -132,7 +134,8 @@ run_checks <- function(validator, i) {
         validator$agent,
         columns = i,
         value = min_val,
-        label = sprintf("Column %s: values are above or equal to %s", i, min_val)
+        label = sprintf("Column %s: values are above or equal to %s", i, min_val),
+        na_pass = TRUE
       )
       # validator <- add_check(validator, sprintf("Column %s: values are above or equal to %s", i, min_val),
       #   validator$data[[i]] >= min_val, type = "error")
@@ -144,7 +147,8 @@ run_checks <- function(validator, i) {
         validator$agent,
         columns = i,
         value = max_val,
-        label = sprintf("Column %s: values are below or equal to %s", i, max_val)
+        label = sprintf("Column %s: values are below or equal to %s", i, max_val),
+        na_pass = TRUE
       )
     }
 
@@ -152,7 +156,8 @@ run_checks <- function(validator, i) {
       validator$agent <-pointblank::col_vals_expr(
         validator$agent,
         expr = rlang::expr(decimal_places(.data[[!!i]]) >= !!min_decimal),
-        label = sprintf("Column %s: decimal places above or equal to %s", i, min_decimal)
+        label = sprintf("Column %s: decimal places above or equal to %s", i, min_decimal),
+        na_pass = TRUE
       )
     }
 
@@ -160,17 +165,26 @@ run_checks <- function(validator, i) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
         expr = rlang::expr(decimal_places(.data[[!!i]]) <= !!max_decimal),
-        label = sprintf("Column %s: decimal places below or equal to %s", i, max_decimal)
+        label = sprintf("Column %s: decimal places below or equal to %s", i, max_decimal),
+        na_pass = TRUE
       )
     }
   } else if (type == "character") {
     if (exists("min_string_length")) {
-      validator <- add_check(validator, sprintf("Column %s: string length above or equal to %s", i, min_string_length),
-                             nchar(validator$data[[i]]) >= min_string_length, type = "error")
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(nchar(.data[[!!i]]) >= !!min_string_length),
+        label = sprintf("Column %s: string length above or equal to %s", i, min_string_length),
+        na_pass = TRUE
+      )
     }
     if (exists("max_string_length")) {
-      validator <- add_check(validator, sprintf("Column %s: string length below or equal to %s", i, max_string_length),
-                             nchar(validator$data[[i]]) <= max_string_length, type = "error")
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(nchar(.data[[!!i]]) <= !!max_string_length),
+        label = sprintf("Column %s: string length below or equal to %s", i, max_string_length),
+        na_pass = TRUE
+      )
     }
 
     if (exists("forbidden_strings")) {
@@ -183,13 +197,29 @@ run_checks <- function(validator, i) {
     }
 
     if (exists("allowed_strings")) {
-      if (is.character(allowed_strings) && length(allowed_strings) > 1) {
-        allowed_strings <- paste0("^", allowed_strings, "$", collapse = "|")
-      }
-      allowed_strings <- grepl(allowed_strings, validator$data[[i]])
+      # if (is.character(allowed_strings) && length(allowed_strings) > 1) {
+      #   allowed_strings <- paste0("^", allowed_strings, "$", collapse = "|")
+      # }
+      # allowed_strings <- grepl(allowed_strings, validator$data[[i]])
 
-      validator <- add_check(validator, sprintf("Column %s only contains allowed strings", i),
-                             allowed_strings, type = "error")
+      # validator <- add_check(validator, sprintf("Column %s only contains allowed strings", i),
+      #                        allowed_strings, type = "error")
+      if (is.character(allowed_strings) && length(allowed_strings) == 1) {
+        validator$agent <- pointblank::col_vals_regex(
+          validator$agent,
+          columns = i,
+          regex = allowed_strings,
+          label = sprintf("Column %s only contains allowed strings", i),
+          na_pass = TRUE
+        )
+      } else if (is.character(allowed_strings) && length(allowed_strings) > 1) {
+        validator$agent <- pointblank::col_vals_in_set(
+          validator$agent,
+          columns = i,
+          set = allowed_strings,
+          label = sprintf("Column %s only contains allowed strings", i)
+        )
+      }
     }
   }
   # if (validator$agent$validation_set$i > 0) {

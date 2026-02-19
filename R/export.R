@@ -175,6 +175,13 @@ log_pointblank_outcomes <- function(validator){
   })
 
   entries <- lapply(entries, function(entry) {
+    if (!is.null(entry$n_failing) && entry$n_failing == 0) {
+      entry$n_failing <- "N/A"
+    }
+    entry
+  })
+
+  entries <- lapply(entries, function(entry) {
     entry$outcome <- convert_bool_pass_fail(entry$outcome)
     entry
   })
