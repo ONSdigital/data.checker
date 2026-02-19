@@ -39,11 +39,29 @@ check_completeness <- function(validator) {
 #'
 #' This function calculates the number of decimal places in a numeric vector.
 #' @param x A numeric vector.
+#' @param column_name A string passed from a DataFrame
 #' @return A vector of the same length as `x`, indicating the number of decimal
 #' places for each element. If an element is `NA`, it returns `NA`.
 #'
 #' @export
-decimal_places <- function(x) {
+decimal_places <- function(x, column_name) {
+  sf_check <- abs(signif(x, 15) - x) < .Machine$double.eps
+
+  sf_check <- sf_check[!is.na(sf_check)]
+
+  if (all(sf_check) != TRUE) {
+    stop(
+      message=sprintf(
+        "Report generation failed: Input data contains 
+        double-precision floating-point with more than 
+        15 significant digits in column: %s. 
+        Please remove decimal places evaluation 
+        from the schema or truncate data.", 
+      column_name),
+      call. = FALSE
+    )
+  }
+
   ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
 }
 
@@ -136,12 +154,12 @@ run_checks <- function(validator, i) {
 
     if (exists("min_decimal")) {
       validator <- add_check(validator, sprintf("Column %s: decimal places above or equal to %s", i, min_decimal),
-                             decimal_places(validator$data[[i]]) >= min_decimal, type = "error")
+                             decimal_places(validator$data[[i]], i) >= min_decimal, type = "error")
     }
 
     if (exists("max_decimal")) {
       validator <- add_check(validator, sprintf("Column %s: decimal places below or equal to %s", i, max_decimal),
-                             decimal_places(validator$data[[i]]) <= max_decimal, type = "error")
+                             decimal_places(validator$data[[i]], i) <= max_decimal, type = "error")
     }
   } else if (type == "character") {
     if (exists("min_string_length")) {
