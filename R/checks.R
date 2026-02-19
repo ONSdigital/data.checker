@@ -99,11 +99,12 @@ run_checks <- function(validator, i) {
   if (type == "double" | type == "integer") {
     if (is.character(class) && length(class) == 1 && class == "factor") {
       if (exists("expected_levels")) {
-        levels <- all(levels(validator$data[[i]]) == expected_levels)
-        validator <- add_qa_entry(validator,
-                                  description = sprintf("Column %s contains expected factor levels", i),
-                                  outcome = levels,
-                                  entry_type = "error")
+        validator$agent <- pointblank::col_vals_in_set(
+          validator$agent,
+          columns = i,
+          set = expected_levels,
+          label = sprintf("Column %s contains expected factor levels", i)
+        )
       }
 
     } else if (is.character(class) && length(class) == 1 && class == "Date") {
