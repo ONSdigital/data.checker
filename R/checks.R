@@ -5,9 +5,19 @@
 #' @return NULL
 #' @export
 check_duplicates <- function(validator) {
-  duplicated_idx <- !duplicated(validator$data)
+  cols <- validator$schema$duplicates_cols
+  if (is.null(cols)) {
+    cols <- colnames(validator$data)
+  }
 
-  validator <- add_check(validator, "There are no duplicated rows", outcome = duplicated_idx, type = "error", rowwise = TRUE)
+  validator$agent <- pointblank::rows_distinct(
+    validator$agent,
+    columns = tidyselect::all_of(cols),
+    label = "There are no duplicated rows"
+  ) |> pointblank::interrogate()
+
+  validator <- log_pointblank_outcomes(validator)
+
   return(validator)
 }
 
@@ -25,11 +35,20 @@ check_completeness <- function(validator) {
     cols <- colnames(validator$data)
   }
 
-  combos <- expand.grid(unique(validator$data[cols]))
+  validator$agent <- pointblank::specially(
+    validator$agent, 
+    label = "There are no missing rows based on specified columns",
+    fn = function(x) { 
+    nrow(
+      dplyr::anti_join(
+        tidyr::expand(x, !!!rlang::syms(cols)), 
+        dplyr::distinct(x, !!!rlang::syms(cols))
+      )
+    ) == 0
+  }) |> pointblank::interrogate()
 
-  result <- nrow(dplyr::anti_join(combos, validator$data[cols])) == 0
-
-  validator <- add_check(validator, "There are no missing rows", outcome = result, type = "error", rowwise = FALSE)
+  validator <- log_pointblank_outcomes(validator)
+  
   return(validator)
 }
 

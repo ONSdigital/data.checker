@@ -14,8 +14,9 @@ df <- data.frame(
 )
 
 test_that("completeness check returns TRUE when data is complete", {
-  validator <- new_validator(df, schema) |>
-    check_completeness()
+  validator <- new_validator(df, schema)
+  validator$agent <- pointblank::create_agent(tbl = df) 
+  validator <- check_completeness(validator)
 
   expect_equal(validator$log[[2]]$outcome, "pass")
 })
@@ -27,8 +28,9 @@ test_that("completeness check returns FALSE when data is complete", {
     b = c("a", "a", "b", "b", "c")
   )
 
-  validator <- new_validator(df, schema) |>
-    check_completeness()
+  validator <- new_validator(df, schema)
+  validator$agent <- pointblank::create_agent(tbl = df) 
+  validator <- check_completeness(validator)
 
   expect_equal(validator$log[[2]]$outcome, "fail")
 })
