@@ -36,19 +36,19 @@ check_completeness <- function(validator) {
   }
 
   validator$agent <- pointblank::specially(
-    validator$agent, 
+    validator$agent,
     label = "There are no missing rows based on specified columns",
-    fn = function(x) { 
-    nrow(
-      dplyr::anti_join(
-        tidyr::expand(x, !!!rlang::syms(cols)), 
-        dplyr::distinct(x, !!!rlang::syms(cols))
-      )
-    ) == 0
-  }) |> pointblank::interrogate()
+    fn = function(x) {
+      nrow(
+        dplyr::anti_join(
+          tidyr::expand(x, !!!rlang::syms(cols)),
+          dplyr::distinct(x, !!!rlang::syms(cols))
+        )
+      ) == 0
+    }) |> pointblank::interrogate()
 
   validator <- log_pointblank_outcomes(validator)
-  
+
   return(validator)
 }
 
@@ -83,8 +83,8 @@ check_column_contents <- function(validator) {
     }
   }
   if (nrow(validator$agent$validation_set) > 0) {
-      validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
-      validator <- log_pointblank_outcomes(validator)
+    validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
+    validator <- log_pointblank_outcomes(validator)
   }
 
   # validator <- log_pointblank_outcomes(validator)
@@ -122,7 +122,7 @@ run_checks <- function(validator, i) {
       if (exists("expected_levels")) {
         validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           set = expected_levels,
           label = sprintf("Column %s contains expected factor levels", i)
         )
@@ -132,7 +132,7 @@ run_checks <- function(validator, i) {
       if (exists("min_date")) {
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           value = lubridate::ymd(min_date),
           label = sprintf("Column %s: dates are after %s", i, min_date),
           na_pass = TRUE
@@ -141,7 +141,7 @@ run_checks <- function(validator, i) {
       if (exists("max_date")) {
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           value = lubridate::ymd(max_date),
           label = sprintf("Column %s: dates are before %s", i, max_date),
           na_pass = TRUE
@@ -156,7 +156,7 @@ run_checks <- function(validator, i) {
         )
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           value = min_datetime,
           label = sprintf("Column %s: datetimes are after %s", i, min_datetime),
           na_pass = TRUE
@@ -169,7 +169,7 @@ run_checks <- function(validator, i) {
         )
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           value = max_datetime,
           label = sprintf("Column %s: datetimes are before %s", i, max_datetime),
           na_pass = TRUE
@@ -180,7 +180,7 @@ run_checks <- function(validator, i) {
     if (exists("min_val")) {
       validator$agent <- pointblank::col_vals_gte(
         validator$agent,
-        columns = i,
+        columns = all_of(i),
         value = min_val,
         label = sprintf("Column %s: values are above or equal to %s", i, min_val),
         na_pass = TRUE
@@ -189,9 +189,9 @@ run_checks <- function(validator, i) {
     }
 
     if (exists("max_val")) {
-        validator$agent <- pointblank::col_vals_lte(
+      validator$agent <- pointblank::col_vals_lte(
         validator$agent,
-        columns = i,
+        columns = all_of(i),
         value = max_val,
         label = sprintf("Column %s: values are below or equal to %s", i, max_val),
         na_pass = TRUE
@@ -237,7 +237,7 @@ run_checks <- function(validator, i) {
       if (is.character(forbidden_strings) && length(forbidden_strings) > 1) {
         validator$agent <- pointblank::col_vals_not_in_set(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           set = forbidden_strings,
           label = sprintf("Column %s does not contain forbidden strings", i)
         )
@@ -255,7 +255,7 @@ run_checks <- function(validator, i) {
       if (is.character(allowed_strings) && length(allowed_strings) == 1) {
         validator$agent <- pointblank::col_vals_regex(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           regex = allowed_strings,
           label = sprintf("Column %s only contains allowed strings", i),
           na_pass = TRUE
@@ -263,14 +263,13 @@ run_checks <- function(validator, i) {
       } else if (is.character(allowed_strings) && length(allowed_strings) > 1) {
         validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
-          columns = i,
+          columns = all_of(i),
           set = allowed_strings,
           label = sprintf("Column %s only contains allowed strings", i)
         )
       }
     }
   }
-  # if (validator$agent$validation_set$i > 0) {
   return(validator)
 }
 
@@ -446,7 +445,7 @@ add_check <- function(validator, description, outcome, condition, type = c("erro
       outcome = outcome,
       entry_type = match.arg(type)
     )
- }
+  }
 
   return(validator)
 }

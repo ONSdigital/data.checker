@@ -167,7 +167,7 @@ log_pointblank_outcomes <- function(validator){
     list(
       timestamp = x$time_processed,
       description = x$label,
-      outcome = ifelse(x$all_passed, "pass", "fail"),
+      outcome = convert_bool_pass_fail(x$all_passed),
       failing_ids = which(x$tbl_checked[[1]]$pb_is_good_ == FALSE),
       n_failing = x$n_failed,
       entry_type = "error"
@@ -181,13 +181,7 @@ log_pointblank_outcomes <- function(validator){
     entry
   })
 
-  entries <- lapply(entries, function(entry) {
-    entry$outcome <- convert_bool_pass_fail(entry$outcome)
-    entry
-  })
-
   validator$log <- append(validator$log, entries)
- 
+
   return(validator)
- }
- 
+}
