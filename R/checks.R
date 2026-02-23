@@ -358,57 +358,52 @@ check_colnames <- function(validator) {
 check_types <- function(validator) {
   # Check column types
   schema_types <- lapply(validator$schema$columns, `[[`, "type")
+  schema_types <- schema_types[!sapply(schema_types, is.null)]  # drop any missing schema entries
 
-  incorrect_types <- sapply(names(schema_types), function(x) {
-    if (schema_types[[x]] != typeof(validator$data[[x]])) {
-      return(x)
+  validator$agent <- pointblank::specially(
+    validator$agent,
+    label = "Correct column types",
+    fn = function(x) {
+      incorrect_types <- names(schema_types)[vapply(
+        names(schema_types),
+        function(nm) schema_types[[nm]] != typeof(x[[nm]]),
+        logical(1)
+      )]
+
+      length(incorrect_types) == 0
     }
-  }) |> unlist() |> unname()
-
-  if (length(incorrect_types) == 0) {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column types",
-      outcome = TRUE,
-      entry_type = "error"
-    )
-  } else {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column types",
-      outcome = FALSE,
-      failing_ids = incorrect_types,
-      entry_type = "error"
-    )
-  }
+  )
   # Check column classes
-  schema_classes <- lapply(validator$schema$columns, function(col) if ("class" %in% names(col)) col[["class"]])
-  schema_classes <- schema_classes[!sapply(schema_classes, is.null)]  # Remove NULL entries
+  schema_classes <- lapply(
+    validator$schema$columns,
+    function(col) if ("class" %in% names(col)) col[["class"]] else NULL
+  )
+  schema_classes <- schema_classes[!vapply(schema_classes, is.null, logical(1))] # drop any missing schema entries
 
-  incorrect_classes <- sapply(names(schema_classes), function(x) {
-    # Check if all classes match (including multi-class objects)
-    if (all(class(validator$data[[x]]) != schema_classes[[x]])) {
-      return(x)
+  validator$agent <- pointblank::specially(
+    validator$agent,
+    label = "Correct column classes",
+    fn = function(x) {
+      incorrect_classes <- names(schema_classes)[vapply(
+        names(schema_classes),
+        function(nm) {
+          expected <- schema_classes[[nm]]
+          actual <- class(x[[nm]])
+
+          # expected can be length > 1; require identical class vector
+          !identical(actual, expected)
+        },
+        logical(1)
+      )]
+
+      length(incorrect_classes) == 0
     }
-  }) |> unlist() |> unname()
+  )
 
-  if (length(incorrect_classes) > 0) {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column classes",
-      outcome = FALSE,
-      failing_ids = incorrect_classes,
-      entry_type = "error"
-    )
-  } else {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column classes",
-      outcome = TRUE,
-      entry_type = "error"
-    )
+  if (nrow(validator$agent$validation_set) > 0) {
+    validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
+    validator <- log_pointblank_outcomes(validator)
   }
-
   return(validator)
 }
 
