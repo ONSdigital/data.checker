@@ -31,9 +31,9 @@ test_that("log_pointblank_outcomes preserves existing log and appends outcomes",
 })
 
 test_that("log_pointblank_outcomes captures correct outcomes", {
-  expect_true(output$log[[2]]$outcome)
-  expect_true(output$log[[3]]$outcome)  
-  expect_true(output$log[[4]]$outcome)  
-  expect_false(output$log[[5]]$outcome)
+  expect_equal(output$log[[2]]$outcome, "pass")
+  expect_equal(output$log[[3]]$outcome, "pass")
+  expect_equal(output$log[[4]]$outcome, "pass")
+  expect_equal(output$log[[5]]$outcome, "fail")
   expect_equal(output$log[[5]]$n_failing, 1)
 })
