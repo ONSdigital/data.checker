@@ -39,13 +39,13 @@ check_completeness <- function(validator) {
     validator$agent, 
     label = "There are no missing rows based on specified columns",
     fn = function(x) { 
-    nrow(
-      dplyr::anti_join(
-        tidyr::expand(x, !!!rlang::syms(cols)), 
-        dplyr::distinct(x, !!!rlang::syms(cols))
-      )
-    ) == 0
-  }) |> pointblank::interrogate()
+      nrow(
+        dplyr::anti_join(
+          tidyr::expand(x, !!!rlang::syms(cols)), 
+          dplyr::distinct(x, !!!rlang::syms(cols))
+        )
+      ) == 0
+    }) |> pointblank::interrogate()
 
   validator <- log_pointblank_outcomes(validator)
   
