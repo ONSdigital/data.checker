@@ -22,7 +22,10 @@ Imports:
     utils,
     cli,
     rlang,
-    pointblank
+    pointblank,
+    tidyselect,
+    tidyr,
+    stringr
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
