@@ -163,36 +163,39 @@ log_html <- function(log) {
 #' @return The updated validator list with new log entries appended.
 #' @details Each entry in the log will contain the timestamp, description, outcome, failing row indices, number of failures, and entry type for each validation step.
 log_pointblank_outcomes <- function(validator){
+  hashed_log <- sapply(validator$log, function(x) rlang::hash(x[-1]))
+
   entries <- apply(validator$agent$validation_set, 1, function(x) {
-    list(
+    outcome <- ifelse(x$all_passed, "pass", "fail")
+
+    if (outcome == "fail" & is.null(x$tbl_checked)) {
+      failing_ids <- ifelse(is.null(x$column), NA, x$column)
+    } else if (outcome == "fail") {
+      failing_ids <- which(x$tbl_checked[[1]]$pb_is_good_ == FALSE)
+    } else {
+      failing_ids <- NA
+    }
+
+    output <- list(
       timestamp = x$time_processed,
       description = x$label,
-      outcome = convert_bool_pass_fail(x$all_passed),
-      failing_ids = which(x$tbl_checked[[1]]$pb_is_good_ == FALSE),
+      outcome = outcome,
+      failing_ids = failing_ids,
       n_failing = x$n_failed,
       entry_type = "error"
     )
-  })
 
-  entries <- lapply(entries, function(entry) {
-    if (!is.null(entry$n_failing) && entry$n_failing == 0) {
-      entry$n_failing <- "N/A"
+    if (!rlang::hash(output) %in% hashed_log) {
+      return(output)
     }
-    entry
   })
 
-  existing_desc <- vapply(validator$log, function(e) {
-    if (is.null(e) || is.null(e$description)) NA_character_ else as.character(e$description)
-  }, character(1))
 
-  new_desc <- vapply(entries, function(e) {
-    if (is.null(e) || is.null(e$description)) NA_character_ else as.character(e$description)
-  }, character(1))
-
-  entries <- entries[!(new_desc %in% existing_desc)]
 
 
   validator$log <- append(validator$log, entries)
 
+
   return(validator)
 }
+ 

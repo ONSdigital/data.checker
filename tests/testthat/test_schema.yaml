@@ -6,4 +6,4 @@ columns:
     optional: true
   b:
     type: character
-    optional: true
+    optional: false

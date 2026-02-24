@@ -2,7 +2,7 @@
 df = data.frame(a= 1, b = 2,c = 3)
 columns = list(
   a = list(type = "numeric", optional = TRUE),
-  b = list(type = "character", optional = TRUE)
+  b = list(type = "character", optional = FALSE)
 )
 
 test <- new_validator(

@@ -7,14 +7,20 @@ test_that("The code returns no errors when the column names are correct", {
   )
 
   validator <- new_validator(
-    schema = list(columns = columns, hard_checks = TRUE,   check_duplicates = FALSE,check_completeness = FALSE),
+    schema = list(
+      columns = columns, 
+      hard_checks = TRUE, 
+      check_duplicates = FALSE,
+      check_completeness = FALSE
+    ),
     data = df
-  ) %>% check_colnames()
+  )
+  validator <- check_colnames(validator)
 
   for (entry in validator$log[2:5]) {
     expect_equal(entry$outcome, "pass")
-    expect_equal(entry$n_failing, "N/A")
-    expect_equal(entry$failing_ids, character())
+    expect_equal(entry$n_failing, 0)
+    expect_equal(entry$failing_ids, NA)
   }
 
 })
@@ -29,7 +35,8 @@ test_that("Column names with incorrect style return errors", {
   validator <- new_validator(
     schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
     data = df
-  ) %>% check_colnames()
+  )
+  validator <- check_colnames(validator)
 
   expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[3]]$outcome, "fail")
@@ -47,11 +54,12 @@ test_that("Missing mandatory columns return errors", {
   validator <- new_validator(
     schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
     data = df
-  ) %>% check_colnames()
+  ) 
+  validator <- check_colnames(validator)
 
   expect_equal(validator$log[[4]]$outcome, "fail")
   expect_equal(validator$log[[4]]$n_failing, 1)
-  expect_equal(validator$log[[4]]$failing_ids, "c")
+  expect_equal(validator$log[[4]]$failing_ids, 1)
 })
 
 test_that("Unexpected columns return errors", {
@@ -65,11 +73,12 @@ test_that("Unexpected columns return errors", {
   validator <- new_validator(
     schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
     data = df
-  ) %>% check_colnames()
+  )
+  validator <- check_colnames(validator)
 
   expect_equal(validator$log[[5]]$outcome, "fail")
   expect_equal(validator$log[[5]]$n_failing, 1)
-  expect_equal(validator$log[[5]]$failing_ids, "d")
+  expect_equal(validator$log[[5]]$failing_ids, 4)
 })
 
 test_that("validator removes unnecessary schema info for optional columns", {
@@ -83,7 +92,8 @@ test_that("validator removes unnecessary schema info for optional columns", {
   validator <- new_validator(
     schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
     data = df
-  ) %>% check_colnames()
+  )
+  validator <- check_colnames(validator)
 
   expect_false("c" %in% names(validator$schema$columns))
 

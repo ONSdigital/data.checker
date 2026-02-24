@@ -1,4 +1,4 @@
-df <- data.frame(a = 1.23, b = "2")
+df <- data.frame(a = 1.23, b = "a")
 
 test_that("The schema is loaded correctly for JSON", {
   expect_no_error(new_validator(schema = "test_schema.json", data = df))
@@ -9,8 +9,9 @@ test_that("The schema is loaded correctly for YAML", {
 })
 
 test_that("The schema is loaded correctly for toml", {
-  expect_no_error(validator <- new_validator(schema = "test_schema.toml", data = df) |>
-                  check() |>
+  validator <- new_validator(schema = "test_schema.toml", data = df)
+  validator$agent <- pointblank::create_agent(tbl = df)
+  expect_no_error(validator <- validator |> check() |>
                   hard_checks_status(hard_check = TRUE))
 })
 
