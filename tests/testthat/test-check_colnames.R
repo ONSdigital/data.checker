@@ -59,7 +59,7 @@ test_that("Missing mandatory columns return errors", {
 
   expect_equal(validator$log[[4]]$outcome, "fail")
   expect_equal(validator$log[[4]]$n_failing, 1)
-  expect_equal(validator$log[[4]]$failing_ids, NA)
+  expect_equal(validator$log[[4]]$failing_ids, 1)
 })
 
 test_that("Unexpected columns return errors", {
@@ -78,7 +78,7 @@ test_that("Unexpected columns return errors", {
 
   expect_equal(validator$log[[5]]$outcome, "fail")
   expect_equal(validator$log[[5]]$n_failing, 1)
-  expect_equal(validator$log[[5]]$failing_ids, NA)
+  expect_equal(validator$log[[5]]$failing_ids, 4)
 })
 
 test_that("validator removes unnecessary schema info for optional columns", {

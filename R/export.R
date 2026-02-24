@@ -168,7 +168,7 @@ log_pointblank_outcomes <- function(validator){
   entries <- apply(validator$agent$validation_set, 1, function(x) {
     outcome <- ifelse(x$all_passed, "pass", "fail")
 
-    if (outcome == "fail" & is.null(x$pb_is_good_) & x$capture_stack$pb_call != "tbl_rows_distinct") {
+    if (outcome == "fail" & is.null(x$tbl_checked)) {
       failing_ids <- ifelse(is.null(x$column), NA, x$column)
     } else if (outcome == "fail") {
       failing_ids <- which(x$tbl_checked[[1]]$pb_is_good_ == FALSE)
