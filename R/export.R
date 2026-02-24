@@ -181,6 +181,17 @@ log_pointblank_outcomes <- function(validator){
     entry
   })
 
+  existing_desc <- vapply(validator$log, function(e) {
+    if (is.null(e) || is.null(e$description)) NA_character_ else as.character(e$description)
+  }, character(1))
+
+  new_desc <- vapply(entries, function(e) {
+    if (is.null(e) || is.null(e$description)) NA_character_ else as.character(e$description)
+  }, character(1))
+
+  entries <- entries[!(new_desc %in% existing_desc)]
+
+
   validator$log <- append(validator$log, entries)
 
   return(validator)
