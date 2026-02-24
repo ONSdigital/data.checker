@@ -36,19 +36,19 @@ check_completeness <- function(validator) {
   }
 
   validator$agent <- pointblank::specially(
-    validator$agent, 
+    validator$agent,
     label = "There are no missing rows based on specified columns",
-    fn = function(x) { 
+    fn = function(x) {
       nrow(
         dplyr::anti_join(
-          tidyr::expand(x, !!!rlang::syms(cols)), 
+          tidyr::expand(x, !!!rlang::syms(cols)),
           dplyr::distinct(x, !!!rlang::syms(cols))
         )
       ) == 0
     }) |> pointblank::interrogate()
 
   validator <- log_pointblank_outcomes(validator)
-  
+
   return(validator)
 }
 
@@ -82,6 +82,13 @@ check_column_contents <- function(validator) {
       validator <- run_checks(validator, i)
     }
   }
+  if (nrow(validator$agent$validation_set) > 0) {
+    validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
+    validator <- log_pointblank_outcomes(validator)
+  }
+
+  # validator <- log_pointblank_outcomes(validator)
+
 
   return(validator)
 }
@@ -113,85 +120,156 @@ run_checks <- function(validator, i) {
   if (type == "double" | type == "integer") {
     if (is.character(class) && length(class) == 1 && class == "factor") {
       if (exists("expected_levels")) {
-        levels <- all(levels(validator$data[[i]]) == expected_levels)
-        validator <- add_qa_entry(validator,
-                                  description = sprintf("Column %s contains expected factor levels", i),
-                                  outcome = levels,
-                                  entry_type = "error")
+        validator$agent <- pointblank::col_vals_in_set(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          set = expected_levels,
+          label = sprintf("Column %s contains expected factor levels", i)
+        )
       }
 
     } else if (is.character(class) && length(class) == 1 && class == "Date") {
       if (exists("min_date")) {
-        validator <- add_check(validator, sprintf("Column %s: dates are after %s", i, min_date),
-                               validator$data[[i]] >= lubridate::ymd(min_date), type = "error")
+        validator$agent <- pointblank::col_vals_gte(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          value = lubridate::ymd(min_date),
+          label = sprintf("Column %s: dates are after %s", i, min_date),
+          na_pass = TRUE
+        )
       }
       if (exists("max_date")) {
-        validator <- add_check(validator, sprintf("Column %s: dates are before %s", i, max_date),
-                               validator$data[[i]] <= lubridate::ymd(max_date), type = "error")
+        validator$agent <- pointblank::col_vals_lte(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          value = lubridate::ymd(max_date),
+          label = sprintf("Column %s: dates are before %s", i, max_date),
+          na_pass = TRUE
+        )
       }
 
     } else if (is.character(class) && all(class %in% c("POSIXct", "POSIXt", "POSIXlt"))) {
       if (exists("min_datetime")) {
-        min_datetime <- lubridate::parse_date_time(min_datetime, orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS"))
-        validator <- add_check(validator, sprintf("Column %s: datetimes are after %s", i, min_datetime),
-                               validator$data[[i]] >= min_datetime, type = "error")
+        min_datetime <- lubridate::parse_date_time(
+          min_datetime,
+          orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS")
+        )
+        validator$agent <- pointblank::col_vals_gte(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          value = min_datetime,
+          label = sprintf("Column %s: datetimes are after %s", i, min_datetime),
+          na_pass = TRUE
+        )
       }
       if (exists("max_datetime")) {
-        max_datetime <- lubridate::parse_date_time(max_datetime, orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS"))
-        validator <- add_check(validator, sprintf("Column %s: datetimes are before %s", i, max_datetime),
-                               validator$data[[i]] <= max_datetime, type = "error")
+        max_datetime <- lubridate::parse_date_time(
+          max_datetime,
+          orders = c("y", "ym", "ymd", "ymd H", "ymd HM", "ymd HMS")
+        )
+        validator$agent <- pointblank::col_vals_lte(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          value = max_datetime,
+          label = sprintf("Column %s: datetimes are before %s", i, max_datetime),
+          na_pass = TRUE
+        )
       }
     }
 
     if (exists("min_val")) {
-      validator <- add_check(validator, sprintf("Column %s: values are above or equal to %s", i, min_val),
-                             validator$data[[i]] >= min_val, type = "error")
+      validator$agent <- pointblank::col_vals_gte(
+        validator$agent,
+        columns = tidyselect::all_of(i),
+        value = min_val,
+        label = sprintf("Column %s: values are above or equal to %s", i, min_val),
+        na_pass = TRUE
+      )
+
     }
 
     if (exists("max_val")) {
-      validator <- add_check(validator, sprintf("Column %s: values are below or equal to %s", i, max_val),
-                             validator$data[[i]] <= max_val, type = "error")
+      validator$agent <- pointblank::col_vals_lte(
+        validator$agent,
+        columns = tidyselect::all_of(i),
+        value = max_val,
+        label = sprintf("Column %s: values are below or equal to %s", i, max_val),
+        na_pass = TRUE
+      )
     }
 
     if (exists("min_decimal")) {
-      validator <- add_check(validator, sprintf("Column %s: decimal places above or equal to %s", i, min_decimal),
-                             decimal_places(validator$data[[i]]) >= min_decimal, type = "error")
+      validator$agent <-pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(decimal_places(.data[[!!i]]) >= !!min_decimal),
+        label = sprintf("Column %s: decimal places above or equal to %s", i, min_decimal),
+        na_pass = TRUE
+      )
     }
 
     if (exists("max_decimal")) {
-      validator <- add_check(validator, sprintf("Column %s: decimal places below or equal to %s", i, max_decimal),
-                             decimal_places(validator$data[[i]]) <= max_decimal, type = "error")
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(decimal_places(.data[[!!i]]) <= !!max_decimal),
+        label = sprintf("Column %s: decimal places below or equal to %s", i, max_decimal),
+        na_pass = TRUE
+      )
     }
   } else if (type == "character") {
     if (exists("min_string_length")) {
-      validator <- add_check(validator, sprintf("Column %s: string length above or equal to %s", i, min_string_length),
-                             nchar(validator$data[[i]]) >= min_string_length, type = "error")
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(nchar(.data[[!!i]]) >= !!min_string_length),
+        label = sprintf("Column %s: string length above or equal to %s", i, min_string_length),
+        na_pass = TRUE
+      )
     }
     if (exists("max_string_length")) {
-      validator <- add_check(validator, sprintf("Column %s: string length below or equal to %s", i, max_string_length),
-                             nchar(validator$data[[i]]) <= max_string_length, type = "error")
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(nchar(.data[[!!i]]) <= !!max_string_length),
+        label = sprintf("Column %s: string length below or equal to %s", i, max_string_length),
+        na_pass = TRUE
+      )
     }
 
     if (exists("forbidden_strings")) {
       if (is.character(forbidden_strings) && length(forbidden_strings) > 1) {
-        forbidden_strings <- paste0("^", forbidden_strings, "$", collapse = "|")
+        validator$agent <- pointblank::col_vals_not_in_set(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          set = forbidden_strings,
+          label = sprintf("Column %s does not contain forbidden strings", i)
+        )
+      } else if (is.character(forbidden_strings) && length(forbidden_strings) == 1) {
+        validator$agent <- pointblank::col_vals_expr(
+          validator$agent,
+          expr = rlang::expr(!stringr::str_detect(.data[[!!i]], !!forbidden_strings)),
+          label = sprintf("Column %s does not contain forbidden characters", i),
+          na_pass = TRUE
+        )
       }
-      forbidden_strings <- !grepl(forbidden_strings, validator$data[[i]])
-      validator <- add_check(validator, sprintf("Column %s does not contain forbidden characters", i),
-                             forbidden_strings, type = "error")
     }
 
     if (exists("allowed_strings")) {
-      if (is.character(allowed_strings) && length(allowed_strings) > 1) {
-        allowed_strings <- paste0("^", allowed_strings, "$", collapse = "|")
+      if (is.character(allowed_strings) && length(allowed_strings) == 1) {
+        validator$agent <- pointblank::col_vals_regex(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          regex = allowed_strings,
+          label = sprintf("Column %s only contains allowed strings", i),
+          na_pass = TRUE
+        )
+      } else if (is.character(allowed_strings) && length(allowed_strings) > 1) {
+        validator$agent <- pointblank::col_vals_in_set(
+          validator$agent,
+          columns = tidyselect::all_of(i),
+          set = allowed_strings,
+          label = sprintf("Column %s only contains allowed strings", i)
+        )
       }
-      allowed_strings <- grepl(allowed_strings, validator$data[[i]])
-
-      validator <- add_check(validator, sprintf("Column %s only contains allowed strings", i),
-                             allowed_strings, type = "error")
     }
   }
-
   return(validator)
 }
 
@@ -283,57 +361,52 @@ check_colnames <- function(validator) {
 check_types <- function(validator) {
   # Check column types
   schema_types <- lapply(validator$schema$columns, `[[`, "type")
+  schema_types <- schema_types[!sapply(schema_types, is.null)]  # drop any missing schema entries
 
-  incorrect_types <- sapply(names(schema_types), function(x) {
-    if (schema_types[[x]] != typeof(validator$data[[x]])) {
-      return(x)
+  validator$agent <- pointblank::specially(
+    validator$agent,
+    label = "Correct column types",
+    fn = function(x) {
+      incorrect_types <- names(schema_types)[vapply(
+        names(schema_types),
+        function(nm) schema_types[[nm]] != typeof(x[[nm]]),
+        logical(1)
+      )]
+
+      length(incorrect_types) == 0
     }
-  }) |> unlist() |> unname()
-
-  if (length(incorrect_types) == 0) {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column types",
-      outcome = TRUE,
-      entry_type = "error"
-    )
-  } else {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column types",
-      outcome = FALSE,
-      failing_ids = incorrect_types,
-      entry_type = "error"
-    )
-  }
+  )
   # Check column classes
-  schema_classes <- lapply(validator$schema$columns, function(col) if ("class" %in% names(col)) col[["class"]])
-  schema_classes <- schema_classes[!sapply(schema_classes, is.null)]  # Remove NULL entries
+  schema_classes <- lapply(
+    validator$schema$columns,
+    function(col) if ("class" %in% names(col)) col[["class"]] else NULL
+  )
+  schema_classes <- schema_classes[!vapply(schema_classes, is.null, logical(1))] # drop any missing schema entries
 
-  incorrect_classes <- sapply(names(schema_classes), function(x) {
-    # Check if all classes match (including multi-class objects)
-    if (all(class(validator$data[[x]]) != schema_classes[[x]])) {
-      return(x)
+  validator$agent <- pointblank::specially(
+    validator$agent,
+    label = "Correct column classes",
+    fn = function(x) {
+      incorrect_classes <- names(schema_classes)[vapply(
+        names(schema_classes),
+        function(nm) {
+          expected <- schema_classes[[nm]]
+          actual <- class(x[[nm]])
+
+          # expected can be length > 1; require identical class vector
+          !identical(actual, expected)
+        },
+        logical(1)
+      )]
+
+      length(incorrect_classes) == 0
     }
-  }) |> unlist() |> unname()
+  )
 
-  if (length(incorrect_classes) > 0) {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column classes",
-      outcome = FALSE,
-      failing_ids = incorrect_classes,
-      entry_type = "error"
-    )
-  } else {
-    validator <- add_qa_entry(
-      validator,
-      description = "Correct column classes",
-      outcome = TRUE,
-      entry_type = "error"
-    )
+  if (nrow(validator$agent$validation_set) > 0) {
+    validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
+    validator <- log_pointblank_outcomes(validator)
   }
-
   return(validator)
 }
 
@@ -370,7 +443,7 @@ add_check <- function(validator, description, outcome, condition, type = c("erro
       outcome = outcome,
       entry_type = match.arg(type)
     )
- }
+  }
 
   return(validator)
 }

@@ -32,7 +32,7 @@ test_that("The validator logs a pass if all types are correct", {
   validator <- check_types(validator)
 
   expect_equal(validator$log[[2]]$outcome, "pass")
-  expect_equal(validator$log[[2]]$n_failing, "N/A")
+  expect_equal(validator$log[[2]]$n_failing, 0)
 })
 
 test_that("check_types validates column types and classes correctly", {
@@ -54,5 +54,5 @@ test_that("check_types validates column types and classes correctly", {
   validator <- check_types(validator)
 
   expect_equal(validator$log[[3]]$outcome, "pass")
-  expect_equal(validator$log[[3]]$n_failing, "N/A")
+  expect_equal(validator$log[[3]]$n_failing, 0)
 })

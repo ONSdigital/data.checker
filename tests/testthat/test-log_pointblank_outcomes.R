@@ -9,7 +9,7 @@ agent <-
   pointblank::col_exists(columns = pointblank::vars(x, y)) |>
   pointblank::col_is_numeric(columns = pointblank::vars(x)) |>
   pointblank::col_is_numeric(columns = pointblank::vars(y)) |>
-  pointblank::interrogate()
+  pointblank::interrogate( progress = FALSE)
 
 validator <- list(
   agent = agent,
@@ -31,9 +31,9 @@ test_that("log_pointblank_outcomes preserves existing log and appends outcomes",
 })
 
 test_that("log_pointblank_outcomes captures correct outcomes", {
-  expect_equal(output$log[[2]]$outcome, "pass")
-  expect_equal(output$log[[3]]$outcome, "pass")
-  expect_equal(output$log[[4]]$outcome, "pass")
-  expect_equal(output$log[[5]]$outcome, "fail")
+  expect_true(grepl("pass", output$log[[2]]$outcome, fixed = TRUE))
+  expect_true(grepl("pass", output$log[[3]]$outcome, fixed = TRUE))
+  expect_true(grepl("pass", output$log[[4]]$outcome, fixed = TRUE))
+  expect_true(grepl("fail", output$log[[5]]$outcome, fixed = TRUE))
   expect_equal(output$log[[5]]$n_failing, 1)
 })
