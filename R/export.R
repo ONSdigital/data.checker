@@ -163,7 +163,14 @@ log_html <- function(log) {
 #' @return The updated validator list with new log entries appended.
 #' @details Each entry in the log will contain the timestamp, description, outcome, failing row indices, number of failures, and entry type for each validation step.
 log_pointblank_outcomes <- function(validator){
-  hashed_log <- sapply(validator$log, function(x) rlang::hash(x[-1]))
+  # Avoid duplicates by hashing stable fields only (exclude timestamp).
+  log_hash_key <- function(entry) {
+    key <- entry[c("description", "outcome", "failing_ids", "n_failing", "entry_type")]
+    key$failing_ids <- paste0(key$failing_ids, collapse = ",")
+    rlang::hash(key)
+  }
+
+  hashed_log <- vapply(validator$log, log_hash_key, character(1))
 
   entries <- apply(validator$agent$validation_set, 1, function(x) {
     outcome <- ifelse(x$all_passed, "pass", "fail")
@@ -185,17 +192,11 @@ log_pointblank_outcomes <- function(validator){
       entry_type = "error"
     )
 
-    if (!rlang::hash(output) %in% hashed_log) {
-      return(output)
-    }
+    if (!log_hash_key(output) %in% hashed_log) output
   })
 
-
-
-
+  entries <- Filter(Negate(is.null), as.list(entries))
   validator$log <- append(validator$log, entries)
 
-
-  return(validator)
+  validator
 }
- 

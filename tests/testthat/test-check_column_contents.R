@@ -17,8 +17,8 @@ test_that("The code returns no errors when the column contents are correct", {
       expect_true(entry$entry_type == "info")
     } else {
       expect_equal(entry$outcome, "pass")
-      expect_equal(entry$n_failing, "N/A")
-      expect_equal(entry$failing_ids, integer())
+      expect_equal(entry$n_failing, 0)
+      expect_equal(entry$failing_ids, NA)
     }
   }
 })
