@@ -18,12 +18,10 @@ test_that("custom checks work with standard evaluation", {
   condition <- df$age > 20
 
   expect_no_error(
-    add_check(
+    validator <- add_check(
       validator,
       description = "Age greater than 20",
-      condition = condition,
-      type = "error",
-      rowwise = TRUE
+      condition = condition
     )
   )
 })
@@ -33,9 +31,7 @@ test_that("custom checks work within validator$data environment", {
     add_check(
       validator,
       description = "Age greater than 20",
-      condition = age > 20,
-      type = "error",
-      rowwise = TRUE
+      condition = age > 20
     )
   )
 

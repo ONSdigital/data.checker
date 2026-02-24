@@ -334,40 +334,61 @@ check_types <- function(validator) {
   return(validator)
 }
 
+# Utility function to convert expression to function for use in pointblank specially 
+expr_to_fun <- function() {
+  as.function(alist(df=, exp =, {rlang::eval_tidy(exp, data=df)}))
+}
+
 #' Add a custom check to the validator
 #'
 #' This function allows you to add a custom check to the `Validator`object.
 #'
 #' @param validator A `Validator` object to which the custom check will be added.
 #' @param description A description of the custom check.
-#' @param outcome Logical vector - one value per row if rowwise, or a single value if not. Optional if condition is set.
 #' @param condition Expression to be evaluated or logical conditions to define the custom check. Optional if outcome is set
-#' @param type The type of the check, which can be one of "error", "warning", or "info".
-#' @param rowwise Logical indicating whether the check should be applied row-wise, i.e. return a result per row. Defaults to `TRUE`. If false, the check will return a single logical value.
 #'
 #' @return The updated `Validator` object with the custom check added.
 #' @export
-add_check <- function(validator, description, outcome, condition, type = c("error", "warning", "info"), rowwise = TRUE) {
-  if (missing(outcome)) {
-    outcome <- rlang::eval_tidy(substitute(condition), data = validator$data)
+add_check <- function(validator, description, condition) {
+
+  condition <-rlang::enquo(condition)
+  fun <- expr_to_fun()
+
+  validator$agent <- pointblank::specially(
+    validator$agent,
+    label = "description",
+    fn = function(x) fun(df=x, exp=rlang::enquo(condition))
+  ) |> pointblank::interrogate()
+
+  validator <- log_pointblank_outcomes(validator)
+  
+  return(validator)
+}
+
+#' Add a custom check to the validator
+#'
+#' This function allows you to add a custom check outcomes to the validator log. The outcomes must be a logical vector.
+#'
+#' @param validator A `Validator` object to which the custom check will be added.
+#' @param description A description of the custom check.
+#' @param outcome Logical vector indicating the result of the check (TRUE/FALSE).
+#' Outcome must be logical.
+#' @param type The type of the check, can be "error", "warning", or "note".
+#'
+#' @return The updated `Validator` object with the custom check added.
+#' @export
+add_check_custom <- function(validator, description, outcome, type = c("error", "warning", "note")) {
+  if (!is.logical(outcome)) {
+    stop("Outcome must be a logical value (TRUE/FALSE)")
   }
 
-  if (rowwise) {
-    validator <- add_qa_entry(
-      validator,
-      description = description,
-      failing_ids = which(!outcome),
-      outcome = length(which(!outcome)) == 0,
-      entry_type = match.arg(type)
-    )
-  } else {
-    validator <- add_qa_entry(
-      validator,
-      description = description,
-      outcome = outcome,
-      entry_type = match.arg(type)
-    )
- }
+  validator <- add_qa_entry(
+    validator,
+    description = description,
+    failing_ids = which(!outcome),
+    outcome = length(which(!outcome)) == 0,
+    entry_type = match.arg(type)
+  )
 
   return(validator)
 }
