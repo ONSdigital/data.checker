@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   export_formats: export_formats.html
   getting_started: getting_started.html
-last_built: 2026-02-23T16:59Z
+last_built: 2026-02-24T11:42Z
 urls:
   reference: https://onsdigital.github.io/data.checker/reference
   article: https://onsdigital.github.io/data.checker/articles
