@@ -218,39 +218,42 @@ run_checks <- function(validator, i) {
 check_colnames <- function(validator) {
 
   # Check if column names contains symbols other than underscores
-  failing_ids <- names(validator$data)[grepl("[^a-zA-Z0-9_]", names(validator$data))]
-  validator <- add_qa_entry(validator,
-                            description = "Column names contain no symbols other than underscores.",
-                            outcome = length(failing_ids) == 0,
-                            failing_ids = failing_ids,
-                            entry_type = "warning")
+  validator$agent <- pointblank::specially(validator$agent,
+    fn = function(x) stringr::str_detect(colnames(x), "[^a-zA-Z0-9_]", negate = T),
+    label = "Column names contain no symbols other than underscores."
+  )                          
 
   # Check if column names contains capital letters
-  failing_ids <- names(validator$data)[grepl("[A-Z]", names(validator$data))]
-  validator <- add_qa_entry(validator,
-                            description = "Column names contain no upper case letters.",
-                            outcome = length(failing_ids) == 0,
-                            failing_ids = failing_ids,
-                            entry_type = "warning")
+  validator$agent <- pointblank::specially(validator$agent,
+    fn = function(x) stringr::str_detect(colnames(x), "[A-Z]", negate = T),
+    label = "Column names contain no capital letters."
+  ) 
 
   # Extract mandatory columns from the schema
-  mandatory_columns <- validator$schema$columns[sapply(validator$schema$columns, function(x) !x$optional)]
+  mandatory_columns <- validator$schema$columns[sapply(validator$schema$columns, function(x) !x$optional)] |> names()
+
+  if (length(mandatory_columns) == 0) {
+    stop("No mandatory columns specified in the schema. Please specify at least one mandatory column.")
+  }
 
   # Check if all mandatory columns are present
-  missing_columns <- setdiff(names(mandatory_columns), names(validator$data))
-  validator <- add_qa_entry(validator,
-                            description = "All mandatory columns are present.",
-                            outcome = length(missing_columns) == 0,
-                            failing_ids = missing_columns,
-                            entry_type = "error")
+  validator$agent <- pointblank::specially(validator$agent,
+    fn = function(x) length(dplyr::setdiff(mandatory_columns, colnames(x))) == 0,
+    label = "All mandatory columns are present."
+  )
+  
+  # Extract unexpected columns
+  unexpected_columns <- setdiff(names(validator$data), names(validator$schema$columns))
+  unexpected_columns <- paste0("^(", paste(unexpected_columns, collapse = "|"), ")$")
 
   # Check that there are no expected columns
-  unexpected_columns <- setdiff(names(validator$data), names(validator$schema$columns))
-  validator <- add_qa_entry(validator,
-                            description = "There are no unexpected columns.",
-                            outcome = length(unexpected_columns) == 0,
-                            failing_ids = unexpected_columns,
-                            entry_type = "error")
+  validator$agent <- pointblank::specially(validator$agent,
+    fn = function(x) stringr::str_detect(colnames(x), unexpected_columns, negate = TRUE),
+    label = "There are no unexpected columns."
+  )
+
+  validator$agent <- pointblank::interrogate(validator$agent, progress = FALSE)
+  validator <- log_pointblank_outcomes(validator)
 
   # Remove optional columns from schema if they do not exist in the data
   optional_columns <- names(validator$schema$columns)[sapply(validator$schema$columns, function(x) x$optional)]
@@ -259,7 +262,7 @@ check_colnames <- function(validator) {
   validator <- add_qa_entry(validator,
                             description = "Removed schema information for optional columns that aren't in the data",
                             outcome = NA,
-                            failing_ids = unexpected_columns,
+                            failing_ids = NA,
                             entry_type = "info")
 
   return(validator)
