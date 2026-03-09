@@ -42,6 +42,7 @@ new_validator <- function(data, schema) {
 
   if (is_valid_schema(schema)) {
     schema <- types_to_classes(schema)  # Convert complex types to correct types and classes
+    validate_schema_date_formats(schema) # check date formats are correct
 
 
     validator <- list("schema" = schema)
@@ -54,7 +55,7 @@ new_validator <- function(data, schema) {
   }
 
   validator$log <- list()  # Initialize an empty log for validation results
-  
+
   class(validator) <- "Validator"
 
   info <- paste0(
@@ -189,4 +190,45 @@ types_to_classes <- function(schema) {
   })
 
   return(schema)
+}
+
+#' Validate date formats in the schema
+#' This function checks that any date formats specified in the schema are valid and can be parsed correctly.
+#
+#' @param schema A list containing a `columns` element, where each column may have `min_date` and `max_date` fields.
+#' @return The original schema if all date formats are valid. If any date format is invalid, an error is thrown with a message indicating the issue.
+#' @export
+validate_schema_date_formats <- function(schema){
+  for (col in names(schema$columns)) {
+    col_info <- schema$columns[[col]]
+    if (exists("min_date", where = col_info)) {
+      warning_msg <-date_from_schema(col_info$min_date)
+      if (!is.null(warning_msg)) {
+        stop(sprintf("Invalid date format for min_date in column '%s': %s, use Year Month Day format", col, col_info$min_date))
+      }
+    }
+    if (exists("max_date", where = col_info)) {
+      warning_msg <- date_from_schema(col_info$max_date)
+      if (!is.null(warning_msg)) {
+        stop(sprintf("Invalid date format for max_date in column '%s': %s, use Year Month Day format", col, col_info$max_date))
+      }
+    }
+  }
+}
+
+#' Attempt to parse a date from the schema and capture any warnings
+#' This function tries to parse a date string using `lubridate::ymd` and captures any warnings that occur during parsing. 
+#' If a warning is raised, the warning message is returned; otherwise, `NULL` is returned.
+#' @param date_value A date string to be parsed.
+#' @return A warning message if parsing fails, otherwise `NULL`.
+date_from_schema <- function(date_value) {
+  warning_msg <- NULL
+  withCallingHandlers(
+    lubridate::ymd(date_value),
+    warning = function(w) {
+      warning_msg <<- conditionMessage(w)
+      invokeRestart("muffleWarning")
+    }
+  )
+  return(warning_msg)
 }
