@@ -514,3 +514,41 @@ hard_checks_status <- function(validator, hard_check){
 
 
 }
+
+
+check_schema_contents_against_df <- function(validator) {
+  valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
+  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+    for (entry in max_min_cols) {
+      valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
+    }
+
+  for (col in names(validator$schema$columns)) {
+    column_schema = validator$schema$columns[[col]]
+    if ("allowed_strings" %in% names(column_schema) && "forbidden_strings" %in% names(column_schema)) {
+      message = paste0("Column '", col, "': allowed_strings and forbidden_strings cannot both be present.")
+      validator <-add_qa_entry(
+        validator = validator,
+        description = message,
+        outcome = NA,
+        entry_type = "warning"
+      )
+  }
+
+  unused_entries <- c()
+  for (entry in names(column_schema)) {
+    if (!entry %in% valid_schema_entries) {
+      unused_entries <- c(unused_entries,entry)
+    }
+  }
+  if (length(unused_entries) > 0) {
+    validator <-add_qa_entry(
+      validator = validator,
+      description = paste0("Column '", col, "': Unused schema entries: ", paste(unused_entries, collapse = ", ")),
+      outcome = NA,
+      entry_type = "warning"
+    )
+  }
+  }
+  return(validator)
+}

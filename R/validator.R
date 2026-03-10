@@ -121,7 +121,8 @@ check <- function(validator, ...) {
     stop("The object must be of class 'Validator'.")
   }
 
-  validator <- check_colnames(validator) |>
+  validator <- check_schema_contents_against_df(validator) |>
+    check_colnames() |>
     check_types() |>
     check_column_contents()
 
@@ -161,8 +162,24 @@ is_valid_schema <- function(schema) {
   } else if (!"check_completeness" %in% names(schema)) {
     stop("Schema must contain a 'check_completeness' element")
   }
+  for (col in names(schema$columns)) {
+    is_valid_column_values(schema$columns[[col]], col)
+  }
 
   return(TRUE)
+}
+
+is_valid_column_values <- function(column_schema, col_name){
+  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+  for (col in max_min_cols) {
+    max_col <- paste0("max_", col)
+    min_col <- paste0("min_", col)
+    if (max_col %in% names(column_schema) && min_col %in% names(column_schema)) {
+      if (column_schema[[max_col]] < column_schema[[min_col]]) {
+        stop(paste0("In column '", col_name, "': ", max_col, " cannot be less than ", min_col, "."))
+      }
+    }
+  }    
 }
 
 #' Convert complex types to the correct types and classes
