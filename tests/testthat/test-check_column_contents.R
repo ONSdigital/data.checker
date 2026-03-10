@@ -194,6 +194,23 @@ test_that("duplicate checks return correct outcomes", {
   expect_equal(validator$log[[2]]$outcome, "pass")
 })
 
+test_that("z score checks work correctly", {
+  df <- data.frame(a = c(1:9, 1000))
+  columns <- list(
+    a = list(type = "double", optional = FALSE, max_z_score = 2.5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  print(validator$log)
+
+  expect_equal(validator$log[[2]]$outcome, "fail")
+  expect_equal(validator$log[[2]]$failing_ids, c(10))
+})
+
 convert_to_regex <- function(forbidden_strings) {
   escaped_strings <- gsub("([\\^$.|?*+(){}\\[\\]])", "\\\\\\1", forbidden_strings)
   regex_pattern <- paste0("^", escaped_strings, "$", collapse = "|")
