@@ -4,27 +4,14 @@
 \alias{add_check}
 \title{Add a custom check to the validator}
 \usage{
-add_check(
-  validator,
-  description,
-  outcome,
-  condition,
-  type = c("error", "warning", "info"),
-  rowwise = TRUE
-)
+add_check(validator, description, condition)
 }
 \arguments{
 \item{validator}{A \code{Validator} object to which the custom check will be added.}
 
 \item{description}{A description of the custom check.}
 
-\item{outcome}{Logical vector - one value per row if rowwise, or a single value if not. Optional if condition is set.}
-
 \item{condition}{Expression to be evaluated or logical conditions to define the custom check. Optional if outcome is set}
-
-\item{type}{The type of the check, which can be one of "error", "warning", or "info".}
-
-\item{rowwise}{Logical indicating whether the check should be applied row-wise, i.e. return a result per row. Defaults to \code{TRUE}. If false, the check will return a single logical value.}
 }
 \value{
 The updated \code{Validator} object with the custom check added.

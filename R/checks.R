@@ -98,23 +98,23 @@ check_column_contents <- function(validator) {
 #' To be used by check_column_contents - not intended to be run separately.
 #'
 #' @param validator `Validator` object passed from check_column_contents.
-#' @param i column index
+#' @param i_col column index
 #'
 #' @return validator object
 
-run_checks <- function(validator, i) {
+run_checks <- function(validator, i_col) {
   # Unpack all column configurations into functions scope
 
-  list2env(validator$schema$columns[[i]], env = environment())
+  list2env(validator$schema$columns[[i_col]], env = environment())
   # Store names of loaded variables
-  loaded_vars <- names(validator$schema$columns[[i]])
+  loaded_vars <- names(validator$schema$columns[[i_col]])
 
   if (exists("allow_na") && !allow_na) {
-    validator <- add_check(validator, sprintf("Column %s contains no missing values", i), !is.na(validator$data[[i]]), type = "error")
+    validator <- add_check(validator, sprintf("Column %s contains no missing values", i_col), !is.na(validator$data[[i_col]]))
   }
 
   if (exists("allow_duplicates") && !allow_duplicates) {
-    validator <- add_check(validator, sprintf("column %s contains no duplicate values", i), !duplicated(validator$data[[i]], type = "error"))
+    validator <- add_check(validator, sprintf("column %s contains no duplicate values", i_col), !duplicated(validator$data[[i_col]]))
   }
 
   if (type == "double" | type == "integer") {
@@ -122,9 +122,9 @@ run_checks <- function(validator, i) {
       if (exists("expected_levels")) {
         validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           set = expected_levels,
-          label = sprintf("Column %s contains expected factor levels", i)
+          label = sprintf("Column %s contains expected factor levels", i_col)
         )
       }
 
@@ -132,18 +132,18 @@ run_checks <- function(validator, i) {
       if (exists("min_date")) {
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           value = lubridate::ymd(min_date),
-          label = sprintf("Column %s: dates are after %s", i, min_date),
+          label = sprintf("Column %s: dates are after %s", i_col, min_date),
           na_pass = TRUE
         )
       }
       if (exists("max_date")) {
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           value = lubridate::ymd(max_date),
-          label = sprintf("Column %s: dates are before %s", i, max_date),
+          label = sprintf("Column %s: dates are before %s", i_col, max_date),
           na_pass = TRUE
         )
       }
@@ -156,9 +156,9 @@ run_checks <- function(validator, i) {
         )
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           value = min_datetime,
-          label = sprintf("Column %s: datetimes are after %s", i, min_datetime),
+          label = sprintf("Column %s: datetimes are after %s", i_col, min_datetime),
           na_pass = TRUE
         )
       }
@@ -169,9 +169,9 @@ run_checks <- function(validator, i) {
         )
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           value = max_datetime,
-          label = sprintf("Column %s: datetimes are before %s", i, max_datetime),
+          label = sprintf("Column %s: datetimes are before %s", i_col, max_datetime),
           na_pass = TRUE
         )
       }
@@ -180,9 +180,9 @@ run_checks <- function(validator, i) {
     if (exists("min_val")) {
       validator$agent <- pointblank::col_vals_gte(
         validator$agent,
-        columns = tidyselect::all_of(i),
+        columns = tidyselect::all_of(i_col),
         value = min_val,
-        label = sprintf("Column %s: values are above or equal to %s", i, min_val),
+        label = sprintf("Column %s: values are above or equal to %s", i_col, min_val),
         na_pass = TRUE
       )
 
@@ -191,9 +191,9 @@ run_checks <- function(validator, i) {
     if (exists("max_val")) {
       validator$agent <- pointblank::col_vals_lte(
         validator$agent,
-        columns = tidyselect::all_of(i),
+        columns = tidyselect::all_of(i_col),
         value = max_val,
-        label = sprintf("Column %s: values are below or equal to %s", i, max_val),
+        label = sprintf("Column %s: values are below or equal to %s", i_col, max_val),
         na_pass = TRUE
       )
     }
@@ -201,8 +201,8 @@ run_checks <- function(validator, i) {
     if (exists("min_decimal")) {
       validator$agent <-pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!i]]) >= !!min_decimal),
-        label = sprintf("Column %s: decimal places above or equal to %s", i, min_decimal),
+        expr = rlang::expr(decimal_places(.data[[!!i_col]]) >= !!min_decimal),
+        label = sprintf("Column %s: decimal places above or equal to %s", i_col, min_decimal),
         na_pass = TRUE
       )
     }
@@ -210,8 +210,8 @@ run_checks <- function(validator, i) {
     if (exists("max_decimal")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!i]]) <= !!max_decimal),
-        label = sprintf("Column %s: decimal places below or equal to %s", i, max_decimal),
+        expr = rlang::expr(decimal_places(.data[[!!i_col]]) <= !!max_decimal),
+        label = sprintf("Column %s: decimal places below or equal to %s", i_col, max_decimal),
         na_pass = TRUE
       )
     }
@@ -219,16 +219,16 @@ run_checks <- function(validator, i) {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(nchar(.data[[!!i]]) >= !!min_string_length),
-        label = sprintf("Column %s: string length above or equal to %s", i, min_string_length),
+        expr = rlang::expr(nchar(.data[[!!i_col]]) >= !!min_string_length),
+        label = sprintf("Column %s: string length above or equal to %s", i_col, min_string_length),
         na_pass = TRUE
       )
     }
     if (exists("max_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(nchar(.data[[!!i]]) <= !!max_string_length),
-        label = sprintf("Column %s: string length below or equal to %s", i, max_string_length),
+        expr = rlang::expr(nchar(.data[[!!i_col]]) <= !!max_string_length),
+        label = sprintf("Column %s: string length below or equal to %s", i_col, max_string_length),
         na_pass = TRUE
       )
     }
@@ -237,15 +237,15 @@ run_checks <- function(validator, i) {
       if (is.character(forbidden_strings) && length(forbidden_strings) > 1) {
         validator$agent <- pointblank::col_vals_not_in_set(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           set = forbidden_strings,
-          label = sprintf("Column %s does not contain forbidden strings", i)
+          label = sprintf("Column %s does not contain forbidden strings", i_col)
         )
       } else if (is.character(forbidden_strings) && length(forbidden_strings) == 1) {
         validator$agent <- pointblank::col_vals_expr(
           validator$agent,
-          expr = rlang::expr(!stringr::str_detect(.data[[!!i]], !!forbidden_strings)),
-          label = sprintf("Column %s does not contain forbidden characters", i),
+          expr = rlang::expr(!stringr::str_detect(.data[[!!i_col]], !!forbidden_strings)),
+          label = sprintf("Column %s does not contain forbidden characters", i_col),
           na_pass = TRUE
         )
       }
@@ -255,17 +255,17 @@ run_checks <- function(validator, i) {
       if (is.character(allowed_strings) && length(allowed_strings) == 1) {
         validator$agent <- pointblank::col_vals_regex(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           regex = allowed_strings,
-          label = sprintf("Column %s only contains allowed strings", i),
+          label = sprintf("Column %s only contains allowed strings", i_col),
           na_pass = TRUE
         )
       } else if (is.character(allowed_strings) && length(allowed_strings) > 1) {
         validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
-          columns = tidyselect::all_of(i),
+          columns = tidyselect::all_of(i_col),
           set = allowed_strings,
-          label = sprintf("Column %s only contains allowed strings", i)
+          label = sprintf("Column %s only contains allowed strings", i_col)
         )
       }
     }
@@ -410,22 +410,52 @@ check_types <- function(validator) {
   return(validator)
 }
 
+# Utility function to convert expression to function for use in pointblank specially 
+expr_to_fun <- function() {
+  as.function(alist(df=, exp =, {rlang::eval_tidy(exp, data=df)}))
+}
+
 #' Add a custom check to the validator
 #'
 #' This function allows you to add a custom check to the `Validator`object.
 #'
 #' @param validator A `Validator` object to which the custom check will be added.
 #' @param description A description of the custom check.
-#' @param outcome Logical vector - one value per row if rowwise, or a single value if not. Optional if condition is set.
 #' @param condition Expression to be evaluated or logical conditions to define the custom check. Optional if outcome is set
-#' @param type The type of the check, which can be one of "error", "warning", or "info".
-#' @param rowwise Logical indicating whether the check should be applied row-wise, i.e. return a result per row. Defaults to `TRUE`. If false, the check will return a single logical value.
 #'
 #' @return The updated `Validator` object with the custom check added.
 #' @export
-add_check <- function(validator, description, outcome, condition, type = c("error", "warning", "info"), rowwise = TRUE) {
-  if (missing(outcome)) {
-    outcome <- rlang::eval_tidy(substitute(condition), data = validator$data)
+add_check <- function(validator, description, condition) {
+
+  condition <-rlang::enquo(condition)
+  fun <- expr_to_fun()
+
+  validator$agent <- pointblank::specially(
+    validator$agent,
+    label = "description",
+    fn = function(x) fun(df=x, exp=rlang::enquo(condition))
+  ) |> pointblank::interrogate()
+
+  validator <- log_pointblank_outcomes(validator)
+  
+  return(validator)
+}
+
+#' Add a custom check to the validator
+#'
+#' This function allows you to add a custom check outcomes to the validator log. The outcomes must be a logical vector.
+#'
+#' @param validator A `Validator` object to which the custom check will be added.
+#' @param description A description of the custom check.
+#' @param outcome Logical vector indicating the result of the check (TRUE/FALSE).
+#' Outcome must be logical.
+#' @param type The type of the check, can be "error", "warning", or "note".
+#'
+#' @return The updated `Validator` object with the custom check added.
+#' @export
+add_check_custom <- function(validator, description, outcome, type = c("error", "warning", "note")) {
+  if (!is.logical(outcome)) {
+    stop("Outcome must be a logical value (TRUE/FALSE)")
   }
 
   if (rowwise) {
