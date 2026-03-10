@@ -9,7 +9,7 @@ run_checks(validator, i_col)
 \arguments{
 \item{validator}{\code{Validator} object passed from check_column_contents.}
 
-\item{i}{column index}
+\item{i_col}{column index}
 }
 \value{
 validator object

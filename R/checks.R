@@ -98,7 +98,7 @@ check_column_contents <- function(validator) {
 #' To be used by check_column_contents - not intended to be run separately.
 #'
 #' @param validator `Validator` object passed from check_column_contents.
-#' @param i column index
+#' @param i_col column index
 #'
 #' @return validator object
 
