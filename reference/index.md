@@ -4,6 +4,8 @@
 
 - [`add_check()`](https://onsdigital.github.io/data.checker/reference/add_check.md)
   : Add a custom check to the validator
+- [`add_check_custom()`](https://onsdigital.github.io/data.checker/reference/add_check_custom.md)
+  : Add a custom check to the validator
 - [`add_qa_entry()`](https://onsdigital.github.io/data.checker/reference/add_qa_entry.md)
   : Add a QA Entry to the validator's QA Log
 - [`check()`](https://onsdigital.github.io/data.checker/reference/check.md)

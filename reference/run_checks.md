@@ -5,7 +5,7 @@ To be used by check_column_contents - not intended to be run separately.
 ## Usage
 
 ``` r
-run_checks(validator, i)
+run_checks(validator, i_col)
 ```
 
 ## Arguments
@@ -14,7 +14,7 @@ run_checks(validator, i)
 
   `Validator` object passed from check_column_contents.
 
-- i:
+- i_col:
 
   column index
 
