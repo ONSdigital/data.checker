@@ -232,8 +232,8 @@ run_checks <- function(validator, i_col) {
     if (exists("max_z_score")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(z_score(.data[[!!i_col]]) <= !!max_z_score),
-        label = sprintf("Column %s: z-score below or equal to %s", i_col, max_z_score),
+        expr = rlang::expr(abs(z_score(.data[[!!i_col]])) <= !!max_z_score),
+        label = sprintf("Column %s: Absolute z-score below or equal to %s", i_col, max_z_score),
         na_pass = TRUE
       )
     }
