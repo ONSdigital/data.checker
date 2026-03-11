@@ -78,6 +78,17 @@ iqr_bounds <- function(x, multiplier = 1.5) {
   upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
   
   return(x < lower | x > upper)
+
+#' Check Z Score of Numeric Columns
+#'
+#' This function calculates the maximum z-score for a numeric column.
+#' @param x A numeric vector.
+#' @return A vector of the same length as `x`, indicating the z-score for each element.
+#'
+#' @export
+z_score <- function(x) {
+  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  return(z_scores)
 }
 
 
@@ -240,6 +251,15 @@ run_checks <- function(validator, i_col) {
       )
     }
 
+    if (exists("max_z_score")) {
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(abs(z_score(.data[[!!i_col]])) <= !!max_z_score),
+        label = sprintf("Column %s: Absolute z-score below or equal to %s", i_col, max_z_score),
+        na_pass = TRUE
+      )
+    }
+  
   } else if (type == "character") {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
