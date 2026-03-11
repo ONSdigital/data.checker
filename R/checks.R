@@ -78,6 +78,7 @@ iqr_bounds <- function(x, multiplier = 1.5) {
   upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
   
   return(x < lower | x > upper)
+}
 
 #' Check Z Score of Numeric Columns
 #'
@@ -556,6 +557,5 @@ hard_checks_status <- function(validator, hard_check){
   else if (!hard_check && error_counter > 0) {
     warning(sprintf("Soft checks failed: %d error(s) found, see log output for more details", error_counter))
   }
-
 
 }

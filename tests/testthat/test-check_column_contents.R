@@ -221,6 +221,8 @@ test_that("check the case for IQR = 0", {
   ) %>% check_column_contents()
 
   expect_equal(validator$log[[2]]$outcome, "pass")
+})
+
 test_that("z score checks work correctly", {
   df <- data.frame(a = c(1:9, 1000))
   columns <- list(
