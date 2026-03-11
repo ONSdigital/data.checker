@@ -53,7 +53,6 @@ check_completeness <- function(validator) {
 }
 
 
-
 #' Check Decimal Places in Numeric Columns
 #'
 #' This function calculates the number of decimal places in a numeric vector.
@@ -65,6 +64,20 @@ check_completeness <- function(validator) {
 decimal_places <- function(x) {
   ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
 }
+
+
+#' Check Z Score of Numeric Columns
+#'
+#' This function calculates the maximum z-score for a numeric column.
+#' @param x A numeric vector.
+#' @return A vector of the same length as `x`, indicating the z-score for each element.
+#'
+#' @export
+z_score <- function(x) {
+  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  return(z_scores)
+}
+
 
 #' Check Column Contents against schema and checks
 #'
@@ -215,6 +228,16 @@ run_checks <- function(validator, i_col) {
         na_pass = TRUE
       )
     }
+
+    if (exists("max_z_score")) {
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(abs(z_score(.data[[!!i_col]])) <= !!max_z_score),
+        label = sprintf("Column %s: Absolute z-score below or equal to %s", i_col, max_z_score),
+        na_pass = TRUE
+      )
+    }
+  
   } else if (type == "character") {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
