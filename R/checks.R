@@ -526,7 +526,10 @@ check_schema_contents_against_df <- function(validator) {
   for (col in names(validator$schema$columns)) {
     column_schema = validator$schema$columns[[col]]
     if ("allowed_strings" %in% names(column_schema) && "forbidden_strings" %in% names(column_schema)) {
-      message = paste0("Column '", col, "': allowed_strings and forbidden_strings cannot both be present.")
+      print(names(column_schema))
+      validator$schema$columns[[col]] <- column_schema[!names(column_schema) %in% c("forbidden_strings")]
+      print(names(validator$schema$columns[[col]]))
+      message = paste0("Column ", col, " allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
       validator <-add_qa_entry(
         validator = validator,
         description = message,
@@ -544,10 +547,18 @@ check_schema_contents_against_df <- function(validator) {
   if (length(unused_entries) > 0) {
     validator <-add_qa_entry(
       validator = validator,
-      description = paste0("Column '", col, "': Unused schema entries: ", paste(unused_entries, collapse = ", ")),
+      description = paste0("Column ", col, " unused schema entries: ", paste(unused_entries, collapse = ", ")),
       outcome = NA,
       entry_type = "warning"
     )
+  }
+  }
+
+  for (name_col in c("completeness_cols", "duplicate_cols")) {
+  if (name_col %in% names(validator$schema)) {
+    if (!(all(validator$schema[[name_col]] %in% colnames(validator$data)))) {
+      stop(paste0("All columns specified in ", name_col, " must be present in the data."))
+    }
   }
   }
   return(validator)

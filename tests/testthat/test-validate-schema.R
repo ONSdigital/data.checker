@@ -25,7 +25,7 @@ schema = list(
     check_completeness = TRUE
   )
   
-  expect_error(is_valid_schema(schema), "In column 'col1': max_val cannot be less than min_val.")
+  expect_error(is_valid_schema(schema), "Column col1 max_val cannot be less than min_val.")
 })
 
 test_that("is_valid_schema returns error (max_string_length < min_string_length)", {
@@ -37,7 +37,7 @@ schema = list(
     check_completeness = TRUE
   )
   
-  expect_error(is_valid_schema(schema), "In column 'col1': max_string_length cannot be less than min_string_length.")
+  expect_error(is_valid_schema(schema), "Column col1 max_string_length cannot be less than min_string_length.")
 })
 
 test_that("is_valid_schema returns error for correct column (max_date < min_date)", {
@@ -50,7 +50,7 @@ schema = list(
     check_completeness = TRUE
   )
   
-  expect_error(is_valid_schema(schema), "In column 'col2': max_date cannot be less than min_date.")
+  expect_error(is_valid_schema(schema), "Column col2 max_date cannot be less than min_date.")
 })
 
 
@@ -58,11 +58,39 @@ test_that("is_valid_schema returns error for allowed and forbidden strings", {
 df = data.frame(col1 = "hello!")
 schema = list(
     columns = list(
-      col1 = list(type = "string", allowed_strings = c("a","b"), forbidden_strings = c("c","d"), optional = FALSE)
+      col1 = list(type = "character", allowed_strings = c("a","b"), forbidden_strings = c("c","d"), optional = FALSE)
       ),
     check_duplicates = TRUE,
     check_completeness = TRUE
   )
   validator <- new_validator(schema = schema, data = df) |> check()
-  
+  expect_equal(validator$log[[2]]$description, "Column col1 allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
+  expect_true(is.null(validator$schema$columns$col1$forbidden_strings))
+})
+
+test_that("unused schema args are put into the log", {
+df = data.frame(a = "hello!")
+schema = list(
+    columns = list(
+      a = list(type = "character", accepted_strings = c("a","b"), optional = FALSE)
+      ),
+    check_duplicates = TRUE,
+    check_completeness = TRUE
+  )
+  validator <- new_validator(schema = schema, data = df) |> check()
+  expect_equal(validator$log[[2]]$description, "Column a unused schema entries: accepted_strings")
+})
+
+test_that("warning when completeness cols not in df", {
+df = data.frame(a = "hello!", b = "world!")
+schema = list(
+    columns = list(
+      a = list(type = "character", optional = FALSE),
+      b = list(type = "character", optional = FALSE)
+      ),
+    check_duplicates = TRUE,
+    check_completeness = TRUE,
+    completeness_cols = c("b", "c")
+  )
+  expect_error(validator <- new_validator(schema = schema, data = df) |> check(), "All columns specified in completeness_cols must be present in the data.")
 })

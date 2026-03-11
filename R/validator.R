@@ -77,34 +77,6 @@ new_validator <- function(data, schema) {
 }
 
 
-assign_agent_typechecks <- function(agent,schema){
-  int_columns <- c()
-  factor_columns <- c()
-  numeric_columns <- c()
-  date_columns <- c()
-  logical_columns <- c()
-  char_columns <- c()
-  for (col in names(schema$columns)) {
-    col_info <- schema$columns[[col]]
-    if (col_info$type == "integer") {
-      int_columns <- c(int_columns, col)
-    } else if (col_info$type == "factor") {
-      factor_columns <- c(factor_columns, col)
-    } else if (col_info$type == "double") {
-      numeric_columns <- c(numeric_columns, col)
-    } else if (col_info$type == "date") {
-      date_columns <- c(date_columns, col)
-    } else if (col_info$type == "logical") {
-      logical_columns <- c(logical_columns, col)
-    } else if (col_info$type == "character") {
-      char_columns <- c(char_columns, col)
-    }
-  }
-
-  return(agent)
-}
-
-
 #' Validate a Validator Object
 #'
 #' This function runs the full suite of validation checks on a `Validator` object.
@@ -176,7 +148,7 @@ is_valid_column_values <- function(column_schema, col_name){
     min_col <- paste0("min_", col)
     if (max_col %in% names(column_schema) && min_col %in% names(column_schema)) {
       if (column_schema[[max_col]] < column_schema[[min_col]]) {
-        stop(paste0("In column '", col_name, "': ", max_col, " cannot be less than ", min_col, "."))
+        stop(paste0("Column ", col_name, " ", max_col, " cannot be less than ", min_col, "."))
       }
     }
   }    
