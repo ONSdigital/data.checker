@@ -65,20 +65,19 @@ decimal_places <- function(x) {
   ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
 }
 
-#' Calculate IQR bounds for outlier detection
-#' This function calculates the lower and upper bounds for outliers.
+#' Flag outliers based on Interquartile Range (IQR).
+#' Outliers are flagged if they are below Q1 - (mulitplier * IQR) or above Q3 + (multiplier * IQR).
 #' @param x A numeric vector.
 #' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
-#' @return A named vector with the lower and upper bounds for outliers.
+#' @return A vector the same size as `x`, with `TRUE` for values that are outliers and `FALSE` otherwise
 #' 
 #' @export
 iqr_bounds <- function(x, multiplier = 1.5) {
   iqr <- IQR(x, na.rm = TRUE)
-  bounds <- c(
-    lower = quantile(x, 0.25, na.rm = TRUE) - multiplier * iqr,
-    upper = quantile(x, 0.75, na.rm = TRUE) + multiplier * iqr
-  )
-  return(bounds)
+  lower = quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
+  upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
+  
+  return(x < lower | x > upper)
 }
 
 
@@ -231,6 +230,16 @@ run_checks <- function(validator, i_col) {
         na_pass = TRUE
       )
     }
+
+    if (exists("iqr_check")) {
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(!iqr_bounds(.data[[!!i_col]], multiplier = !!iqr_check)),
+        label = sprintf("Column %s: values are not outliers based on IQR bounds with multiplier %s", i_col, iqr_check),
+        na_pass = TRUE
+      )
+    }
+
   } else if (type == "character") {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
