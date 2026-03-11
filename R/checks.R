@@ -53,7 +53,6 @@ check_completeness <- function(validator) {
 }
 
 
-
 #' Check Decimal Places in Numeric Columns
 #'
 #' This function calculates the number of decimal places in a numeric vector.
@@ -65,6 +64,23 @@ check_completeness <- function(validator) {
 decimal_places <- function(x) {
   ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
 }
+
+#' Calculate IQR bounds for outlier detection
+#' This function calculates the lower and upper bounds for outliers.
+#' @param x A numeric vector.
+#' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
+#' @return A named vector with the lower and upper bounds for outliers.
+#' 
+#' @export
+iqr_bounds <- function(x, multiplier = 1.5) {
+  iqr <- IQR(x, na.rm = TRUE)
+  bounds <- c(
+    lower = quantile(x, 0.25, na.rm = TRUE) - multiplier * iqr,
+    upper = quantile(x, 0.75, na.rm = TRUE) + multiplier * iqr
+  )
+  return(bounds)
+}
+
 
 #' Check Column Contents against schema and checks
 #'
