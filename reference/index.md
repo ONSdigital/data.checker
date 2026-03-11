@@ -46,3 +46,5 @@
   : Run column checks
 - [`types_to_classes()`](https://onsdigital.github.io/data.checker/reference/types_to_classes.md)
   : Convert complex types to the correct types and classes
+- [`z_score()`](https://onsdigital.github.io/data.checker/reference/z_score.md)
+  : Check Z Score of Numeric Columns
