@@ -30,6 +30,10 @@
   : Export Validator Log
 - [`hard_checks_status()`](https://onsdigital.github.io/data.checker/reference/hard_checks_status.md)
   : Check the status of errors and warnings in the validator log
+- [`iqr_bounds()`](https://onsdigital.github.io/data.checker/reference/iqr_bounds.md)
+  : Flag outliers based on Interquartile Range (IQR). Outliers are
+  flagged if they are below Q1 - (mulitplier \* IQR) or above Q3 +
+  (multiplier \* IQR).
 - [`is_valid_schema()`](https://onsdigital.github.io/data.checker/reference/is_valid_schema.md)
   : Check if the schema is valid
 - [`log_html()`](https://onsdigital.github.io/data.checker/reference/log_html.md)
