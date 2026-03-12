@@ -515,7 +515,15 @@ hard_checks_status <- function(validator, hard_check){
 
 }
 
-
+#' Check schema contents against the data frame provided
+#' 
+#' This function checks that the contents of the schema are consistent with the data frame provided. 
+#' It checks for unused schema entries, incompatible schema entries, and that any columns specified 
+#' in the schema are present in the data frame.
+#' 
+#' @param validator A `Validator` object containing the data and schema to check against.
+#' @return The updated `Validator` object with QA entries added for any issues found in the schema.
+#' @export
 check_schema_contents_against_df <- function(validator) {
   valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
   max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")

@@ -141,6 +141,17 @@ is_valid_schema <- function(schema) {
   return(TRUE)
 }
 
+#' Check that max values are not less than min values in column schema
+#' 
+#' This function checks that for any column schema, the max values 
+#' (e.g., max_string_length, max_date) are not less than the corresponding min values 
+#' (e.g., min_string_length, min_date). If any such inconsistency is found, an error 
+#' is raised with a descriptive message.
+#' 
+#' @param column_schema A list representing the schema for a specific column, which may contain max and min value specifications.
+#' @param col_name The name of the column being checked, used for error messages.
+#' @return `TRUE` if all max values are greater than or equal to their corresponding min values, otherwise an error is raised.
+#' @export
 is_valid_column_values <- function(column_schema, col_name){
   max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
   for (col in max_min_cols) {
