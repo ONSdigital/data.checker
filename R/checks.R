@@ -14,7 +14,7 @@ check_duplicates <- function(validator) {
     validator$agent,
     columns = tidyselect::all_of(cols),
     label = "There are no duplicated rows"
-  ) |> pointblank::interrogate()
+  ) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
 
@@ -45,7 +45,7 @@ check_completeness <- function(validator) {
           dplyr::distinct(x, !!!rlang::syms(cols))
         )
       ) == 0
-    }) |> pointblank::interrogate()
+    }) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
 
@@ -434,7 +434,7 @@ add_check <- function(validator, description, condition) {
     validator$agent,
     label = "description",
     fn = function(x) fun(df=x, exp=rlang::enquo(condition))
-  ) |> pointblank::interrogate()
+  ) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
   
@@ -526,9 +526,7 @@ check_schema_contents_against_df <- function(validator) {
   for (col in names(validator$schema$columns)) {
     column_schema = validator$schema$columns[[col]]
     if ("allowed_strings" %in% names(column_schema) && "forbidden_strings" %in% names(column_schema)) {
-      print(names(column_schema))
       validator$schema$columns[[col]] <- column_schema[!names(column_schema) %in% c("forbidden_strings")]
-      print(names(validator$schema$columns[[col]]))
       message = paste0("Column ", col, " allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
       validator <-add_qa_entry(
         validator = validator,
