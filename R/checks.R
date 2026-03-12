@@ -65,6 +65,20 @@ decimal_places <- function(x) {
   ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
 }
 
+#' Flag outliers based on Interquartile Range (IQR).
+#' Outliers are flagged if they are below Q1 - (mulitplier * IQR) or above Q3 + (multiplier * IQR).
+#' @param x A numeric vector.
+#' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
+#' @return A vector the same size as `x`, with `TRUE` for values that are outliers and `FALSE` otherwise
+#' 
+#' @export
+iqr_bounds <- function(x, multiplier = 1.5) {
+  iqr <- IQR(x, na.rm = TRUE)
+  lower = quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
+  upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
+  
+  return(x < lower | x > upper)
+}
 
 #' Check Z Score of Numeric Columns
 #'
@@ -225,6 +239,15 @@ run_checks <- function(validator, i_col) {
         validator$agent,
         expr = rlang::expr(decimal_places(.data[[!!i_col]]) <= !!max_decimal),
         label = sprintf("Column %s: decimal places below or equal to %s", i_col, max_decimal),
+        na_pass = TRUE
+      )
+    }
+
+    if (exists("iqr_check")) {
+      validator$agent <- pointblank::col_vals_expr(
+        validator$agent,
+        expr = rlang::expr(!iqr_bounds(.data[[!!i_col]], multiplier = !!iqr_check)),
+        label = sprintf("Column %s: values are not outliers based on IQR bounds with multiplier %s", i_col, iqr_check),
         na_pass = TRUE
       )
     }
@@ -534,6 +557,5 @@ hard_checks_status <- function(validator, hard_check){
   else if (!hard_check && error_counter > 0) {
     warning(sprintf("Soft checks failed: %d error(s) found, see log output for more details", error_counter))
   }
-
 
 }

@@ -194,6 +194,35 @@ test_that("duplicate checks return correct outcomes", {
   expect_equal(validator$log[[2]]$outcome, "pass")
 })
 
+test_that("IQR checks work correctly", {
+  df <- data.frame(a = c(-100, 2, 3, 4, 5, 6, 7, 8, 9, 100))
+  columns <- list(
+    a = list(type = "double", optional = FALSE, iqr_check = 1.5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, check_completeness = FALSE, check_duplicates = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  expect_equal(validator$log[[2]]$outcome, "fail")
+  expect_equal(validator$log[[2]]$failing_ids, c(1, 10))
+})
+
+test_that("check the case for IQR = 0", {
+  df <- data.frame(a = c(1, 1, 1, 1, 1, 1))
+  columns <- list(
+    a = list(type = "integer", optional = FALSE, iqr_check = 1.5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, check_completeness = FALSE, check_duplicates = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  expect_equal(validator$log[[2]]$outcome, "pass")
+})
+
 test_that("z score checks work correctly", {
   df <- data.frame(a = c(1:9, 1000))
   columns <- list(
@@ -204,8 +233,6 @@ test_that("z score checks work correctly", {
     schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
     data = df
   ) %>% check_column_contents()
-
-  print(validator$log)
 
   expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(10))
