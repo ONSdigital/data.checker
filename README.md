@@ -75,6 +75,8 @@ These checks can be included in the lists for individual columns in your schema,
 |---------------|---------------|---------------|-----------------------------|
 | integer / double | Minimum value          | min_val           | Checks that all values are above or equal to the minimum value                                                                             |
 | integer / double | Maximum value          | max_val           | Checks that all values are below or equal to the maximum value                                                                             |
+| integer / double | Interquartile range (IQR) outlier check | iqr_check | Checks that all values fall within $Q1 - (IQR*multiplier)$ and $Q3 + (IQR*multiplier)$, where the $multiplier$ is given by `iqr_check`
+| integer / double | Maximum absolute z score | max_z_score | Checks that the absolute value of all z scores are below or equal to the maximum z score
 | double           | Minimum decimal places | min_decimal       | Checks that all values have more or equal amounts of decimal places                                                                        |
 | double           | Maximum decimal places | max_decimal       | Checks that all values have less or equal amounts of decimal places                                                                        |
 | character        | Minimum length         | min_length        | Checks that all strings have length are above or equal to the minimum length                                                               |
