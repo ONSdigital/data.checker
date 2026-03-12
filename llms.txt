@@ -177,6 +177,8 @@ changes.
   : Check dataset for missing columns
 - [`check_duplicates()`](https://onsdigital.github.io/data.checker/reference/check_duplicates.md)
   : Check for duplicate rows
+- [`check_schema_contents_against_df()`](https://onsdigital.github.io/data.checker/reference/check_schema_contents_against_df.md)
+  : Check schema contents against the data frame provided
 - [`check_types()`](https://onsdigital.github.io/data.checker/reference/check_types.md)
   : Check Column Types and Classes
 - [`decimal_places()`](https://onsdigital.github.io/data.checker/reference/decimal_places.md)
@@ -191,6 +193,8 @@ changes.
   : Flag outliers based on Interquartile Range (IQR). Outliers are
   flagged if they are below Q1 - (mulitplier \* IQR) or above Q3 +
   (multiplier \* IQR).
+- [`is_valid_column_values()`](https://onsdigital.github.io/data.checker/reference/is_valid_column_values.md)
+  : Check that max values are not less than min values in column schema
 - [`is_valid_schema()`](https://onsdigital.github.io/data.checker/reference/is_valid_schema.md)
   : Check if the schema is valid
 - [`log_html()`](https://onsdigital.github.io/data.checker/reference/log_html.md)
