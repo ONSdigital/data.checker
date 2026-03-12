@@ -14,7 +14,7 @@ check_duplicates <- function(validator) {
     validator$agent,
     columns = tidyselect::all_of(cols),
     label = "There are no duplicated rows"
-  ) |> pointblank::interrogate()
+  ) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
 
@@ -45,7 +45,7 @@ check_completeness <- function(validator) {
           dplyr::distinct(x, !!!rlang::syms(cols))
         )
       ) == 0
-    }) |> pointblank::interrogate()
+    }) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
 
@@ -480,7 +480,7 @@ add_check <- function(validator, description, condition) {
     validator$agent,
     label = "description",
     fn = function(x) fun(df=x, exp=rlang::enquo(condition))
-  ) |> pointblank::interrogate()
+  ) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
   
@@ -558,4 +558,59 @@ hard_checks_status <- function(validator, hard_check){
     warning(sprintf("Soft checks failed: %d error(s) found, see log output for more details", error_counter))
   }
 
+}
+
+#' Check schema contents against the data frame provided
+#' 
+#' This function checks that the contents of the schema are consistent with the data frame provided. 
+#' It checks for unused schema entries, incompatible schema entries, and that any columns specified 
+#' in the schema are present in the data frame.
+#' 
+#' @param validator A `Validator` object containing the data and schema to check against.
+#' @return The updated `Validator` object with QA entries added for any issues found in the schema.
+#' @export
+check_schema_contents_against_df <- function(validator) {
+  valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
+  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+    for (entry in max_min_cols) {
+      valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
+    }
+
+  for (col in names(validator$schema$columns)) {
+    column_schema = validator$schema$columns[[col]]
+    if ("allowed_strings" %in% names(column_schema) && "forbidden_strings" %in% names(column_schema)) {
+      validator$schema$columns[[col]] <- column_schema[!names(column_schema) %in% c("forbidden_strings")]
+      message = paste0("Column ", col, " allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
+      validator <-add_qa_entry(
+        validator = validator,
+        description = message,
+        outcome = NA,
+        entry_type = "warning"
+      )
+  }
+
+  unused_entries <- c()
+  for (entry in names(column_schema)) {
+    if (!entry %in% valid_schema_entries) {
+      unused_entries <- c(unused_entries,entry)
+    }
+  }
+  if (length(unused_entries) > 0) {
+    validator <-add_qa_entry(
+      validator = validator,
+      description = paste0("Column ", col, " unused schema entries: ", paste(unused_entries, collapse = ", ")),
+      outcome = NA,
+      entry_type = "warning"
+    )
+  }
+  }
+
+  for (name_col in c("completeness_cols", "duplicate_cols")) {
+  if (name_col %in% names(validator$schema)) {
+    if (!(all(validator$schema[[name_col]] %in% colnames(validator$data)))) {
+      stop(paste0("All columns specified in ", name_col, " must be present in the data."))
+    }
+  }
+  }
+  return(validator)
 }

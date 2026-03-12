@@ -77,34 +77,6 @@ new_validator <- function(data, schema) {
 }
 
 
-assign_agent_typechecks <- function(agent,schema){
-  int_columns <- c()
-  factor_columns <- c()
-  numeric_columns <- c()
-  date_columns <- c()
-  logical_columns <- c()
-  char_columns <- c()
-  for (col in names(schema$columns)) {
-    col_info <- schema$columns[[col]]
-    if (col_info$type == "integer") {
-      int_columns <- c(int_columns, col)
-    } else if (col_info$type == "factor") {
-      factor_columns <- c(factor_columns, col)
-    } else if (col_info$type == "double") {
-      numeric_columns <- c(numeric_columns, col)
-    } else if (col_info$type == "date") {
-      date_columns <- c(date_columns, col)
-    } else if (col_info$type == "logical") {
-      logical_columns <- c(logical_columns, col)
-    } else if (col_info$type == "character") {
-      char_columns <- c(char_columns, col)
-    }
-  }
-
-  return(agent)
-}
-
-
 #' Validate a Validator Object
 #'
 #' This function runs the full suite of validation checks on a `Validator` object.
@@ -121,7 +93,8 @@ check <- function(validator, ...) {
     stop("The object must be of class 'Validator'.")
   }
 
-  validator <- check_colnames(validator) |>
+  validator <- check_schema_contents_against_df(validator) |>
+    check_colnames() |>
     check_types() |>
     check_column_contents()
 
@@ -161,8 +134,35 @@ is_valid_schema <- function(schema) {
   } else if (!"check_completeness" %in% names(schema)) {
     stop("Schema must contain a 'check_completeness' element")
   }
+  for (col in names(schema$columns)) {
+    is_valid_column_values(schema$columns[[col]], col)
+  }
 
   return(TRUE)
+}
+
+#' Check that max values are not less than min values in column schema
+#' 
+#' This function checks that for any column schema, the max values 
+#' (e.g., max_string_length, max_date) are not less than the corresponding min values 
+#' (e.g., min_string_length, min_date). If any such inconsistency is found, an error 
+#' is raised with a descriptive message.
+#' 
+#' @param column_schema A list representing the schema for a specific column, which may contain max and min value specifications.
+#' @param col_name The name of the column being checked, used for error messages.
+#' @return `TRUE` if all max values are greater than or equal to their corresponding min values, otherwise an error is raised.
+#' @export
+is_valid_column_values <- function(column_schema, col_name){
+  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+  for (col in max_min_cols) {
+    max_col <- paste0("max_", col)
+    min_col <- paste0("min_", col)
+    if (max_col %in% names(column_schema) && min_col %in% names(column_schema)) {
+      if (column_schema[[max_col]] < column_schema[[min_col]]) {
+        stop(paste0("Column ", col_name, " ", max_col, " cannot be less than ", min_col, "."))
+      }
+    }
+  }    
 }
 
 #' Convert complex types to the correct types and classes
