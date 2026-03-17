@@ -53,30 +53,18 @@ check_completeness <- function(validator) {
 }
 
 
-#' Check Decimal Places in Numeric Columns
-#'
-#' This function calculates the number of decimal places in a numeric vector.
-#' @param x A numeric vector.
-#' @return A vector of the same length as `x`, indicating the number of decimal
-#' places for each element. If an element is `NA`, it returns `NA`.
-#'
-#' @export
-decimal_places <- function(x) {
-  ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
-}
-
 #' Flag outliers based on Interquartile Range (IQR).
 #' Outliers are flagged if they are below Q1 - (mulitplier * IQR) or above Q3 + (multiplier * IQR).
 #' @param x A numeric vector.
 #' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
 #' @return A vector the same size as `x`, with `TRUE` for values that are outliers and `FALSE` otherwise
-#' 
+#'
 #' @export
 iqr_bounds <- function(x, multiplier = 1.5) {
-  iqr <- IQR(x, na.rm = TRUE)
-  lower = quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
-  upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
-  
+  iqr <- stats::IQR(x, na.rm = TRUE)
+  lower = stats::quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
+  upper = stats::quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
+
   return(x < lower | x > upper)
 }
 
@@ -88,7 +76,7 @@ iqr_bounds <- function(x, multiplier = 1.5) {
 #'
 #' @export
 z_score <- function(x) {
-  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  z_scores <- (x - mean(x, na.rm = TRUE)) / stats::sd(x, na.rm = TRUE)
   return(z_scores)
 }
 
@@ -225,24 +213,6 @@ run_checks <- function(validator, i_col) {
       )
     }
 
-    if (exists("min_decimal")) {
-      validator$agent <-pointblank::col_vals_expr(
-        validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!i_col]]) >= !!min_decimal),
-        label = sprintf("Column %s: decimal places above or equal to %s", i_col, min_decimal),
-        na_pass = TRUE
-      )
-    }
-
-    if (exists("max_decimal")) {
-      validator$agent <- pointblank::col_vals_expr(
-        validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!i_col]]) <= !!max_decimal),
-        label = sprintf("Column %s: decimal places below or equal to %s", i_col, max_decimal),
-        na_pass = TRUE
-      )
-    }
-
     if (exists("iqr_check")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
@@ -260,7 +230,7 @@ run_checks <- function(validator, i_col) {
         na_pass = TRUE
       )
     }
-  
+
   } else if (type == "character") {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
@@ -345,13 +315,13 @@ check_colnames <- function(validator) {
   validator$agent <- pointblank::specially(validator$agent,
     fn = function(x) stringr::str_detect(colnames(x), "[^a-zA-Z0-9_]", negate = T),
     label = "Column names contain no symbols other than underscores."
-  )                          
+  )
 
   # Check if column names contains capital letters
   validator$agent <- pointblank::specially(validator$agent,
     fn = function(x) stringr::str_detect(colnames(x), "[A-Z]", negate = T),
     label = "Column names contain no capital letters."
-  ) 
+  )
 
   # Extract mandatory columns from the schema
   mandatory_columns <- validator$schema$columns[sapply(validator$schema$columns, function(x) !x$optional)] |> names()
@@ -365,7 +335,7 @@ check_colnames <- function(validator) {
     fn = function(x) length(dplyr::setdiff(mandatory_columns, colnames(x))) == 0,
     label = "All mandatory columns are present."
   )
-  
+
   # Extract unexpected columns
   unexpected_columns <- setdiff(names(validator$data), names(validator$schema$columns))
   unexpected_columns <- paste0("^(", paste(unexpected_columns, collapse = "|"), ")$")
@@ -456,7 +426,7 @@ check_types <- function(validator) {
   return(validator)
 }
 
-# Utility function to convert expression to function for use in pointblank specially 
+# Utility function to convert expression to function for use in pointblank specially
 expr_to_fun <- function() {
   as.function(alist(df=, exp =, {rlang::eval_tidy(exp, data=df)}))
 }
@@ -483,7 +453,7 @@ add_check <- function(validator, description, condition) {
   ) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
-  
+
   return(validator)
 }
 
@@ -561,17 +531,17 @@ hard_checks_status <- function(validator, hard_check){
 }
 
 #' Check schema contents against the data frame provided
-#' 
-#' This function checks that the contents of the schema are consistent with the data frame provided. 
-#' It checks for unused schema entries, incompatible schema entries, and that any columns specified 
+#'
+#' This function checks that the contents of the schema are consistent with the data frame provided.
+#' It checks for unused schema entries, incompatible schema entries, and that any columns specified
 #' in the schema are present in the data frame.
-#' 
+#'
 #' @param validator A `Validator` object containing the data and schema to check against.
 #' @return The updated `Validator` object with QA entries added for any issues found in the schema.
 #' @export
 check_schema_contents_against_df <- function(validator) {
   valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
-  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+  max_min_cols <- c("val", "string_length", "date", "datetime")
     for (entry in max_min_cols) {
       valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
     }
