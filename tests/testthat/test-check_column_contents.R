@@ -85,10 +85,10 @@ test_that("Factor checks work correctly", {
 })
 
 test_that("Date checks work correctly", {
-  df <- data.frame(a = as.Date(c("2020-01-01", "2020-02-01", "2020-03-01")), b = as.Date(c("2020-01-01", "2020-02-30", "2020-03-01")))
+  df <- data.frame(a = as.Date(c("2020-01-01", "2020-02-01", "2020-03-01")), b = as.Date(c("2018-01-01", "2020-02-30", "2026-03-01")))
   columns <- list(
     a = list(type = "Date", optional = TRUE, min_date = "2019-12-31", max_date = "2021-01-01"),
-    b = list(type = "Date", optional = TRUE, min_date = "2021-12-31", max_date = "2019-01-01")
+    b = list(type = "Date", optional = TRUE, min_date = "2019-01-01", max_date = "2021-12-31")
   )
 
   validator <- new_validator(
@@ -99,17 +99,17 @@ test_that("Date checks work correctly", {
   expect_equal(validator$log[[2]]$outcome, "pass")
   expect_equal(validator$log[[3]]$outcome, "pass")
   expect_equal(validator$log[[4]]$outcome, "fail")
-  expect_equal(validator$log[[4]]$failing_ids, c(1, 3))
+  expect_equal(validator$log[[4]]$failing_ids, c(1))
   expect_equal(validator$log[[5]]$outcome, "fail")
-  expect_equal(validator$log[[5]]$failing_ids, c(1,3))
+  expect_equal(validator$log[[5]]$failing_ids, c(3))
 })
 
 test_that("Datetime checks work correctly", {
   df <- data.frame(a = strptime(c("2020-01-01 12:00", "2020-02-01 12:00", "2020-03-01 12:00"), format = "%Y-%m-%d %H:%M"),
-                   b = strptime(c("2020-01-01 12:00", "2020-02-30 12:00", "2020-03-01 12:00"), format = "%Y-%m-%d %H:%M"))
+                   b = strptime(c("2018-01-01 12:00", "2020-02-30 12:00", "2026-03-01 12:00"), format = "%Y-%m-%d %H:%M"))
   columns <- list(
     a = list(type = "datetime", optional = TRUE, min_datetime = "2019-12-31 11:59", max_datetime = "2021-01-01 13:00"),
-    b = list(type = "datetime", optional = TRUE, min_datetime = "2021-12-31 11:59", max_datetime = "2019-01-01 13:00")
+    b = list(type = "datetime", optional = TRUE, min_datetime = "2019-01-01 13:00", max_datetime = "2021-12-31 11:59")
   )
 
   validator <- new_validator(
@@ -120,9 +120,9 @@ test_that("Datetime checks work correctly", {
   expect_equal(validator$log[[2]]$outcome, "pass")
   expect_equal(validator$log[[3]]$outcome, "pass")
   expect_equal(validator$log[[4]]$outcome, "fail")
-  expect_equal(validator$log[[4]]$failing_ids, c(1,3))
+  expect_equal(validator$log[[4]]$failing_ids, c(1))
   expect_equal(validator$log[[5]]$outcome, "fail")
-  expect_equal(validator$log[[5]]$failing_ids, c(1,3))
+  expect_equal(validator$log[[5]]$failing_ids, c(3))
 })
 
 test_that("allowed strings for regex expressions work correctly", {
@@ -192,6 +192,67 @@ test_that("duplicate checks return correct outcomes", {
   ) %>% check_column_contents()
 
   expect_equal(validator$log[[2]]$outcome, "pass")
+})
+
+test_that("IQR checks work correctly", {
+  df <- data.frame(a = c(-100, 2, 3, 4, 5, 6, 7, 8, 9, 100))
+  columns <- list(
+    a = list(type = "double", optional = FALSE, iqr_check = 1.5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, check_completeness = FALSE, check_duplicates = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  expect_equal(validator$log[[2]]$outcome, "fail")
+  expect_equal(validator$log[[2]]$failing_ids, c(1, 10))
+})
+
+test_that("check the case for IQR = 0", {
+  df <- data.frame(a = c(1, 1, 1, 1, 1, 1))
+  columns <- list(
+    a = list(type = "integer", optional = FALSE, iqr_check = 1.5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, check_completeness = FALSE, check_duplicates = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  expect_equal(validator$log[[2]]$outcome, "pass")
+})
+
+test_that("z score checks work correctly", {
+  df <- data.frame(a = c(1:9, 1000))
+  columns <- list(
+    a = list(type = "double", optional = FALSE, max_z_score = 2.5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  expect_equal(validator$log[[2]]$outcome, "fail")
+  expect_equal(validator$log[[2]]$failing_ids, c(10))
+})
+
+test_that("z score checks work correctly for negative z scores", {
+  df <- data.frame(a = c(1:99, -10000))
+  columns <- list(
+    a = list(type = "double", optional = FALSE, max_z_score = 5)
+  )
+
+  validator <- new_validator(
+    schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
+    data = df
+  ) %>% check_column_contents()
+
+  print(validator$log)
+
+  expect_equal(validator$log[[2]]$outcome, "fail")
+  expect_equal(validator$log[[2]]$failing_ids, c(100))
 })
 
 convert_to_regex <- function(forbidden_strings) {
