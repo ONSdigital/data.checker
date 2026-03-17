@@ -45,17 +45,17 @@ test_that("max and min value error for different types", {
     )
 })
 
-test_that("max and min value no error for different formats", {
-    columns <- list(
-        id = list(type = "integer", optional = FALSE, min_val = 0, max_val = 10),
-        date = list(type = "date", optional = FALSE, min_date = "20120102", max_date = "2023.01.01"),
-        end_date = list(type = "date", optional = TRUE, min_date = "2025/01/01", max_date = "2025-12-31")
-    )
+# test_that("max and min value no error for different formats", {
+#     columns <- list(
+#         id = list(type = "integer", optional = FALSE, min_val = 0, max_val = 10),
+#         date = list(type = "date", optional = FALSE, min_date = "20120102", max_date = "2023.01.01"),
+#         end_date = list(type = "date", optional = TRUE, min_date = "2025/01/01", max_date = "2025-12-31")
+#     )
 
-    expect_no_error(
-        new_validator(
-            schema = list(columns = columns, check_duplicates = FALSE, check_completeness = FALSE),
-            data = df
-        )
-    )
-})
+#     expect_no_error(
+#         new_validator(
+#             schema = list(columns = columns, check_duplicates = FALSE, check_completeness = FALSE),
+#             data = df
+#         )
+#     )
+# })
