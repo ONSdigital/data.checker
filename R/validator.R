@@ -159,8 +159,11 @@ is_valid_column_values <- function(column_schema, col_name){
     max_col <- paste0("max_", col)
     min_col <- paste0("min_", col)
     if (max_col %in% names(column_schema) && min_col %in% names(column_schema)) {
-      if (column_schema[[max_col]] < column_schema[[min_col]]) {
+      if (column_schema[[max_col]] < column_schema[[min_col]] & typeof(column_schema[[max_col]]) == typeof(column_schema[[min_col]])) {
         stop(paste0("Column ", col_name, " ", max_col, " cannot be less than ", min_col, "."))
+      }
+      else if (typeof(column_schema[[max_col]]) != typeof(column_schema[[min_col]])) {
+        stop(paste0("Column ", col_name, " ", max_col, " and ", min_col, " must be of the same type."))
       }
     }
   }    
