@@ -139,10 +139,6 @@ is_valid_schema <- function(schema) {
   } else if (!"check_completeness" %in% names(schema)) {
     stop("Schema must contain a 'check_completeness' element")
   }
-  # for (col in names(schema$columns)) {
-  #   is_valid_column_values(schema$columns[[col]], col)
-  # }
-
   return(TRUE)
 }
 
@@ -206,23 +202,23 @@ types_to_classes <- function(schema) {
 #' @return The original schema if all date formats are valid. If any date format is invalid, an error is thrown with a message indicating the issue.
 #' @export
 validate_and_convert_date_formats <- function(schema){
-  for (col in names(schema$columns)) {
-    col_info <- schema$columns[[col]]
-    if (exists("min_date", where = col_info)) {
-      col_info$min_date <-tryCatch(lubridate::ymd(col_info$min_date), warning = function(w) "invalid")
+   schema$columns <- lapply(schema$columns, function(col) {
+    if (exists("min_date", where = col)) {
+      col$min_date <-tryCatch(lubridate::ymd(col$min_date), warning = function(w) "invalid")
       # if warning raises, dtype becomes character, otherwise its double
-      if (typeof(col_info$min_date) == "character") {
+      if (typeof(col$min_date) == "character") {
         stop(sprintf("Invalid date format for min_date in column '%s' use Year Month Day format", col))
       }
     }
-    if (exists("max_date", where = col_info)) {
-      col_info$max_date <-tryCatch(lubridate::ymd(col_info$max_date), warning = function(w) "invalid")
+    if (exists("max_date", where = col)) {
+      col$max_date <-tryCatch(lubridate::ymd(col$max_date), warning = function(w) "invalid")
       # if warning raises, dtype becomes character, otherwise its double
-      if (typeof(col_info$max_date) == "character") {
+      if (typeof(col$max_date) == "character") {
         stop(sprintf("Invalid date format for max_date in column '%s', use Year Month Day format", col))
       }
     }
-    schema$columns[[col]] <- col_info
-  }
+    return(col)
+  })
+
   return(schema)
 }
