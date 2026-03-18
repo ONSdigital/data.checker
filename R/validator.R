@@ -76,10 +76,18 @@ new_validator <- function(data, schema) {
   return(validator)
 }
 
+#' Check column contents valid
+#' 
+#' This wrapper calls is_valid_column_values for each column in the schema 
+#' 
+#' @param schema the validator schema 
+#' 
+#' @return `TRUE` if all column values are valid, otherwise an error is raised.
 is_column_contents_valid <- function(schema) {
   for (col in names(schema$columns)) {
     is_valid_column_values(schema$columns[[col]], col)
   }
+  return(TRUE)
 }
 
 #' Validate a Validator Object
