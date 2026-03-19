@@ -614,3 +614,39 @@ check_schema_contents_against_df <- function(validator) {
   }
   return(validator)
 }
+
+#' Check backseries consistency
+#'
+#' Checks if the latest data is consistent with previous data.
+#'
+#' @param validator A Validator object containing the schema and agent.
+#' @return The updated Validator object with outcomes logged.
+#' @export
+check_backseries <- function(validator) {
+  if (!is.null(validator$schema$backseries$check_n_rows) && validator$schema$backseries$check_n_rows) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = "Number of rows is consistent with previous data",
+      fn = function(x) nrow(x) == nrow(validator$backseries)
+    ) 
+  } 
+
+  validator$agent <- pointblank::interrogate(validator$agent, progress = FALSE)
+  validator <- log_pointblank_outcomes(validator)
+
+  # Overwrite failing IDs to NA as they are not relevant for backseries checks and can be misleading in the log output
+  validator$log[[length(validator$log)]]$failing_ids <- NA
+
+  if (!is.null(validator$schema$backseries$check_cols_match) && validator$schema$backseries$check_cols_match) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = "Column names match previous data",
+      fn = function(x) colnames(x) == colnames(validator$backseries)
+    ) 
+  }
+
+  validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
+  validator <- log_pointblank_outcomes(validator)
+
+  return(validator)
+}
