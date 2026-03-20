@@ -647,10 +647,8 @@ check_backseries <- function(validator) {
 
   validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
   validator <- log_pointblank_outcomes(validator)
-  print(validator_current_length)
   # Overwrite failing IDs to NA as they are not relevant for backseries checks and can be misleading in the log output
   for (i in (validator_current_length + 1):length(validator$log)) {
-    print(i)
     validator$log[[i]]$failing_ids <- NA
   }
   return(validator)
