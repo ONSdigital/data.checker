@@ -53,18 +53,6 @@ check_completeness <- function(validator) {
 }
 
 
-#' Check Decimal Places in Numeric Columns
-#'
-#' This function calculates the number of decimal places in a numeric vector.
-#' @param x A numeric vector.
-#' @return A vector of the same length as `x`, indicating the number of decimal
-#' places for each element. If an element is `NA`, it returns `NA`.
-#'
-#' @export
-decimal_places <- function(x) {
-  ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
-}
-
 #' Flag outliers based on Interquartile Range (IQR).
 #' Outliers are flagged if they are below Q1 - (mulitplier * IQR) or above Q3 + (multiplier * IQR).
 #' @param x A numeric vector.
@@ -73,9 +61,9 @@ decimal_places <- function(x) {
 #'
 #' @export
 iqr_bounds <- function(x, multiplier = 1.5) {
-  iqr <- IQR(x, na.rm = TRUE)
-  lower = quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
-  upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
+  iqr <- stats::IQR(x, na.rm = TRUE)
+  lower = stats::quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
+  upper = stats::quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
 
   return(x < lower | x > upper)
 }
@@ -88,7 +76,7 @@ iqr_bounds <- function(x, multiplier = 1.5) {
 #'
 #' @export
 z_score <- function(x) {
-  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  z_scores <- (x - mean(x, na.rm = TRUE)) / stats::sd(x, na.rm = TRUE)
   return(z_scores)
 }
 
@@ -221,24 +209,6 @@ run_checks <- function(validator, i_col) {
         columns = tidyselect::all_of({{ i_col }}),
         value = max_val,
         label = sprintf("Column %s: values are below or equal to %s", {{ i_col }}, max_val),
-        na_pass = TRUE
-      )
-    }
-
-    if (exists("min_decimal")) {
-      validator$agent <-pointblank::col_vals_expr(
-        validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!{{ i_col }}]]) >= !!min_decimal),
-        label = sprintf("Column %s: decimal places above or equal to %s", {{ i_col }}, min_decimal),
-        na_pass = TRUE
-      )
-    }
-
-    if (exists("max_decimal")) {
-      validator$agent <- pointblank::col_vals_expr(
-        validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!{{ i_col }}]]) <= !!max_decimal),
-        label = sprintf("Column %s: decimal places below or equal to %s", {{ i_col }}, max_decimal),
         na_pass = TRUE
       )
     }
@@ -571,7 +541,7 @@ hard_checks_status <- function(validator, hard_check){
 #' @export
 check_schema_contents_against_df <- function(validator) {
   valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
-  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+  max_min_cols <- c("val", "string_length", "date", "datetime")
     for (entry in max_min_cols) {
       valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
     }

@@ -133,8 +133,6 @@ Optional checks can be applied to each column depending on the column type. In t
 -   integer/double checks:
     -   min_val (numeric): minimum value
     -   max_val (numeric): maximum value
-    -   min_decimal (double only, numeric): minimum number of decimal places
-    -   max_decimal (double only, numeric): maximum number of decimal places
 -   character checks:
     -   min_length (numeric): minimum number of characters
     -   max_length (numeric): maximum number of characters
