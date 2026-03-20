@@ -623,6 +623,9 @@ check_schema_contents_against_df <- function(validator) {
 #' @return The updated Validator object with outcomes logged.
 #' @export
 check_backseries <- function(validator) {
+  # used to only set backseries checks ID as null. 
+  validator_current_length = length(validator$log)
+
   if (!is.null(validator$schema$backseries$check_n_rows) && validator$schema$backseries$check_n_rows) {
     validator$agent <- pointblank::specially(
       validator$agent,
@@ -634,9 +637,6 @@ check_backseries <- function(validator) {
   validator$agent <- pointblank::interrogate(validator$agent, progress = FALSE)
   validator <- log_pointblank_outcomes(validator)
 
-  # Overwrite failing IDs to NA as they are not relevant for backseries checks and can be misleading in the log output
-  validator$log[[length(validator$log)]]$failing_ids <- NA
-
   if (!is.null(validator$schema$backseries$check_cols_match) && validator$schema$backseries$check_cols_match) {
     validator$agent <- pointblank::specially(
       validator$agent,
@@ -647,6 +647,9 @@ check_backseries <- function(validator) {
 
   validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
   validator <- log_pointblank_outcomes(validator)
-
+  # Overwrite failing IDs to NA as they are not relevant for backseries checks and can be misleading in the log output
+  for (i in (validator_current_length + 1):length(validator$log)) {
+    validator$log[[i]]$failing_ids <- NA
+  }
   return(validator)
 }

@@ -30,6 +30,10 @@ test_that("column names and row checks pass when the data matches the backseries
   )
 
   validator <- check_backseries(validator)
+  expect_equal(validator$log[[2]]$outcome,"pass")
+  expect_equal(validator$log[[2]]$description,"Number of rows is consistent with previous data")
+  expect_equal(validator$log[[3]]$description,"Column names match previous data")
+  expect_equal(validator$log[[3]]$outcome,"pass")
 })
 
 test_that("column names and row checks fail when the data does not match the backseries", {
@@ -62,4 +66,10 @@ test_that("column names and row checks fail when the data does not match the bac
   )
 
   validator <- check_backseries(validator)
+  for (i in 2:3) {
+    expect_equal(validator$log[[i]]$outcome,"fail")
+    expect_equal(validator$log[[i]]$failing_ids, NA)
+  }
+  expect_equal(validator$log[[2]]$description,"Number of rows is consistent with previous data")
+  expect_equal(validator$log[[3]]$description,"Column names match previous data")
 })
