@@ -623,7 +623,9 @@ check_schema_contents_against_df <- function(validator) {
 #' @return The updated Validator object with outcomes logged.
 #' @export
 check_backseries <- function(validator) {
-  if (!is.null(validator$schema$backseries$check_n_rows) && validator$schema$backseries$check_n_rows) {
+  backseries_schema <- validator$schema$backseries
+
+  if (!is.null(backseries_schema$check_n_rows) && backseries_schema$check_n_rows) {
     validator$agent <- pointblank::specially(
       validator$agent,
       label = "Number of rows is consistent with previous data",
@@ -637,12 +639,41 @@ check_backseries <- function(validator) {
   # Overwrite failing IDs to NA as they are not relevant for backseries checks and can be misleading in the log output
   validator$log[[length(validator$log)]]$failing_ids <- NA
 
-  if (!is.null(validator$schema$backseries$check_cols_match) && validator$schema$backseries$check_cols_match) {
+  if (!is.null(backseries_schema$check_cols_match) && backseries_schema$check_cols_match) {
     validator$agent <- pointblank::specially(
       validator$agent,
       label = "Column names match previous data",
       fn = function(x) colnames(x) == colnames(validator$backseries)
     ) 
+  }
+
+  for (value_col in names(backseries_schema$check_cols)) {
+    schema <- backseries_schema$check_cols[[value_col]]
+    match_cols <- schema$match_cols
+    data_subset <- dplyr::select(validator$data, all_of(c(match_cols, value_col)))
+    backseries_subset <- dplyr::select(validator$backseries, all_of(c(match_cols, value_col)))
+
+    merged <- dplyr::inner_join(
+      data_subset, 
+      backseries_subset, 
+      by = match_cols, 
+      suffix = c(".data", ".backseries"))
+
+    if (!is.null(backseries_schema$check_cols[[value_col]]$threshold_abs)) {
+      validator$agent <- pointblank::specially(
+        validator$agent,
+        label = paste0("Values in column ", value_col, " are within absolute threshold of previous data"),
+        fn = function(x) abs(merged[[paste0(value_col, ".data")]] - merged[[paste0(value_col, ".backseries")]]) <= schema$threshold_abs
+      )
+    }
+
+    if (!is.null(schema$threshold_prop)) {
+      validator$agent <- pointblank::specially(
+        validator$agent,
+        label = paste0("Values in column ", value_col, " are within proportional threshold of previous data"),
+        fn = function(x) abs(merged[[paste0(value_col, ".data")]] / merged[[paste0(value_col, ".backseries")]] - 1) <= schema$threshold_prop
+      )
+    }
   }
 
   validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
