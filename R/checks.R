@@ -70,13 +70,13 @@ decimal_places <- function(x) {
 #' @param x A numeric vector.
 #' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
 #' @return A vector the same size as `x`, with `TRUE` for values that are outliers and `FALSE` otherwise
-#' 
+#'
 #' @export
 iqr_bounds <- function(x, multiplier = 1.5) {
   iqr <- IQR(x, na.rm = TRUE)
   lower = quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
   upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
-  
+
   return(x < lower | x > upper)
 }
 
@@ -260,7 +260,7 @@ run_checks <- function(validator, i_col) {
         na_pass = TRUE
       )
     }
-  
+
   } else if (type == "character") {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
@@ -345,13 +345,13 @@ check_colnames <- function(validator) {
   validator$agent <- pointblank::specially(validator$agent,
     fn = function(x) stringr::str_detect(colnames(x), "[^a-zA-Z0-9_]", negate = T),
     label = "Column names contain no symbols other than underscores."
-  )                          
+  )
 
   # Check if column names contains capital letters
   validator$agent <- pointblank::specially(validator$agent,
     fn = function(x) stringr::str_detect(colnames(x), "[A-Z]", negate = T),
     label = "Column names contain no capital letters."
-  ) 
+  )
 
   # Extract mandatory columns from the schema
   mandatory_columns <- validator$schema$columns[sapply(validator$schema$columns, function(x) !x$optional)] |> names()
@@ -365,7 +365,7 @@ check_colnames <- function(validator) {
     fn = function(x) length(dplyr::setdiff(mandatory_columns, colnames(x))) == 0,
     label = "All mandatory columns are present."
   )
-  
+
   # Extract unexpected columns
   unexpected_columns <- setdiff(names(validator$data), names(validator$schema$columns))
   unexpected_columns <- paste0("^(", paste(unexpected_columns, collapse = "|"), ")$")
@@ -456,7 +456,7 @@ check_types <- function(validator) {
   return(validator)
 }
 
-# Utility function to convert expression to function for use in pointblank specially 
+# Utility function to convert expression to function for use in pointblank specially
 expr_to_fun <- function() {
   as.function(alist(df=, exp =, {rlang::eval_tidy(exp, data=df)}))
 }
@@ -483,7 +483,7 @@ add_check <- function(validator, description, condition) {
   ) |> pointblank::interrogate(progress = FALSE)
 
   validator <- log_pointblank_outcomes(validator)
-  
+
   return(validator)
 }
 
@@ -561,11 +561,11 @@ hard_checks_status <- function(validator, hard_check){
 }
 
 #' Check schema contents against the data frame provided
-#' 
-#' This function checks that the contents of the schema are consistent with the data frame provided. 
-#' It checks for unused schema entries, incompatible schema entries, and that any columns specified 
+#'
+#' This function checks that the contents of the schema are consistent with the data frame provided.
+#' It checks for unused schema entries, incompatible schema entries, and that any columns specified
 #' in the schema are present in the data frame.
-#' 
+#'
 #' @param validator A `Validator` object containing the data and schema to check against.
 #' @return The updated `Validator` object with QA entries added for any issues found in the schema.
 #' @export
@@ -625,28 +625,34 @@ check_schema_contents_against_df <- function(validator) {
 check_backseries <- function(validator) {
   backseries_schema <- validator$schema$backseries
 
+  # Number of rows check
   if (!is.null(backseries_schema$check_n_rows) && backseries_schema$check_n_rows) {
     validator$agent <- pointblank::specially(
       validator$agent,
       label = "Number of rows is consistent with previous data",
       fn = function(x) nrow(x) == nrow(validator$backseries)
-    ) 
-  } 
+    )
+  }
 
-  validator$agent <- pointblank::interrogate(validator$agent, progress = FALSE)
-  validator <- log_pointblank_outcomes(validator)
-
-  # Overwrite failing IDs to NA as they are not relevant for backseries checks and can be misleading in the log output
-  validator$log[[length(validator$log)]]$failing_ids <- NA
-
+  # Column match check
   if (!is.null(backseries_schema$check_cols_match) && backseries_schema$check_cols_match) {
     validator$agent <- pointblank::specially(
       validator$agent,
       label = "Column names match previous data",
       fn = function(x) colnames(x) == colnames(validator$backseries)
-    ) 
+    )
   }
 
+  # Completeness check (same unique values as backseries)
+  for (col in backseries_schema$check_unique_vals) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = paste0("Column ", col, " contains unique values consistent with previous data"),
+      fn = function(x) all(sort(unique(x[[col]])) == sort(unique(validator$backseries[[col]])))
+    )
+  }
+
+  # Value limit checks
   for (value_col in names(backseries_schema$check_cols)) {
     schema <- backseries_schema$check_cols[[value_col]]
     match_cols <- schema$match_cols
@@ -654,10 +660,11 @@ check_backseries <- function(validator) {
     backseries_subset <- dplyr::select(validator$backseries, all_of(c(match_cols, value_col)))
 
     merged <- dplyr::inner_join(
-      data_subset, 
-      backseries_subset, 
-      by = match_cols, 
+      data_subset,
+      backseries_subset,
+      by = match_cols,
       suffix = c(".data", ".backseries"))
+
 
     if (!is.null(backseries_schema$check_cols[[value_col]]$threshold_abs)) {
       validator$agent <- pointblank::specially(
