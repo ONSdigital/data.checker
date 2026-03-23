@@ -12,8 +12,6 @@ columns:
     optional: false
     min_val: 0.0
     max_val: 120.0
-    min_decimal: 0
-    max_decimal: 2
     allow_na: false
   sex:
     type: character
