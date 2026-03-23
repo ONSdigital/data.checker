@@ -2,12 +2,12 @@ test_that("is_valid_schema returns TRUE for a valid schema", {
 schema = list(
     columns = list(
       col1 = list(type = "int", max_val = 10, min_val = 0),
-      col2 = list(type = "decimal", max_decimal = 5, min_decimal = 0),
+      col2 = list(type = "decimal"),
       col3 = list(type = "string_length", max_string_length = 20, min_string_length = 5),
       col4 = list(type = "date", max_date = as.Date("2024-12-31"), min_date = as.Date("2020-01-01")),
       col5 = list(type = "datetime", max_datetime = as.POSIXct("2024-12-31 23:59:59"), min_datetime = as.POSIXct("2020-01-01 00:00:00")),
         col6 = list(type = "int", max_val = 10),
-        col7 = list(type = "decimal", min_decimal = 0)
+        col7 = list(type = "decimal")
     ),
     check_duplicates = TRUE,
     check_completeness = TRUE
