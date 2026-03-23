@@ -24,8 +24,6 @@
   : Check schema contents against the data frame provided
 - [`check_types()`](https://onsdigital.github.io/data.checker/reference/check_types.md)
   : Check Column Types and Classes
-- [`decimal_places()`](https://onsdigital.github.io/data.checker/reference/decimal_places.md)
-  : Check Decimal Places in Numeric Columns
 - [`export()`](https://onsdigital.github.io/data.checker/reference/export.md)
   : Generic export function
 - [`export(`*`<Validator>`*`)`](https://onsdigital.github.io/data.checker/reference/export.Validator.md)
