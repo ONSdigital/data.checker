@@ -249,8 +249,6 @@ test_that("z score checks work correctly for negative z scores", {
     data = df
   ) %>% check_column_contents()
 
-  print(validator$log)
-
   expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(100))
 })

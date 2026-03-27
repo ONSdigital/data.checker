@@ -685,6 +685,5 @@ check_backseries <- function(validator) {
 
   validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
   validator <- log_pointblank_outcomes(validator)
-
   return(validator)
 }
