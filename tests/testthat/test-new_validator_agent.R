@@ -1,6 +1,6 @@
 df <- data.frame(a = 1.23, b = 2, c = 3)
 columns <- list(
-  a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0, max_decimal = 2, min_decimal = 0),
+  a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0),
   b = list(type = "character", optional = TRUE, min_string_length = 0, max_string_length = 10)
 )
 schema <- list(

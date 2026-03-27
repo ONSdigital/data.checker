@@ -13,7 +13,7 @@ test_that("Only Required checks are run for all columns in dataframe", {
     )
     # Issues with datetime datatypes when validating schema,
     columns <- list(
-        a = list(type = "double", optional = FALSE, allow_na = FALSE, max_val = 100, min_val = 0, max_decimal = 2, min_decimal = 0),
+        a = list(type = "double", optional = FALSE, allow_na = FALSE, max_val = 100, min_val = 0),
         b = list(type = "character", optional = FALSE, min_string_length = 0, max_string_length = 10, allowed_strings = "^.{0,4}$"),
         g = list(type = "character", optional = FALSE, min_string_length = 0, max_string_length = 2, forbidden_strings = "[[:punct:]]"),
         e = list(type = "date", optional = FALSE, allow_na = TRUE, min_date = "2020-01-01", max_date = "2023-12-31"),
@@ -26,9 +26,9 @@ test_that("Only Required checks are run for all columns in dataframe", {
         data = df
     ) |> check()
     # Expecting:
-    # 15 data checks for columns a (5), b(3), g(3), e(2), i(2)
+    # 13 data checks for columns a (3), b(3), g(3), e(2), i(2)
     # 7 overall checks on column names and expected columns
     # 1 log entry is system information.
-    expect_equal(length(validator$log), 23)
+    expect_equal(length(validator$log), 21)
 })
 

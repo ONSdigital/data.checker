@@ -53,29 +53,18 @@ check_completeness <- function(validator) {
 }
 
 
-#' Check Decimal Places in Numeric Columns
-#'
-#' This function calculates the number of decimal places in a numeric vector.
-#' @param x A numeric vector.
-#' @return A vector of the same length as `x`, indicating the number of decimal
-#' places for each element. If an element is `NA`, it returns `NA`.
-#'
-#' @export
-decimal_places <- function(x) {
-  ifelse(is.na(x), NA, nchar(sub("^[^.]*\\.?", "", as.character(x))))
-}
-
 #' Flag outliers based on Interquartile Range (IQR).
 #' Outliers are flagged if they are below Q1 - (mulitplier * IQR) or above Q3 + (multiplier * IQR).
 #' @param x A numeric vector.
 #' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
 #' @return A vector the same size as `x`, with `TRUE` for values that are outliers and `FALSE` otherwise
 #'
+#'
 #' @export
 iqr_bounds <- function(x, multiplier = 1.5) {
-  iqr <- IQR(x, na.rm = TRUE)
-  lower = quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
-  upper = quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
+  iqr <- stats::IQR(x, na.rm = TRUE)
+  lower = stats::quantile(x, 0.25, na.rm = TRUE) - (multiplier * iqr)
+  upper = stats::quantile(x, 0.75, na.rm = TRUE) + (multiplier * iqr)
 
   return(x < lower | x > upper)
 }
@@ -88,7 +77,7 @@ iqr_bounds <- function(x, multiplier = 1.5) {
 #'
 #' @export
 z_score <- function(x) {
-  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  z_scores <- (x - mean(x, na.rm = TRUE)) / stats::sd(x, na.rm = TRUE)
   return(z_scores)
 }
 
@@ -132,16 +121,16 @@ check_column_contents <- function(validator) {
 run_checks <- function(validator, i_col) {
   # Unpack all column configurations into functions scope
 
-  list2env(validator$schema$columns[[i_col]], env = environment())
+  list2env(validator$schema$columns[[{{ i_col }}]], env = environment())
   # Store names of loaded variables
-  loaded_vars <- names(validator$schema$columns[[i_col]])
+  loaded_vars <- names(validator$schema$columns[[{{ i_col }}]])
 
   if (exists("allow_na") && !allow_na) {
-    validator <- add_check(validator, sprintf("Column %s contains no missing values", i_col), !is.na(validator$data[[i_col]]))
+    validator <- add_check(validator, sprintf("Column %s contains no missing values", {{ i_col }}), !is.na(validator$data[[{{ i_col }}]]))
   }
 
   if (exists("allow_duplicates") && !allow_duplicates) {
-    validator <- add_check(validator, sprintf("column %s contains no duplicate values", i_col), !duplicated(validator$data[[i_col]]))
+    validator <- add_check(validator, sprintf("column %s contains no duplicate values", {{ i_col }}), !duplicated(validator$data[[{{ i_col }}]]))
   }
 
   if (type == "double" | type == "integer") {
@@ -149,9 +138,9 @@ run_checks <- function(validator, i_col) {
       if (exists("expected_levels")) {
         validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           set = expected_levels,
-          label = sprintf("Column %s contains expected factor levels", i_col)
+          label = sprintf("Column %s contains expected factor levels", {{ i_col }})
         )
       }
 
@@ -159,18 +148,18 @@ run_checks <- function(validator, i_col) {
       if (exists("min_date")) {
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           value = lubridate::ymd(min_date),
-          label = sprintf("Column %s: dates are after %s", i_col, min_date),
+          label = sprintf("Column %s: dates are after %s", {{ i_col }}, min_date),
           na_pass = TRUE
         )
       }
       if (exists("max_date")) {
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           value = lubridate::ymd(max_date),
-          label = sprintf("Column %s: dates are before %s", i_col, max_date),
+          label = sprintf("Column %s: dates are before %s", {{ i_col }}, max_date),
           na_pass = TRUE
         )
       }
@@ -183,9 +172,9 @@ run_checks <- function(validator, i_col) {
         )
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           value = min_datetime,
-          label = sprintf("Column %s: datetimes are after %s", i_col, min_datetime),
+          label = sprintf("Column %s: datetimes are after %s", {{ i_col }}, min_datetime),
           na_pass = TRUE
         )
       }
@@ -196,9 +185,9 @@ run_checks <- function(validator, i_col) {
         )
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           value = max_datetime,
-          label = sprintf("Column %s: datetimes are before %s", i_col, max_datetime),
+          label = sprintf("Column %s: datetimes are before %s", {{ i_col }}, max_datetime),
           na_pass = TRUE
         )
       }
@@ -207,9 +196,9 @@ run_checks <- function(validator, i_col) {
     if (exists("min_val")) {
       validator$agent <- pointblank::col_vals_gte(
         validator$agent,
-        columns = tidyselect::all_of(i_col),
+        columns = tidyselect::all_of({{ i_col }}),
         value = min_val,
-        label = sprintf("Column %s: values are above or equal to %s", i_col, min_val),
+        label = sprintf("Column %s: values are above or equal to %s", {{ i_col }}, min_val),
         na_pass = TRUE
       )
 
@@ -218,27 +207,9 @@ run_checks <- function(validator, i_col) {
     if (exists("max_val")) {
       validator$agent <- pointblank::col_vals_lte(
         validator$agent,
-        columns = tidyselect::all_of(i_col),
+        columns = tidyselect::all_of({{ i_col }}),
         value = max_val,
-        label = sprintf("Column %s: values are below or equal to %s", i_col, max_val),
-        na_pass = TRUE
-      )
-    }
-
-    if (exists("min_decimal")) {
-      validator$agent <-pointblank::col_vals_expr(
-        validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!i_col]]) >= !!min_decimal),
-        label = sprintf("Column %s: decimal places above or equal to %s", i_col, min_decimal),
-        na_pass = TRUE
-      )
-    }
-
-    if (exists("max_decimal")) {
-      validator$agent <- pointblank::col_vals_expr(
-        validator$agent,
-        expr = rlang::expr(decimal_places(.data[[!!i_col]]) <= !!max_decimal),
-        label = sprintf("Column %s: decimal places below or equal to %s", i_col, max_decimal),
+        label = sprintf("Column %s: values are below or equal to %s", {{ i_col }}, max_val),
         na_pass = TRUE
       )
     }
@@ -246,8 +217,8 @@ run_checks <- function(validator, i_col) {
     if (exists("iqr_check")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(!iqr_bounds(.data[[!!i_col]], multiplier = !!iqr_check)),
-        label = sprintf("Column %s: values are not outliers based on IQR bounds with multiplier %s", i_col, iqr_check),
+        expr = rlang::expr(!iqr_bounds(.data[[!!{{ i_col }}]], multiplier = !!iqr_check)),
+        label = sprintf("Column %s: values are not outliers based on IQR bounds with multiplier %s", {{ i_col }}, iqr_check),
         na_pass = TRUE
       )
     }
@@ -255,8 +226,8 @@ run_checks <- function(validator, i_col) {
     if (exists("max_z_score")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(abs(z_score(.data[[!!i_col]])) <= !!max_z_score),
-        label = sprintf("Column %s: Absolute z-score below or equal to %s", i_col, max_z_score),
+        expr = rlang::expr(abs(z_score(.data[[!!{{ i_col }}]])) <= !!max_z_score),
+        label = sprintf("Column %s: Absolute z-score below or equal to %s", {{ i_col }}, max_z_score),
         na_pass = TRUE
       )
     }
@@ -265,16 +236,16 @@ run_checks <- function(validator, i_col) {
     if (exists("min_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(nchar(.data[[!!i_col]]) >= !!min_string_length),
-        label = sprintf("Column %s: string length above or equal to %s", i_col, min_string_length),
+        expr = rlang::expr(nchar(.data[[!!{{ i_col }}]]) >= !!min_string_length),
+        label = sprintf("Column %s: string length above or equal to %s", {{ i_col }}, min_string_length),
         na_pass = TRUE
       )
     }
     if (exists("max_string_length")) {
       validator$agent <- pointblank::col_vals_expr(
         validator$agent,
-        expr = rlang::expr(nchar(.data[[!!i_col]]) <= !!max_string_length),
-        label = sprintf("Column %s: string length below or equal to %s", i_col, max_string_length),
+        expr = rlang::expr(nchar(.data[[!!{{ i_col }}]]) <= !!max_string_length),
+        label = sprintf("Column %s: string length below or equal to %s", {{ i_col }}, max_string_length),
         na_pass = TRUE
       )
     }
@@ -283,15 +254,15 @@ run_checks <- function(validator, i_col) {
       if (is.character(forbidden_strings) && length(forbidden_strings) > 1) {
         validator$agent <- pointblank::col_vals_not_in_set(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           set = forbidden_strings,
-          label = sprintf("Column %s does not contain forbidden strings", i_col)
+          label = sprintf("Column %s does not contain forbidden strings", {{ i_col }})
         )
       } else if (is.character(forbidden_strings) && length(forbidden_strings) == 1) {
         validator$agent <- pointblank::col_vals_expr(
           validator$agent,
-          expr = rlang::expr(!stringr::str_detect(.data[[!!i_col]], !!forbidden_strings)),
-          label = sprintf("Column %s does not contain forbidden characters", i_col),
+          expr = rlang::expr(!stringr::str_detect(.data[[!!{{ i_col }}]], !!forbidden_strings)),
+          label = sprintf("Column %s does not contain forbidden characters", {{ i_col }}),
           na_pass = TRUE
         )
       }
@@ -301,17 +272,17 @@ run_checks <- function(validator, i_col) {
       if (is.character(allowed_strings) && length(allowed_strings) == 1) {
         validator$agent <- pointblank::col_vals_regex(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           regex = allowed_strings,
-          label = sprintf("Column %s only contains allowed strings", i_col),
+          label = sprintf("Column %s only contains allowed strings", {{ i_col }}),
           na_pass = TRUE
         )
       } else if (is.character(allowed_strings) && length(allowed_strings) > 1) {
         validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
-          columns = tidyselect::all_of(i_col),
+          columns = tidyselect::all_of({{ i_col }}),
           set = allowed_strings,
-          label = sprintf("Column %s only contains allowed strings", i_col)
+          label = sprintf("Column %s only contains allowed strings", {{ i_col }})
         )
       }
     }
@@ -571,7 +542,7 @@ hard_checks_status <- function(validator, hard_check){
 #' @export
 check_schema_contents_against_df <- function(validator) {
   valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
-  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+  max_min_cols <- c("val", "string_length", "date", "datetime")
     for (entry in max_min_cols) {
       valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
     }

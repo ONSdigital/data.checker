@@ -166,7 +166,7 @@ is_valid_schema <- function(schema) {
 #' @return `TRUE` if all max values are greater than or equal to their corresponding min values, otherwise an error is raised.
 #' @export
 is_valid_column_values <- function(column_schema, col_name){
-  max_min_cols <- c("val", "decimal", "string_length", "date", "datetime")
+  max_min_cols <- c("val", "string_length", "date", "datetime")
   for (col in max_min_cols) {
     max_col <- paste0("max_", col)
     min_col <- paste0("min_", col)
