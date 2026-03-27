@@ -139,13 +139,13 @@ print(check_results)
 #> 
 #>  Timestamp          Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
 #> -----------------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
-#> 1774290129.19065   Column names contain no symbols other than underscores.                   pass                    0           error      
-#> 1774290129.27198   Column names contain no capital letters.                                  pass                    0           error      
-#> 1774290129.28152   All mandatory columns are present.                                        pass                    0           error      
-#> 1774290129.29113   There are no unexpected columns.                                          pass                    0           error      
-#> 18:22:09           Removed schema information for optional columns that aren't in the data                           N/A         info       
-#> 1774290129.36077   Correct column types                                                      fail      1             1           error      
-#> 1774290129.37023   Correct column classes                                                    pass                    0           error
+#> 1774636849.50734   Column names contain no symbols other than underscores.                   pass                    0           error      
+#> 1774636849.5382    Column names contain no capital letters.                                  pass                    0           error      
+#> 1774636849.54756   All mandatory columns are present.                                        pass                    0           error      
+#> 1774636849.55687   There are no unexpected columns.                                          pass                    0           error      
+#> 18:40:49           Removed schema information for optional columns that aren't in the data                           N/A         info       
+#> 1774636849.62339   Correct column types                                                      fail                    1           error      
+#> 1774636849.63272   Correct column classes                                                    pass                    0           error
 ```
 
 ### Exporting your log
@@ -272,23 +272,23 @@ print(data_check_results)
 #> 
 #>  Timestamp          Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
 #> -----------------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
-#> 18:22:09           Column sex unused schema entries: min_length, max_length                                          N/A         warning    
-#> 18:22:09           Column country unused schema entries: levels                                                      N/A         warning    
-#> 1774290129.7811    Column names contain no symbols other than underscores.                   pass                    0           error      
-#> 1774290129.79147   Column names contain no capital letters.                                  pass                    0           error      
-#> 1774290129.80404   All mandatory columns are present.                                        pass                    0           error      
-#> 1774290129.81355   There are no unexpected columns.                                          pass                    0           error      
-#> 18:22:09           Removed schema information for optional columns that aren't in the data                           N/A         info       
-#> 1774290129.87915   Correct column types                                                      pass                    0           error      
-#> 1774290129.88852   Correct column classes                                                    pass                    0           error      
-#> 1774290129.96775   description                                                               pass                    0           error      
-#> 1774290130.09649   Column id: values are above or equal to 0                                 pass                    0           error      
-#> 1774290130.11501   Column id: values are below or equal to 1000                              pass                    0           error      
-#> 1774290130.26934   Column age: values are above or equal to 0                                pass                    0           error      
-#> 1774290130.28471   Column age: values are below or equal to 120                              pass                    0           error      
-#> 1774290130.46795   Column sex only contains allowed strings                                  pass                    0           error      
-#> 1774290130.87718   Column date: dates are after 2020-01-01                                   pass                    0           error      
-#> 1774290130.89303   Column date: dates are before 2023-12-31                                  pass                    0           error
+#> 18:40:50           Column sex unused schema entries: min_length, max_length                                          N/A         warning    
+#> 18:40:50           Column country unused schema entries: levels                                                      N/A         warning    
+#> 1774636850.03957   Column names contain no symbols other than underscores.                   pass                    0           error      
+#> 1774636850.04939   Column names contain no capital letters.                                  pass                    0           error      
+#> 1774636850.06051   All mandatory columns are present.                                        pass                    0           error      
+#> 1774636850.06952   There are no unexpected columns.                                          pass                    0           error      
+#> 18:40:50           Removed schema information for optional columns that aren't in the data                           N/A         info       
+#> 1774636850.13171   Correct column types                                                      pass                    0           error      
+#> 1774636850.14105   Correct column classes                                                    pass                    0           error      
+#> 1774636850.21882   description                                                               pass                    0           error      
+#> 1774636850.34413   Column id: values are above or equal to 0                                 pass                    0           error      
+#> 1774636850.36184   Column id: values are below or equal to 1000                              pass                    0           error      
+#> 1774636850.51263   Column age: values are above or equal to 0                                pass                    0           error      
+#> 1774636850.52735   Column age: values are below or equal to 120                              pass                    0           error      
+#> 1774636850.70842   Column sex only contains allowed strings                                  pass                    0           error      
+#> 1774636851.10466   Column date: dates are after 2020-01-01                                   pass                    0           error      
+#> 1774636851.11942   Column date: dates are before 2023-12-31                                  pass                    0           error
 ```
 
 ### Custom checks
@@ -348,14 +348,14 @@ print(data_check_results)
 #> 
 #>  Timestamp          Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
 #> -----------------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
-#> 1774290131.14873   Column names contain no symbols other than underscores.                   pass                    0           error      
-#> 1774290131.16226   Column names contain no capital letters.                                  pass                    0           error      
-#> 1774290131.17173   All mandatory columns are present.                                        pass                    0           error      
-#> 1774290131.18108   There are no unexpected columns.                                          pass                    0           error      
-#> 18:22:11           Removed schema information for optional columns that aren't in the data                           N/A         info       
-#> 1774290131.25083   Correct column types                                                      fail      1             1           error      
-#> 1774290131.26036   Correct column classes                                                    pass                    0           error      
-#> 1774290131.39977   description                                                               pass                    0           error
+#> 1774636851.37013   Column names contain no symbols other than underscores.                   pass                    0           error      
+#> 1774636851.38254   Column names contain no capital letters.                                  pass                    0           error      
+#> 1774636851.39182   All mandatory columns are present.                                        pass                    0           error      
+#> 1774636851.40103   There are no unexpected columns.                                          pass                    0           error      
+#> 18:40:51           Removed schema information for optional columns that aren't in the data                           N/A         info       
+#> 1774636851.46596   Correct column types                                                      fail                    1           error      
+#> 1774636851.47503   Correct column classes                                                    pass                    0           error      
+#> 1774636851.60899   description                                                               pass                    0           error
 ```
 
 ### Custom log entries
@@ -420,5 +420,5 @@ print(validator)
 #> 
 #>  Timestamp   Description                Outcome   Failing Ids   n Failing   Entry Type 
 #> ----------  -------------------------  --------  ------------  ----------  -----------
-#> 18:22:11    Example custom log entry                           N/A         info
+#> 18:40:51    Example custom log entry                           N/A         info
 ```

@@ -7,7 +7,14 @@ format.
 ## Usage
 
 ``` r
-check_and_export(data, schema, file, format, hard_check = FALSE)
+check_and_export(
+  data,
+  schema,
+  file,
+  format,
+  hard_check = FALSE,
+  backseries = NULL
+)
 ```
 
 ## Arguments
@@ -32,6 +39,10 @@ check_and_export(data, schema, file, format, hard_check = FALSE)
 
   logical. Optional - FALSE by default. If TRUE, raises an error if
   there are any failed checks. Otherwise, raises a warning.
+
+- backseries:
+
+  A previous version of the data to check against (optional).
 
 ## Value
 

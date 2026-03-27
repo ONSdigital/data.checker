@@ -45,7 +45,14 @@ and exports the validation results to a specified file in a given format.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_and_export</span><span class="op">(</span><span class="va">data</span>, <span class="va">schema</span>, <span class="va">file</span>, <span class="va">format</span>, hard_check <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_and_export</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">schema</span>,</span>
+<span>  <span class="va">file</span>,</span>
+<span>  <span class="va">format</span>,</span>
+<span>  hard_check <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  backseries <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -70,6 +77,10 @@ and exports the validation results to a specified file in a given format.</p>
 
 <dt id="arg-hard-check">hard_check<a class="anchor" aria-label="anchor" href="#arg-hard-check"></a></dt>
 <dd><p>logical. Optional - FALSE by default. If TRUE, raises an error if there are any failed checks. Otherwise, raises a warning.</p></dd>
+
+
+<dt id="arg-backseries">backseries<a class="anchor" aria-label="anchor" href="#arg-backseries"></a></dt>
+<dd><p>A previous version of the data to check against (optional).</p></dd>
 
 </dl></div>
     <div class="section level2">

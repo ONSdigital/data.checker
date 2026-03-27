@@ -167,6 +167,8 @@ changes.
   : Validate a Validator Object
 - [`check_and_export()`](https://onsdigital.github.io/data.checker/reference/check_and_export.md)
   : Validate data against a schema and output results
+- [`check_backseries()`](https://onsdigital.github.io/data.checker/reference/check_backseries.md)
+  : Check backseries consistency
 - [`check_colnames()`](https://onsdigital.github.io/data.checker/reference/check_colnames.md)
   : Check Column Names against schema
 - [`check_column_contents()`](https://onsdigital.github.io/data.checker/reference/check_column_contents.md)
