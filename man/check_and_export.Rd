@@ -4,7 +4,14 @@
 \alias{check_and_export}
 \title{Validate data against a schema and output results}
 \usage{
-check_and_export(data, schema, file, format, hard_check = FALSE)
+check_and_export(
+  data,
+  schema,
+  file,
+  format,
+  hard_check = FALSE,
+  backseries = NULL
+)
 }
 \arguments{
 \item{data}{The data to be validated.}
@@ -16,6 +23,8 @@ check_and_export(data, schema, file, format, hard_check = FALSE)
 \item{format}{The format in which the validation results will be exported.}
 
 \item{hard_check}{logical. Optional - FALSE by default. If TRUE, raises an error if there are any failed checks. Otherwise, raises a warning.}
+
+\item{backseries}{A previous version of the data to check against (optional).}
 }
 \value{
 The exported validation results.

@@ -4,12 +4,14 @@
 \alias{new_validator}
 \title{Validator Constructor}
 \usage{
-new_validator(data, schema)
+new_validator(data, schema, backseries = NULL)
 }
 \arguments{
 \item{data}{A data frame to validate against the schema.}
 
 \item{schema}{A schema object that defines the validation rules.}
+
+\item{backseries}{A previous version of the data to check against (optional).}
 }
 \value{
 An object of class \code{Validator}.

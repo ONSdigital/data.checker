@@ -8,9 +8,10 @@
 #' @param file The file path where the validation results will be exported.
 #' @param format The format in which the validation results will be exported.
 #' @param hard_check logical. Optional - FALSE by default. If TRUE, raises an error if there are any failed checks. Otherwise, raises a warning.
+#' @param backseries A previous version of the data to check against (optional).
 #' @return The exported validation results.
 #' @export
-check_and_export <- function(data, schema, file, format, hard_check = FALSE) {
+check_and_export <- function(data, schema, file, format, hard_check = FALSE, backseries = NULL) {
   validator <- new_validator(data, schema) |>
     check() |>
     export(file = file, format = format) |>
@@ -22,10 +23,11 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE) {
 #' Creates a `Validator` object to validate data against a given schema.
 #' @param data A data frame to validate against the schema.
 #' @param schema A schema object that defines the validation rules.
+#' @param backseries A previous version of the data to check against (optional).
 #' @return An object of class `Validator`.
 #'
 #' @export
-new_validator <- function(data, schema) {
+new_validator <- function(data, schema, backseries = NULL) {
   if (is.character(schema)) {
     if (grepl("\\.json$", schema)) {
       schema <- jsonlite::fromJSON(schema)
@@ -43,7 +45,6 @@ new_validator <- function(data, schema) {
   if (is_valid_schema(schema)) {
     schema <- types_to_classes(schema)  # Convert complex types to correct types and classes
 
-
     validator <- list("schema" = schema)
   }
 
@@ -51,6 +52,18 @@ new_validator <- function(data, schema) {
     validator$data <- data
   } else {
     stop("Data must be a data frame.")
+  }
+
+  if ("backseries" %in% names(validator$schema)) {
+    if (!is.null(backseries)) {
+      if ("data.frame" %in% class(backseries)) {
+        validator$backseries <- backseries
+      } else {
+        stop("Backseries must be a data frame.")
+      }
+    } else {
+      stop("Backseries is required by the schema but not provided.")
+    }
   }
 
   validator$log <- list()  # Initialize an empty log for validation results

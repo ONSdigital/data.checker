@@ -59,6 +59,7 @@ check_completeness <- function(validator) {
 #' @param multiplier A numeric value to multiply the IQR by (default is 1.5).
 #' @return A vector the same size as `x`, with `TRUE` for values that are outliers and `FALSE` otherwise
 #'
+#'
 #' @export
 iqr_bounds <- function(x, multiplier = 1.5) {
   iqr <- stats::IQR(x, na.rm = TRUE)
@@ -582,5 +583,78 @@ check_schema_contents_against_df <- function(validator) {
     }
   }
   }
+  return(validator)
+}
+
+#' Check backseries consistency
+#'
+#' Checks if the latest data is consistent with previous data.
+#'
+#' @param validator A Validator object containing the schema and agent.
+#' @return The updated Validator object with outcomes logged.
+#' @export
+check_backseries <- function(validator) {
+  backseries_schema <- validator$schema$backseries
+
+  # Number of rows check
+  if (!is.null(backseries_schema$check_n_rows) && backseries_schema$check_n_rows) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = "Number of rows is consistent with previous data",
+      fn = function(x) nrow(x) == nrow(validator$backseries)
+    )
+  }
+
+  # Column match check
+  if (!is.null(backseries_schema$check_cols_match) && backseries_schema$check_cols_match) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = "Column names match previous data",
+      fn = function(x) colnames(x) == colnames(validator$backseries)
+    )
+  }
+
+  # Completeness check (same unique values as backseries)
+  for (col in backseries_schema$check_unique_vals) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = paste0("Column ", col, " contains unique values consistent with previous data"),
+      fn = function(x) all(sort(unique(x[[col]])) == sort(unique(validator$backseries[[col]])))
+    )
+  }
+
+  # Value limit checks
+  for (value_col in names(backseries_schema$check_cols)) {
+    schema <- backseries_schema$check_cols[[value_col]]
+    match_cols <- schema$match_cols
+    data_subset <- dplyr::select(validator$data, all_of(c(match_cols, value_col)))
+    backseries_subset <- dplyr::select(validator$backseries, all_of(c(match_cols, value_col)))
+
+    merged <- dplyr::inner_join(
+      data_subset,
+      backseries_subset,
+      by = match_cols,
+      suffix = c(".data", ".backseries"))
+
+
+    if (!is.null(backseries_schema$check_cols[[value_col]]$threshold_abs)) {
+      validator$agent <- pointblank::specially(
+        validator$agent,
+        label = paste0("Values in column ", value_col, " are within absolute threshold of previous data"),
+        fn = function(x) abs(merged[[paste0(value_col, ".data")]] - merged[[paste0(value_col, ".backseries")]]) <= schema$threshold_abs
+      )
+    }
+
+    if (!is.null(schema$threshold_prop)) {
+      validator$agent <- pointblank::specially(
+        validator$agent,
+        label = paste0("Values in column ", value_col, " are within proportional threshold of previous data"),
+        fn = function(x) abs(merged[[paste0(value_col, ".data")]] / merged[[paste0(value_col, ".backseries")]] - 1) <= schema$threshold_prop
+      )
+    }
+  }
+
+  validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
+  validator <- log_pointblank_outcomes(validator)
   return(validator)
 }
