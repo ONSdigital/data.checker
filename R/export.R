@@ -177,7 +177,7 @@ log_pointblank_outcomes <- function(validator){
 
     if (outcome == "fail" & is.null(x$tbl_checked)) {
       failing_ids <- ifelse(is.null(x$column), NA, x$column)
-    } else if (outcome == "fail" && nrow(x$tbl_checked[[1]]) > 1) {
+    } else if (outcome == "fail" && nrow(x$tbl_checked[[1]]) > 1 && x$label != "Column names match previous data") {
       failing_ids <- which(x$tbl_checked[[1]]$pb_is_good_ == FALSE)
     } else {
       failing_ids <- NA
