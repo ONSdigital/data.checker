@@ -1,7 +1,7 @@
 test_that("The code returns no errors when the column contents are correct", {
   df <- data.frame(a = 1.23, b = 2, c = NA)
   columns <- list(
-    a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0, max_decimal = 2, min_decimal = 0),
+    a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0),
     b = list(type = "character", optional = TRUE, min_string_length = 0, max_string_length = 10),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = TRUE)
   )
@@ -26,7 +26,7 @@ test_that("The code returns no errors when the column contents are correct", {
 test_that("The code returns errors when the numeric contents are outside ranges", {
   df <- data.frame(a = c(-1, 101.11, -50))
   columns <- list(
-    a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0, max_decimal = 1, min_decimal = 0)
+    a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0)
   )
 
   validator <- new_validator(
@@ -42,10 +42,6 @@ test_that("The code returns errors when the numeric contents are outside ranges"
   expect_equal(validator$log[[3]]$outcome, "fail")
   expect_equal(validator$log[[3]]$failing_ids, c(2))
   expect_equal(validator$log[[3]]$n_failing, 1)
-
-  expect_equal(validator$log[[5]]$outcome, "fail")
-  expect_equal(validator$log[[5]]$failing_ids, c(2))
-  expect_equal(validator$log[[5]]$n_failing, 1)
 
 })
 

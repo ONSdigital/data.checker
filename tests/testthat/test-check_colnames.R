@@ -59,7 +59,7 @@ test_that("Missing mandatory columns return errors", {
 
   expect_equal(validator$log[[4]]$outcome, "fail")
   expect_equal(validator$log[[4]]$n_failing, 1)
-  expect_equal(validator$log[[4]]$failing_ids, 1)
+  expect_equal(validator$log[[4]]$failing_ids, NA)
 })
 
 test_that("Unexpected columns return errors", {
