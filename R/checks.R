@@ -149,7 +149,7 @@ run_checks <- function(validator, i_col) {
         validator$agent <- pointblank::col_vals_gte(
           validator$agent,
           columns = tidyselect::all_of({{ i_col }}),
-          value = lubridate::ymd(min_date),
+          value = min_date,
           label = sprintf("Column %s: dates are after %s", {{ i_col }}, min_date),
           na_pass = TRUE
         )
@@ -158,7 +158,7 @@ run_checks <- function(validator, i_col) {
         validator$agent <- pointblank::col_vals_lte(
           validator$agent,
           columns = tidyselect::all_of({{ i_col }}),
-          value = lubridate::ymd(max_date),
+          value = max_date,
           label = sprintf("Column %s: dates are before %s", {{ i_col }}, max_date),
           na_pass = TRUE
         )

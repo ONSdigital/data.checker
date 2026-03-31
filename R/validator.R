@@ -43,8 +43,9 @@ new_validator <- function(data, schema, backseries = NULL) {
   }
 
   if (is_valid_schema(schema)) {
+    schema <- validate_and_convert_date_formats(schema) # check date formats are correct
     schema <- types_to_classes(schema)  # Convert complex types to correct types and classes
-
+    is_column_contents_valid(schema) # checks max and min values are valid
     validator <- list("schema" = schema)
   }
 
@@ -67,7 +68,7 @@ new_validator <- function(data, schema, backseries = NULL) {
   }
 
   validator$log <- list()  # Initialize an empty log for validation results
-  
+
   class(validator) <- "Validator"
 
   info <- paste0(
@@ -89,6 +90,19 @@ new_validator <- function(data, schema, backseries = NULL) {
   return(validator)
 }
 
+#' Check column contents valid
+#' 
+#' This wrapper calls is_valid_column_values for each column in the schema 
+#' 
+#' @param schema the validator schema 
+#' 
+#' @return `TRUE` if all column values are valid, otherwise an error is raised.
+is_column_contents_valid <- function(schema) {
+  for (col in names(schema$columns)) {
+    is_valid_column_values(schema$columns[[col]], col)
+  }
+  return(TRUE)
+}
 
 #' Validate a Validator Object
 #'
@@ -147,10 +161,6 @@ is_valid_schema <- function(schema) {
   } else if (!"check_completeness" %in% names(schema)) {
     stop("Schema must contain a 'check_completeness' element")
   }
-  for (col in names(schema$columns)) {
-    is_valid_column_values(schema$columns[[col]], col)
-  }
-
   return(TRUE)
 }
 
@@ -171,8 +181,11 @@ is_valid_column_values <- function(column_schema, col_name){
     max_col <- paste0("max_", col)
     min_col <- paste0("min_", col)
     if (max_col %in% names(column_schema) && min_col %in% names(column_schema)) {
-      if (column_schema[[max_col]] < column_schema[[min_col]]) {
+      if (column_schema[[max_col]] < column_schema[[min_col]] & typeof(column_schema[[max_col]]) == typeof(column_schema[[min_col]])) {
         stop(paste0("Column ", col_name, " ", max_col, " cannot be less than ", min_col, "."))
+      }
+      else if (typeof(column_schema[[max_col]]) != typeof(column_schema[[min_col]])) {
+        stop(paste0("Column ", col_name, " ", max_col, " and ", min_col, " must be of the same type."))
       }
     }
   }    
@@ -198,6 +211,34 @@ types_to_classes <- function(schema) {
       col$class <- c("POSIXct", "POSIXt")
     }
 
+    return(col)
+  })
+
+  return(schema)
+}
+
+#' Validate date formats in the schema
+#' This function checks that any date formats specified in the schema are valid and can be parsed correctly.
+#
+#' @param schema A list containing a `columns` element, where each column may have `min_date` and `max_date` fields.
+#' @return The original schema if all date formats are valid. If any date format is invalid, an error is thrown with a message indicating the issue.
+#' @export
+validate_and_convert_date_formats <- function(schema){
+   schema$columns <- lapply(schema$columns, function(col) {
+    if (exists("min_date", where = col)) {
+      col$min_date <-tryCatch(lubridate::ymd(col$min_date), warning = function(w) "invalid")
+      # if warning raises, dtype becomes character, otherwise its double
+      if (typeof(col$min_date) == "character") {
+        stop(sprintf("Invalid date format for min_date in column '%s' use Year Month Day format", col))
+      }
+    }
+    if (exists("max_date", where = col)) {
+      col$max_date <-tryCatch(lubridate::ymd(col$max_date), warning = function(w) "invalid")
+      # if warning raises, dtype becomes character, otherwise its double
+      if (typeof(col$max_date) == "character") {
+        stop(sprintf("Invalid date format for max_date in column '%s', use Year Month Day format", col))
+      }
+    }
     return(col)
   })
 

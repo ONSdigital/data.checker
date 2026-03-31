@@ -25,7 +25,7 @@ schema = list(
     check_completeness = TRUE
   )
   
-  expect_error(is_valid_schema(schema), "Column col1 max_val cannot be less than min_val.")
+  expect_error(is_column_contents_valid(schema), "Column col1 max_val cannot be less than min_val.")
 })
 
 test_that("is_valid_schema returns error (max_string_length < min_string_length)", {
@@ -37,7 +37,7 @@ schema = list(
     check_completeness = TRUE
   )
   
-  expect_error(is_valid_schema(schema), "Column col1 max_string_length cannot be less than min_string_length.")
+  expect_error(is_column_contents_valid(schema), "Column col1 max_string_length cannot be less than min_string_length.")
 })
 
 test_that("is_valid_schema returns error for correct column (max_date < min_date)", {
@@ -50,7 +50,7 @@ schema = list(
     check_completeness = TRUE
   )
   
-  expect_error(is_valid_schema(schema), "Column col2 max_date cannot be less than min_date.")
+  expect_error(is_column_contents_valid(schema), "Column col2 max_date cannot be less than min_date.")
 })
 
 
