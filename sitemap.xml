@@ -26,6 +26,7 @@
 <url><loc>https://onsdigital.github.io/data.checker/reference/hard_checks_status.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/index.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/iqr_bounds.html</loc></url>
+<url><loc>https://onsdigital.github.io/data.checker/reference/is_column_contents_valid.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/is_valid_column_values.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/is_valid_schema.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/log_html.html</loc></url>
@@ -36,6 +37,7 @@
 <url><loc>https://onsdigital.github.io/data.checker/reference/print.Validator.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/run_checks.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/types_to_classes.html</loc></url>
+<url><loc>https://onsdigital.github.io/data.checker/reference/validate_and_convert_date_formats.html</loc></url>
 <url><loc>https://onsdigital.github.io/data.checker/reference/z_score.html</loc></url>
 </urlset>
 

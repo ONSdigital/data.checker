@@ -36,6 +36,8 @@
   : Flag outliers based on Interquartile Range (IQR). Outliers are
   flagged if they are below Q1 - (mulitplier \* IQR) or above Q3 +
   (multiplier \* IQR).
+- [`is_column_contents_valid()`](https://onsdigital.github.io/data.checker/reference/is_column_contents_valid.md)
+  : Check column contents valid
 - [`is_valid_column_values()`](https://onsdigital.github.io/data.checker/reference/is_valid_column_values.md)
   : Check that max values are not less than min values in column schema
 - [`is_valid_schema()`](https://onsdigital.github.io/data.checker/reference/is_valid_schema.md)
@@ -54,5 +56,9 @@
   : Run column checks
 - [`types_to_classes()`](https://onsdigital.github.io/data.checker/reference/types_to_classes.md)
   : Convert complex types to the correct types and classes
+- [`validate_and_convert_date_formats()`](https://onsdigital.github.io/data.checker/reference/validate_and_convert_date_formats.md)
+  : Validate date formats in the schema This function checks that any
+  date formats specified in the schema are valid and can be parsed
+  correctly.
 - [`z_score()`](https://onsdigital.github.io/data.checker/reference/z_score.md)
   : Check Z Score of Numeric Columns
