@@ -3,7 +3,7 @@ schema <- list(
   completeness_cols = c("a", "b"),
   check_duplicates = FALSE,
   columns = list(
-    a = list(type = "float"),
+    a = list(type = "numeric"),
     b = list(type = "character")
   )
 )

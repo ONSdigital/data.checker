@@ -110,3 +110,16 @@ schema = list(
   )
   expect_error(validator <- new_validator(schema = schema, data = df) |> check(), "All columns specified in completeness_cols must be present in the data.")
 })
+
+test_that("is_valid_schema returns error for incorrect column type", {
+schema = list(  
+    columns = list(
+      col1 = list(type = "decimal", max_val = 10, min_val = 0),
+      col2 = list(type = "letters", max_string_length = 20, min_string_length = 5)
+    ),
+    check_duplicates = TRUE,
+    check_completeness = TRUE
+  )
+  
+  expect_error(is_type_valid(schema), "The following columns have invalid types: col1, col2. Accepted types are")
+})
