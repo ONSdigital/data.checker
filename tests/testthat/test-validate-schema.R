@@ -53,6 +53,18 @@ schema = list(
   expect_error(is_column_contents_valid(schema), "Column col2 max_date cannot be less than min_date.")
 })
 
+test_that("is_valid_schema returns error for mismatch types (max_val < min_val)", {
+schema = list(
+    columns = list(
+      col1 = list(type = "int", max_val = 0, min_val = "20")
+    ),
+    check_duplicates = TRUE,
+    check_completeness = TRUE
+  )
+  
+  expect_error(is_column_contents_valid(schema), "Column col1 max_val and min_val must be of the same type.")
+})
+
 
 test_that("is_valid_schema validator warning for allowed and forbidden strings", {
 df = data.frame(col1 = "hello!")
