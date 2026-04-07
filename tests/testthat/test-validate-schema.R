@@ -1,13 +1,13 @@
 test_that("is_valid_schema returns TRUE for a valid schema", {
 schema = list(
     columns = list(
-      col1 = list(type = "int", max_val = 10, min_val = 0),
-      col2 = list(type = "decimal"),
-      col3 = list(type = "string_length", max_string_length = 20, min_string_length = 5),
-      col4 = list(type = "date", max_date = as.Date("2024-12-31"), min_date = as.Date("2020-01-01")),
-      col5 = list(type = "datetime", max_datetime = as.POSIXct("2024-12-31 23:59:59"), min_datetime = as.POSIXct("2020-01-01 00:00:00")),
-        col6 = list(type = "int", max_val = 10),
-        col7 = list(type = "decimal")
+      col1 = list(type = "int", max_val = 10, min_val = 0, optional = FALSE),
+      col2 = list(type = "decimal",optional = FALSE),
+      col3 = list(type = "string_length", max_string_length = 20, min_string_length = 5, optional = FALSE),
+      col4 = list(type = "date", max_date = as.Date("2024-12-31"), min_date = as.Date("2020-01-01"), optional = FALSE),
+      col5 = list(type = "datetime", max_datetime = as.POSIXct("2024-12-31 23:59:59"), min_datetime = as.POSIXct("2020-01-01 00:00:00"), optional = FALSE),
+        col6 = list(type = "int", max_val = 10, optional = FALSE),
+        col7 = list(type = "decimal", optional = FALSE)
     ),
     check_duplicates = TRUE,
     check_completeness = TRUE
@@ -31,7 +31,7 @@ schema = list(
 test_that("is_valid_schema returns error (max_string_length < min_string_length)", {
 schema = list(
     columns = list(
-      col1 = list(type = "str", max_string_length = 0, min_string_length = 20)
+      col1 = list(type = "str", max_string_length = 0, min_string_length = 20, optional = FALSE)
     ),
     check_duplicates = TRUE,
     check_completeness = TRUE
@@ -43,8 +43,8 @@ schema = list(
 test_that("is_valid_schema returns error for correct column (max_date < min_date)", {
 schema = list(
     columns = list(
-      col1 = list(type = "date", max_date = as.Date("2024-01-01"), min_date = as.Date("2012-12-31")),
-      col2 = list(type = "date", max_date = as.Date("2020-01-01"), min_date = as.Date("2024-12-31"))
+      col1 = list(type = "date", max_date = as.Date("2024-01-01"), min_date = as.Date("2012-12-31"), optional = FALSE),
+      col2 = list(type = "date", max_date = as.Date("2020-01-01"), min_date = as.Date("2024-12-31"), optional = FALSE)
     ),
     check_duplicates = TRUE,
     check_completeness = TRUE
@@ -111,7 +111,7 @@ schema = list(
   expect_error(validator <- new_validator(schema = schema, data = df) |> check(), "All columns specified in completeness_cols must be present in the data.")
 })
 
-test_that("is_valid_schema returns error for incorrect column type", {
+test_that("is_valid_schema returns error for two incorrect column types", {
 schema = list(  
     columns = list(
       col1 = list(type = "decimal", max_val = 10, min_val = 0),
@@ -123,3 +123,31 @@ schema = list(
   
   expect_error(is_type_valid(schema), "The following columns have invalid types: col1, col2. Accepted types are")
 })
+
+test_that("is_valid_schema returns error one incorrect column type", {
+schema = list(  
+    columns = list(
+      col1 = list(type = "numeric", max_val = 10, min_val = 0),
+      col2 = list(type = "letters", max_string_length = 20, min_string_length = 5),
+      col3 = list(type = "character", max_string_length = 20, min_string_length = 5)
+    ),
+    check_duplicates = TRUE,
+    check_completeness = TRUE
+  )
+  
+  expect_error(is_type_valid(schema), "The following columns have invalid types: col2. Accepted types are")
+})
+
+test_that("error is returned when column is missing optional field", {
+schema = list(
+    columns = list(
+      col1 = list(type = "numeric", max_val = 10, min_val = 0),
+      col2 = list(type = "character", max_string_length = 20, min_string_length = 5)
+    ),
+    check_duplicates = TRUE,
+    check_completeness = TRUE
+  )
+  
+  expect_error(is_column_contents_valid(schema), "Column col1 must have an 'optional' field set to either TRUE or FALSE")
+}
+)

@@ -2,8 +2,8 @@ schema <- list(
   check_duplicates = FALSE,
   check_completeness = FALSE,
   columns = list(
-    a = list(type = "numeric"),
-    b = list(type = "numeric")
+    a = list(type = "numeric", optional = FALSE),
+    b = list(type = "numeric", optional = FALSE)
   )
 )
 
@@ -47,9 +47,9 @@ test_that("check_duplicates respects check_duplicates_cols in schema", {
     duplicates_cols = c("a", "b"),
     check_completeness = FALSE,
     columns = list(
-      a = list(type = "numeric"),
-      b = list(type = "numeric"),
-      c = list(type = "character")
+      a = list(type = "numeric", optional = FALSE),
+      b = list(type = "numeric", optional = FALSE),
+      c = list(type = "character", optional = FALSE)
     )
   )
 

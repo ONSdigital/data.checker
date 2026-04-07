@@ -205,6 +205,10 @@ is_valid_column_values <- function(column_schema, col_name){
       }
     }
   }    
+
+  if (!("optional" %in% names(column_schema))) {
+    stop(paste0("Column ", col_name, " must have an 'optional' field set to either TRUE or FALSE"))
+  }
 }
 
 #' Convert complex types to the correct types and classes

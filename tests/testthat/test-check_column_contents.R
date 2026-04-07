@@ -67,8 +67,8 @@ test_that("Column with incorrect content return errors", {
 test_that("Factor checks work correctly", {
   df <- data.frame(a = factor(c("A", "B", "C")), b = factor(c("X", "Y", "Z")))
   columns <- list(
-    a = list(type = "integer", class = "factor", expected_levels = c("A", "B", "C")),
-    b = list(type = "integer", class = "factor", expected_levels = c("A", "B", "C"))
+    a = list(type = "integer", class = "factor", expected_levels = c("A", "B", "C"), optional = FALSE),
+    b = list(type = "integer", class = "factor", expected_levels = c("A", "B", "C"), optional = FALSE)
   )
 
   validator <- new_validator(

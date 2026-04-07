@@ -3,8 +3,8 @@ schema <- list(
   completeness_cols = c("a", "b"),
   check_duplicates = FALSE,
   columns = list(
-    a = list(type = "numeric"),
-    b = list(type = "character")
+    a = list(type = "numeric", optional = FALSE),
+    b = list(type = "character", optional = FALSE)
   )
 )
 
