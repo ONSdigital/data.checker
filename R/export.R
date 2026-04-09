@@ -13,8 +13,6 @@
 
 #' @export
 export.Validator <- function(object, file, format = c("yaml", "json", "html", "csv"), ...) {
-
-
   format <- match.arg(format)
 
   file_extension <- tools::file_ext(file)
@@ -28,7 +26,7 @@ export.Validator <- function(object, file, format = c("yaml", "json", "html", "c
   } else if (format == "json") {
     jsonlite::write_json(object$log, file, pretty = TRUE)
   } else if (format == "html") {
-    html_content <- log_html(object$log)
+    html_content <- log_html(object)
     writeLines(html_content, file)
   } else if (format == "csv") {
     log_table <- log_to_table(object$log)
@@ -88,14 +86,16 @@ print.Validator <- function(x, ...) {
 
 #' Generate HTML Representation of a Log
 #'
-#' @param log A log object to be converted into HTML. It is expected to be in a format compatible with `log_to_table`.
+#' @param validator A `Validator` object containing a log to be converted into HTML. It is expected to be in a format compatible with `log_to_table`.
 #'
 #' @return A string containing the HTML representation of the log.
 #'
 #' @importFrom glue glue
 #' @importFrom knitr kable
 #' @export
-log_html <- function(log) {
+log_html <- function(validator) {
+  log <- validator$log
+  name <- validator$name
   text_log <- log_to_table(log[2:length(log)]) # Skip the first entry which is system info
   info <- gsub("\n", "<br>", log[[1]]$description)
 
@@ -104,7 +104,7 @@ log_html <- function(log) {
             <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Document</title>
+              <title>{{{name}}}</title>
               <style>
                 body {
                   font-family: Arial, Helvetica, sans-serif;
@@ -138,7 +138,7 @@ log_html <- function(log) {
             </head>
             <body>
               <header>
-                <h1>QA log</h1>
+                <h1>QA log: {{{name}}}</h1>
               </header>
               <main>
                 <h2>System Information</h2>
