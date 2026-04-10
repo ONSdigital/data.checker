@@ -24,10 +24,16 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 #' @param data A data frame to validate against the schema.
 #' @param schema A schema object that defines the validation rules.
 #' @param backseries A previous version of the data to check against (optional).
+#' @param name Optional validator name - defaults to the name of the dataframe object supplied to "data". 
+#' Must be a single character string.
 #' @return An object of class `Validator`.
 #'
 #' @export
-new_validator <- function(data, schema, backseries = NULL) {
+new_validator <- function(data, schema, backseries = NULL, name = deparse(substitute(data))) {
+  if (!is.null(name) && (!is.character(name) || length(name) != 1 || is.na(name))) {
+    stop("name must be a single character string.")
+  } 
+
   if (is.character(schema)) {
     if (grepl("\\.json$", schema)) {
       schema <- jsonlite::fromJSON(schema)
@@ -84,6 +90,8 @@ new_validator <- function(data, schema, backseries = NULL) {
     outcome = NA,
     entry_type = "info"
   )
+
+  validator$name <- name
 
   validator$agent <- pointblank::create_agent(tbl = validator$data)
 
