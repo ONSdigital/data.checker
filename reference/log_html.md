@@ -5,15 +5,15 @@ Generate HTML Representation of a Log
 ## Usage
 
 ``` r
-log_html(log)
+log_html(validator)
 ```
 
 ## Arguments
 
-- log:
+- validator:
 
-  A log object to be converted into HTML. It is expected to be in a
-  format compatible with `log_to_table`.
+  A `Validator` object containing a log to be converted into HTML. It is
+  expected to be in a format compatible with `log_to_table`.
 
 ## Value
 
