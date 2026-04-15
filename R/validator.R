@@ -105,17 +105,16 @@ is_column_contents_valid <- function(schema) {
   return(TRUE)
 }
 
+#' Check type of column in schema is valid 
+#' 
+#' @param schema the validator schema
+#' @return `TRUE` if all column types are valid, otherwise an error is raised.
 is_type_valid <- function(schema) {
   valid_types <- c("character", "double", "integer", "numeric", "logical", "factor", "date", "datetime", "time")
-  invalid_cols <- list()
-  for (col in names(schema$columns)) {
-    if (!schema$columns[[col]]$type %in% valid_types) {
-      invalid_cols[[col]] <- schema$columns[[col]]$type
-    }
+  invalid_cols = names(which(sapply(schema$columns, function(col) {(!col$type %in% valid_types)})))
 
-  }
   if (length(invalid_cols) > 0) {
-    stop(paste0("The following columns have invalid types: ", paste0(names(invalid_cols), collapse = ", "), ". Accepted types are ", paste0(valid_types, collapse = ", "), "."))
+    stop(paste0("The following columns have invalid types: ", paste0(invalid_cols, collapse = ", "), ". Accepted types are ", paste0(valid_types, collapse = ", "), "."))
   }
   return(TRUE)
 }
