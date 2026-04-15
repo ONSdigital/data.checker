@@ -4,10 +4,11 @@ test_that("The code returns no errors when the column contents are correct", {
     a = list(type = "double", optional = TRUE, max_val = 100, min_val = 0),
     b = list(type = "character", optional = TRUE, min_string_length = 0, max_string_length = 10),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = TRUE)
+
   )
 
   validator <- new_validator(
-    schema = list(columns = columns, hard_checks = TRUE, characters = list(forbidden_characters = "[[:punct:]]"),
+    schema = list(columns = columns, hard_checks = TRUE, characters = list(forbidden_values = "[[:punct:]]"),
                   check_duplicates = FALSE, check_completeness = FALSE),
     data = df
   ) %>% check_column_contents()
@@ -30,8 +31,7 @@ test_that("The code returns errors when the numeric contents are outside ranges"
   )
 
   validator <- new_validator(
-    schema = list(columns = columns, hard_checks = TRUE, characters = list(allowed_characters = "^[A-Za-z0-9]+$", forbidden_strings = "[[:punct:]]"),
-                  check_duplicates = FALSE, check_completeness = FALSE),
+    schema = list(columns = columns, hard_checks = TRUE, check_duplicates = FALSE, check_completeness = FALSE),
     data = df
   ) %>% check_column_contents()
 
@@ -49,7 +49,7 @@ test_that("Column with incorrect content return errors", {
   df = data.frame(a= 1, b = "hello!", c = NA)
   columns = list(
     a = list(type = "double", optional = TRUE, max_val = 0.5),
-    b = list(type = "character", forbidden_strings = "[[:punct:]]", optional = TRUE),
+    b = list(type = "character", forbidden_values = "[[:punct:]]", optional = TRUE),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = FALSE)
   )
 
@@ -124,7 +124,7 @@ test_that("Datetime checks work correctly", {
 test_that("allowed strings for regex expressions work correctly", {
   df <- data.frame(a = c("abc123", "def", "sda:@"))
   columns <- list(
-    a = list(type = "character", optional = TRUE, allowed_strings = "(^[a-z]+$)")
+    a = list(type = "character", optional = TRUE, allowed_values = "(^[a-z]+$)")
   )
 
   validator <- new_validator(
@@ -136,10 +136,12 @@ test_that("allowed strings for regex expressions work correctly", {
   expect_equal(validator$log[[2]]$failing_ids, c(1, 3))
 })
 
-test_that("allowed strings for given list work correctly", {
-  df <- data.frame(a = c("abc123", "def", "sda:@"))
+test_that("allowed values for given list work correctly", {
+  df <- data.frame(a = c("abc123", "def", "sda:@"), b = c(1, 2, 3), c = c(0,1,2))
   columns <- list(
-    a = list(type = "character", optional = TRUE, allowed_strings = c("abc", "def", "sda"))
+    a = list(type = "character", optional = TRUE, allowed_values = c("abc", "def", "sda")),
+    b = list(type = "double", optional = TRUE, allowed_values = c(1,2)),
+    c = list(type = "double", optional = TRUE, allowed_values = 1)
   )
 
   validator <- new_validator(
@@ -149,12 +151,18 @@ test_that("allowed strings for given list work correctly", {
 
   expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(1, 3))
+  expect_equal(validator$log[[3]]$outcome, "fail")
+  expect_equal(validator$log[[3]]$failing_ids, c(3))
+  expect_equal(validator$log[[4]]$outcome, "fail")
+  expect_equal(validator$log[[4]]$failing_ids, c(1,3))
 })
 
-test_that("forbidden strings for given list work correctly", {
-  df <- data.frame(a = c("abc123", "def", "@"))
+test_that("forbidden values for given list work correctly", {
+  df <- data.frame(a = c("abc123", "def", "@"), b = c(1, 2, 3), c = c(0,1,2))
   columns <- list(
-    a = list(type = "character", optional = TRUE, forbidden_strings = c("abc123", ":", "@"))
+    a = list(type = "character", optional = TRUE, forbidden_values = c("abc123", ":", "@")),
+    b = list(type = "double", optional = TRUE, forbidden_values = 3),
+    c = list(type = "double", optional = TRUE, forbidden_values = c(0,2))
   )
 
   validator <- new_validator(
@@ -164,6 +172,10 @@ test_that("forbidden strings for given list work correctly", {
 
   expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(1, 3))
+  expect_equal(validator$log[[3]]$outcome, "fail")
+  expect_equal(validator$log[[3]]$failing_ids, c(3))
+  expect_equal(validator$log[[4]]$outcome, "fail")
+  expect_equal(validator$log[[4]]$failing_ids, c(1,3))
 })
 
 test_that("duplicate checks return correct outcomes", {
@@ -249,9 +261,10 @@ test_that("z score checks work correctly for negative z scores", {
   expect_equal(validator$log[[2]]$failing_ids, c(100))
 })
 
-convert_to_regex <- function(forbidden_strings) {
-  escaped_strings <- gsub("([\\^$.|?*+(){}\\[\\]])", "\\\\\\1", forbidden_strings)
+convert_to_regex <- function(forbidden_values) {
+  escaped_strings <- gsub("([\\^$.|?*+(){}\\[\\]])", "\\\\\\1", forbidden_values)
   regex_pattern <- paste0("^", escaped_strings, "$", collapse = "|")
   return(regex_pattern)
 }
+
 
