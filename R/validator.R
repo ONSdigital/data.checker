@@ -52,6 +52,7 @@ new_validator <- function(data, schema, backseries = NULL, name = deparse(substi
     schema <- validate_and_convert_date_formats(schema) # check date formats are correct
     schema <- types_to_classes(schema)  # Convert complex types to correct types and classes
     is_column_contents_valid(schema) # checks max and min values are valid
+    is_type_valid(schema)
     validator <- list("schema" = schema)
   }
 
@@ -108,6 +109,20 @@ new_validator <- function(data, schema, backseries = NULL, name = deparse(substi
 is_column_contents_valid <- function(schema) {
   for (col in names(schema$columns)) {
     is_valid_column_values(schema$columns[[col]], col)
+  }
+  return(TRUE)
+}
+
+#' Check type of column in schema is valid 
+#' 
+#' @param schema the validator schema
+#' @return `TRUE` if all column types are valid, otherwise an error is raised.
+is_type_valid <- function(schema) {
+  valid_types <- c("character", "double", "integer", "numeric", "logical", "factor", "date", "datetime", "time")
+  invalid_cols = names(which(sapply(schema$columns, function(col) {(!col$type %in% valid_types)})))
+
+  if (length(invalid_cols) > 0) {
+    stop(paste0("The following columns have invalid types: ", paste0(invalid_cols, collapse = ", "), ". Accepted types are ", paste0(valid_types, collapse = ", "), "."))
   }
   return(TRUE)
 }
@@ -197,6 +212,10 @@ is_valid_column_values <- function(column_schema, col_name){
       }
     }
   }    
+
+  if (!("optional" %in% names(column_schema))) {
+    stop(paste0("Column ", col_name, " must have an 'optional' field set to either TRUE or FALSE"))
+  }
 }
 
 #' Convert complex types to the correct types and classes
