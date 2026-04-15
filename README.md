@@ -107,7 +107,7 @@ schema <- list(
   columns = list(
     id = list(type = "double", optional = FALSE),
     age = list(type = "double", optional = FALSE, min_val = 0),
-    sex = list(type = "character", optional = FALSE, allowed_strings = c("M", "F"))
+    sex = list(type = "character", optional = FALSE, allowed_values = c("M", "F"))
   )
 )
 
