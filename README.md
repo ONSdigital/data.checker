@@ -79,12 +79,12 @@ These checks can be included in the lists for individual columns in your schema,
 | integer / double | Maximum absolute z score | max_z_score | Checks that the absolute value of all z scores are below or equal to the maximum z score
 | character        | Minimum length         | min_length        | Checks that all strings have length are above or equal to the minimum length                                                               |
 | character        | Maximum length         | max_length        | Checks that all strings have length below or equal to the maximum length                                                                   |
-| character        | allowed strings        | allowed_strings   | Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead)        |
-| character        | forbidden strings      | forbidden_strings | Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead) |
 | date / datetime  | Minimum Date           | min_date          | Checks that all dates are after the minimum date using the format “YYYY-MM-DD”                                                             |
 | date / datetime  | Maximum Date           | max_date          | Checks that all dates are before the maximum date using the format “YYYY-MM-DD”                                                            |
 | date/ datetime   | Minimum Datetime       | min_datetime      | Checks that all dates are after the minimum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS                                 |
 | date/ datetime   | Maximum Datetime       | max_datetime      | Checks that all dates are before the maximum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS                                |
+| any        | allowed values        | allowed_values  | Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead)        |
+| any        | forbidden values      | forbidden_values | Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead) |
 | any              | Missing values check   | allow_na          | Checks for missing or NA values in the column.                                                                                             |
 | any              | Class                  | class             | Checks that column data Class matches the specified type                                                                                   |
 

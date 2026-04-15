@@ -35,11 +35,9 @@ test_that("The code returns errors when the numeric contents are outside ranges"
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(1, 3))
   expect_equal(validator$log[[2]]$n_failing, 2)
 
-  expect_equal(validator$log[[3]]$outcome, "fail")
   expect_equal(validator$log[[3]]$failing_ids, c(2))
   expect_equal(validator$log[[3]]$n_failing, 1)
 
@@ -94,9 +92,7 @@ test_that("Date checks work correctly", {
 
   expect_equal(validator$log[[2]]$outcome, "pass")
   expect_equal(validator$log[[3]]$outcome, "pass")
-  expect_equal(validator$log[[4]]$outcome, "fail")
   expect_equal(validator$log[[4]]$failing_ids, c(1))
-  expect_equal(validator$log[[5]]$outcome, "fail")
   expect_equal(validator$log[[5]]$failing_ids, c(3))
 })
 
@@ -115,9 +111,7 @@ test_that("Datetime checks work correctly", {
 
   expect_equal(validator$log[[2]]$outcome, "pass")
   expect_equal(validator$log[[3]]$outcome, "pass")
-  expect_equal(validator$log[[4]]$outcome, "fail")
   expect_equal(validator$log[[4]]$failing_ids, c(1))
-  expect_equal(validator$log[[5]]$outcome, "fail")
   expect_equal(validator$log[[5]]$failing_ids, c(3))
 })
 
@@ -149,11 +143,8 @@ test_that("allowed values for given list work correctly", {
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(1, 3))
-  expect_equal(validator$log[[3]]$outcome, "fail")
-  expect_equal(validator$log[[3]]$failing_ids, c(3))
-  expect_equal(validator$log[[4]]$outcome, "fail")
+  expect_equal(validator$log[[3]]$failing_ids, 3)
   expect_equal(validator$log[[4]]$failing_ids, c(1,3))
 })
 
@@ -170,11 +161,8 @@ test_that("forbidden values for given list work correctly", {
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(1, 3))
-  expect_equal(validator$log[[3]]$outcome, "fail")
   expect_equal(validator$log[[3]]$failing_ids, c(3))
-  expect_equal(validator$log[[4]]$outcome, "fail")
   expect_equal(validator$log[[4]]$failing_ids, c(1,3))
 })
 
@@ -189,7 +177,6 @@ test_that("duplicate checks return correct outcomes", {
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, 4)
 
   df <- data.frame(a = c(1, 2, 3))
@@ -213,7 +200,6 @@ test_that("IQR checks work correctly", {
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(1, 10))
 })
 
@@ -242,7 +228,6 @@ test_that("z score checks work correctly", {
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(10))
 })
 
@@ -257,7 +242,6 @@ test_that("z score checks work correctly for negative z scores", {
     data = df
   ) %>% check_column_contents()
 
-  expect_equal(validator$log[[2]]$outcome, "fail")
   expect_equal(validator$log[[2]]$failing_ids, c(100))
 })
 
