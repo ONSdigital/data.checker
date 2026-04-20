@@ -26,6 +26,21 @@ test_that("custom checks work with standard evaluation", {
   )
 })
 
+test_that("custom checks are labelled correctly", {
+  condition <- df$age > 20
+
+  validator <- add_check(
+    validator,
+    description = "Age is greater than 20",
+    condition = condition
+  ) 
+  
+  log <- validator$log
+
+  expect_equal(log[[length(log)]]$description, "Age is greater than 20")
+
+})
+
 test_that("custom checks work within validator$data environment", {
   expect_no_error(
     add_check(

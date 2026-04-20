@@ -449,7 +449,7 @@ add_check <- function(validator, description, condition) {
 
   validator$agent <- pointblank::specially(
     validator$agent,
-    label = "description",
+    label = description,
     fn = function(x) fun(df=x, exp=rlang::enquo(condition))
   ) |> pointblank::interrogate(progress = FALSE)
 
