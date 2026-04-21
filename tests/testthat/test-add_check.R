@@ -45,7 +45,7 @@ test_that("custom checks work within validator$data environment", {
   expect_no_error(
     add_check(
       validator,
-      description = "Age greater than 20",
+      description = "Age is greater than 20",
       condition = age > 20
     )
   )

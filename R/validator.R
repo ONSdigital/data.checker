@@ -22,7 +22,8 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 #'
 #' Creates a `Validator` object to validate data against a given schema.
 #' @param data A data frame to validate against the schema.
-#' @param schema A schema object that defines the validation rules.
+#' @param schema A schema object that defines the validation rules. See the vignette for more details on schema structure. 
+#' This can also be a file path to a JSON, YAML, or TOML file containing the schema.
 #' @param backseries A previous version of the data to check against (optional).
 #' @param name Optional validator name - defaults to the name of the dataframe object supplied to "data". 
 #' Must be a single character string.
