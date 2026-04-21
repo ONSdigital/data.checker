@@ -4,10 +4,10 @@
 \alias{log_html}
 \title{Generate HTML Representation of a Log}
 \usage{
-log_html(log)
+log_html(validator)
 }
 \arguments{
-\item{log}{A log object to be converted into HTML. It is expected to be in a format compatible with \code{log_to_table}.}
+\item{validator}{A \code{Validator} object containing a log to be converted into HTML. It is expected to be in a format compatible with \code{log_to_table}.}
 }
 \value{
 A string containing the HTML representation of the log.

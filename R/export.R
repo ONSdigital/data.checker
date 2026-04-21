@@ -172,13 +172,17 @@ log_pointblank_outcomes <- function(validator){
 
   hashed_log <- vapply(validator$log, log_hash_key, character(1))
 
-  entries <- apply(validator$agent$validation_set, 1, function(x) {
+  validation_set <- as.data.frame(validator$agent$validation_set)
+
+  entries <- apply(validation_set, 1, function(x) {
     outcome <- ifelse(x$all_passed, "pass", "fail")
 
-    if (outcome == "fail" & is.null(x$tbl_checked)) {
+    tbl_checked <- as.data.frame(x$tbl_checked)
+
+    if (!is.na(outcome) && outcome == "fail" && is.null(tbl_checked)) {
       failing_ids <- ifelse(is.null(x$column), NA, x$column)
-    } else if (outcome == "fail" && nrow(x$tbl_checked[[1]]) > 1 && x$label != "Column names match previous data") {
-      failing_ids <- which(x$tbl_checked[[1]]$pb_is_good_ == FALSE)
+    } else if (!is.na(outcome) && outcome == "fail" && nrow(tbl_checked) > 1 && x$label != "Column names match previous data") {
+      failing_ids <- which(tbl_checked$pb_is_good_ == FALSE)
     } else {
       failing_ids <- NA
     }

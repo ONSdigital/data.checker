@@ -384,15 +384,12 @@ check_types <- function(validator) {
     validator$agent,
     label = "Correct column types",
     fn = function(x) {
-      incorrect_types <- names(schema_types)[vapply(
-        names(schema_types),
-        function(nm) schema_types[[nm]] != typeof(x[[nm]]),
-        logical(1)
-      )]
-
-      length(incorrect_types) == 0
+      sapply(names(schema_types), function(colname) {
+        schema_types[[colname]] == typeof(x[[colname]])
+      })
     }
   )
+
   # Check column classes
   schema_classes <- lapply(
     validator$schema$columns,
@@ -400,30 +397,23 @@ check_types <- function(validator) {
   )
   schema_classes <- schema_classes[!vapply(schema_classes, is.null, logical(1))] # drop any missing schema entries
 
-  validator$agent <- pointblank::specially(
-    validator$agent,
-    label = "Correct column classes",
-    fn = function(x) {
-      incorrect_classes <- names(schema_classes)[vapply(
-        names(schema_classes),
-        function(nm) {
-          expected <- schema_classes[[nm]]
-          actual <- class(x[[nm]])
-
-          # expected can be length > 1; require identical class vector
-          !identical(actual, expected)
-        },
-        logical(1)
-      )]
-
-      length(incorrect_classes) == 0
-    }
-  )
-
+  if (length(schema_classes) > 0) {
+    validator$agent <- pointblank::specially(
+      validator$agent,
+      label = "Correct column classes",
+      fn = function(x) {
+        sapply(names(schema_classes), function(colname) {
+          schema_classes[[colname]] == class(x[[colname]])
+        })
+      }
+    )
+  }
+  
   if (nrow(validator$agent$validation_set) > 0) {
-    validator$agent <- validator$agent |> pointblank::interrogate( progress = FALSE)
+    validator$agent <- validator$agent |> pointblank::interrogate(progress = FALSE)
     validator <- log_pointblank_outcomes(validator)
   }
+
   return(validator)
 }
 

@@ -134,8 +134,8 @@ Optional checks can be applied to each column depending on the column type. In t
     -   min_val (numeric): minimum value
     -   max_val (numeric): maximum value
 -   character checks:
-    -   min_length (numeric): minimum number of characters
-    -   max_length (numeric): maximum number of characters
+    -   min_string_length (numeric): minimum number of characters
+    -   max_string_length (numeric): maximum number of characters
     -   allowed strings (character): either a list of allowed strings or a regular expression (see regular expression guide below)
     -   forbidden_strings (character): either a list of forbidden strings or a regular expression
 -   Date checks:
