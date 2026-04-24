@@ -60,8 +60,6 @@ schema
 
 Running the `new_validator` function will create a `Validator` object.
 
-
-
 ```{r}
 validator <- data.checker::new_validator(
   data = df,
@@ -133,6 +131,8 @@ Optional checks can be applied to each column depending on the column type. In t
 -   integer/double checks:
     -   min_val (numeric): minimum value
     -   max_val (numeric): maximum value
+-   factor checks:
+    - expected_levels
 -   character checks:
     -   min_string_length (numeric): minimum number of characters
     -   max_string_length (numeric): maximum number of characters
@@ -185,7 +185,7 @@ print(data_check_results)
 
 ### Custom checks
 
-You can write your own checks using the `add_custom_check` function. This is particularly useful for checks involving more than one column, which cannot be configured using the standard template. The checks are done in the context of the original data, meaning you can reference columns as if they are variables in the environment (similar to tidy evaluation). This is recommended because it guarantees the checks are done on the correct data only. Alternatively, you can use standard evaluation (see example below).
+You can write your own checks using the `add_check` function. This is particularly useful for checks involving more than one column, which cannot be configured using the standard template. The checks are done in the context of the original data, meaning you can reference columns as if they are variables in the environment (similar to tidy evaluation). This is recommended because it guarantees the checks are done on the correct data only. Alternatively, you can use standard evaluation (see example below).
 
 ```{r}
 df <- data.frame(
