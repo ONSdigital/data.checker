@@ -14,7 +14,8 @@ new_validator(
 \arguments{
 \item{data}{A data frame to validate against the schema.}
 
-\item{schema}{A schema object that defines the validation rules.}
+\item{schema}{A schema object that defines the validation rules. See the vignette for more details on schema structure.
+This can also be a file path to a JSON, YAML, or TOML file containing the schema.}
 
 \item{backseries}{A previous version of the data to check against (optional).}
 

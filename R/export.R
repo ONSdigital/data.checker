@@ -173,6 +173,7 @@ log_pointblank_outcomes <- function(validator){
   hashed_log <- vapply(validator$log, log_hash_key, character(1))
 
   validation_set <- as.data.frame(validator$agent$validation_set)
+  validation_set$time_processed <- validation_set$time_processed |> hms::as_hms() |> hms::round_hms(2) |> as.character()
 
   entries <- apply(validation_set, 1, function(x) {
     outcome <- ifelse(x$all_passed, "pass", "fail")
