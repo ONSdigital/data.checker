@@ -46,7 +46,11 @@ export.Validator <- function(object, file, format = c("yaml", "json", "html", "c
 #' @export
 log_to_table <- function(log) {
   table <- lapply(log, function(x) {
-    x$failing_ids <- paste0(x$failing_ids, collapse = ", ")
+    if (!any(is.null(x$failing_ids)) && !any(is.na(x$failing_ids)) && length(x$failing_ids) > 10) {
+      x$failing_ids <- paste0(head(x$failing_ids, 10), collapse = ", ") |> paste0(" (+ ", length(x$failing_ids) - 10, ")")
+    } else {
+      x$failing_ids <- paste0(x$failing_ids, collapse = ", ")
+    }
     x[is.na(x) | x == "NA"] <- ""
     data.frame(x)
   })
