@@ -14,8 +14,8 @@ test_that("Only Required checks are run for all columns in dataframe", {
     # Issues with datetime datatypes when validating schema,
     columns <- list(
         a = list(type = "double", optional = FALSE, allow_na = FALSE, max_val = 100, min_val = 0),
-        b = list(type = "character", optional = FALSE, min_string_length = 0, max_string_length = 10, allowed_strings = "^.{0,4}$"),
-        g = list(type = "character", optional = FALSE, min_string_length = 0, max_string_length = 2, forbidden_strings = "[[:punct:]]"),
+        b = list(type = "character", optional = FALSE, min_string_length = 0, max_string_length = 10, allowed_values = "^.{0,4}$"),
+        g = list(type = "character", optional = FALSE, min_string_length = 0, max_string_length = 2, forbidden_values = "[[:punct:]]"),
         e = list(type = "date", optional = FALSE, allow_na = TRUE, min_date = "2020-01-01", max_date = "2023-12-31"),
         f = list(type = "integer", optional = FALSE, min_val = 0, max_val = 10),
         i = list(type = "datetime", optional = TRUE, allow_na = TRUE, min_datetime = "2020-01-01 01:00:00", max_datetime = "2023-12-31 01:00:00")

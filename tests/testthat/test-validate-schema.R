@@ -70,29 +70,29 @@ test_that("is_valid_schema validator warning for allowed and forbidden strings",
 df = data.frame(col1 = "hello!")
 schema = list(
     columns = list(
-      col1 = list(type = "character", allowed_strings = c("a","b"), forbidden_strings = c("c","d"), optional = FALSE)
+      col1 = list(type = "character", allowed_values = c("a","b"), forbidden_values = c("c","d"), optional = FALSE)
       ),
     check_duplicates = TRUE,
     check_completeness = TRUE
   )
   validator <- new_validator(schema = schema, data = df) |> check()
-  expect_equal(validator$log[[2]]$description, "Column col1 allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
-  expect_true(is.null(validator$schema$columns$col1$forbidden_strings))
+  expect_equal(validator$log[[2]]$description, "Column col1 allowed_values and forbidden_values cannot both be present. Using allowed_values only.")
+  expect_true(is.null(validator$schema$columns$col1$forbidden_values))
 })
 
 test_that("is_valid_schema doesnt return validator warning for allowed and forbidden strings in diff columns", {
 df = data.frame(col1 = "hello!", col2 = "world!")
 schema = list(
     columns = list(
-      col1 = list(type = "character", allowed_strings = c("a","b"), optional = FALSE),
-      col2 = list(type = "character", forbidden_strings = c("c","d"), optional = FALSE)
+      col1 = list(type = "character", allowed_values = c("a","b"), optional = FALSE),
+      col2 = list(type = "character", forbidden_values = c("c","d"), optional = FALSE)
       ),
     check_duplicates = TRUE,
     check_completeness = TRUE
   )
   validator <- new_validator(schema = schema, data = df) |> check()
-  expect_false(validator$log[[2]]$description == "Column col1 allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
-  expect_false(validator$log[[2]]$description == "Column col2 allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
+  expect_false(validator$log[[2]]$description == "Column col1 allowed_values and forbidden_values cannot both be present. Using allowed_values only.")
+  expect_false(validator$log[[2]]$description == "Column col2 allowed_values and forbidden_values cannot both be present. Using allowed_values only.")
 })
 
 

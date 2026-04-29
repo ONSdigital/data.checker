@@ -2,7 +2,7 @@ test_that("Input data is list produces error", {
   df = list(a= 1, b = "hello!", c = NA)
   columns = list(
     a = list(type = "double", optional = TRUE, max_val = 0.5),
-    b = list(type = "character", forbidden_strings = "[[:punct:]]", optional = TRUE),
+    b = list(type = "character", forbidden_values = "[[:punct:]]", optional = TRUE),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = FALSE)
   )
 
@@ -19,7 +19,7 @@ test_that("Schema is not list produces error", {
   df = data.frame(a= 1, b = "hello!", c = NA)
   columns = list(
     a = list(type = "double", optional = TRUE, max_val = 0.5),
-    b = list(type = "character", forbidden_strings = "[[:punct:]]", optional = TRUE),
+    b = list(type = "character", forbidden_values = "[[:punct:]]", optional = TRUE),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = FALSE)
   )
 
@@ -36,7 +36,7 @@ test_that("schema is not named list produces error", {
   df = data.frame(a= 1, b = "hello!", c = NA)
   columns = list(
     a = list(type = "double", optional = TRUE, max_val = 0.5),
-    b = list(type = "character", forbidden_strings = "[[:punct:]]", optional = TRUE),
+    b = list(type = "character", forbidden_values = "[[:punct:]]", optional = TRUE),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = FALSE)
   )
 
@@ -53,7 +53,7 @@ test_that("schema is does not contain column produces error", {
   df = data.frame(a= 1, b = "hello!", c = NA)
   columns = list(
     a = list(type = "double", optional = TRUE, max_val = 0.5),
-    b = list(type = "character", forbidden_strings = "[[:punct:]]", optional = TRUE),
+    b = list(type = "character", forbidden_values = "[[:punct:]]", optional = TRUE),
     c = list(type = "double", optional = TRUE, min_val = 0, max_val = 10, allow_na = FALSE)
   )
 
