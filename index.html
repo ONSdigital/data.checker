@@ -181,18 +181,6 @@
 <td>Checks that all strings have length below or equal to the maximum length</td>
 </tr>
 <tr class="odd">
-<td>character</td>
-<td>allowed strings</td>
-<td>allowed_strings</td>
-<td>Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead)</td>
-</tr>
-<tr class="even">
-<td>character</td>
-<td>forbidden strings</td>
-<td>forbidden_strings</td>
-<td>Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead)</td>
-</tr>
-<tr class="odd">
 <td>date / datetime</td>
 <td>Minimum Date</td>
 <td>min_date</td>
@@ -215,6 +203,18 @@
 <td>Maximum Datetime</td>
 <td>max_datetime</td>
 <td>Checks that all dates are before the maximum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS</td>
+</tr>
+<tr class="odd">
+<td>any</td>
+<td>allowed values</td>
+<td>allowed_values</td>
+<td>Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead)</td>
+</tr>
+<tr class="even">
+<td>any</td>
+<td>forbidden values</td>
+<td>forbidden_values</td>
+<td>Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead)</td>
 </tr>
 <tr class="odd">
 <td>any</td>
@@ -249,7 +249,7 @@
 <span>  columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"double"</span>, optional <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
 <span>    age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"double"</span>, optional <span class="op">=</span> <span class="cn">FALSE</span>, min_val <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
-<span>    sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"character"</span>, optional <span class="op">=</span> <span class="cn">FALSE</span>, allowed_strings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"M"</span>, <span class="st">"F"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"character"</span>, optional <span class="op">=</span> <span class="cn">FALSE</span>, allowed_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"M"</span>, <span class="st">"F"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
