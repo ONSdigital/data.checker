@@ -2,7 +2,9 @@
 % Please edit documentation in R/checks.R
 \name{check_duplicates}
 \alias{check_duplicates}
-\title{Check for duplicate rows}
+\title{Check for duplicate rows. Can use subset of columns to check for
+duplicates if \code{duplicates_cols} is specified in the schema.
+Otherwise, all columns are used for duplicate check.}
 \usage{
 check_duplicates(validator)
 }
@@ -10,5 +12,7 @@ check_duplicates(validator)
 \item{validator}{\code{Validator} object}
 }
 \description{
-Check for duplicate rows
+Check for duplicate rows. Can use subset of columns to check for
+duplicates if \code{duplicates_cols} is specified in the schema.
+Otherwise, all columns are used for duplicate check.
 }

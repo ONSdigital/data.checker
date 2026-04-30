@@ -10,7 +10,8 @@ check_and_export(
   file,
   format,
   hard_check = FALSE,
-  backseries = NULL
+  backseries = NULL,
+  name = deparse(substitute(data))
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ check_and_export(
 \item{hard_check}{logical. Optional - FALSE by default. If TRUE, raises an error if there are any failed checks. Otherwise, raises a warning.}
 
 \item{backseries}{A previous version of the data to check against (optional).}
+
+\item{name}{validator name - defaults to the name of the dataframe object supplied to "data" (Optional).
+Must be a single character string.}
 }
 \value{
 The exported validation results.

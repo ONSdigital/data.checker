@@ -19,7 +19,7 @@ This can also be a file path to a JSON, YAML, or TOML file containing the schema
 
 \item{backseries}{A previous version of the data to check against (optional).}
 
-\item{name}{Optional validator name - defaults to the name of the dataframe object supplied to "data".
+\item{name}{validator name - defaults to the name of the dataframe object supplied to "data" (optional).
 Must be a single character string.}
 }
 \value{
