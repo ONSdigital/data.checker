@@ -136,8 +136,8 @@ Optional checks can be applied to each column depending on the column type. In t
 -   all types:
     -   allow_na (TRUE/FALSE): checks if there are any missing values
     -   class (character vector of any length): checks class of column
-    -   allowed values (character): either a list of allowed values or a regular expression (see regular expression guide below)
-    -   forbidden values (character): either a list of forbidden values or a regular expression
+    -   allowed_values (character or list): either a list of allowed strings or a regular expression (see regular expression guide below)
+    -   forbidden_values (character or list): either a list of forbidden strings or a regular expression
 -   integer/double checks:
     -   min_val (numeric): minimum value
     -   max_val (numeric): maximum value
@@ -146,8 +146,8 @@ Optional checks can be applied to each column depending on the column type. In t
 -   factor checks:
     -   expected_levels
 -   character checks:
-    -   min_string_length (numeric): minimum number of characters
-    -   max_string_length (numeric): maximum number of characters
+    -   min_length (numeric): minimum number of characters
+    -   max_length (numeric): maximum number of characters
 -   Date checks:
     -   min_date (character): minimum date using the format "YYYY-MM-DD", e.g. "2025-08-19"
     -   max_date (character): maximum date using the format "YYYY-MM-DD", e.g. "2025-08-19"

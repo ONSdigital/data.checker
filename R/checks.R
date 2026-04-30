@@ -1,4 +1,6 @@
-#' Check for duplicate rows
+#' Check for duplicate rows. Can use subset of columns to check for
+#' duplicates if `duplicates_cols` is specified in the schema.
+#' Otherwise, all columns are used for duplicate check.
 #'
 #' @param validator `Validator` object
 #'
@@ -250,43 +252,53 @@ run_checks <- function(validator, i_col) {
       )
     }
 
-    if (exists("forbidden_strings")) {
-      if (is.character(forbidden_strings) && length(forbidden_strings) > 1) {
-        validator$agent <- pointblank::col_vals_not_in_set(
+  }
+    if (exists("allowed_values")){
+      if (length(allowed_values) > 1) {
+        validator$agent <- pointblank::col_vals_in_set(
           validator$agent,
           columns = tidyselect::all_of({{ i_col }}),
-          set = forbidden_strings,
-          label = sprintf("Column %s does not contain forbidden strings", {{ i_col }})
+          set = allowed_values,
+          label = sprintf("Column %s only contains allowed values", {{ i_col }})
         )
-      } else if (is.character(forbidden_strings) && length(forbidden_strings) == 1) {
-        validator$agent <- pointblank::col_vals_expr(
+      }
+      else if (length(allowed_values) == 1) {
+        if (typeof(allowed_values) != "character") {
+          # will handle cases where single allowed value is numeric or date
+          allowed_values <- as.character(allowed_values)
+        }
+        validator$agent <- pointblank::col_vals_regex(
           validator$agent,
-          expr = rlang::expr(!stringr::str_detect(.data[[!!{{ i_col }}]], !!forbidden_strings)),
-          label = sprintf("Column %s does not contain forbidden characters", {{ i_col }}),
+          columns = tidyselect::all_of({{ i_col }}),
+          regex = allowed_values,
+          label = sprintf("Column %s only contains allowed values", {{ i_col }}),
           na_pass = TRUE
         )
       }
     }
 
-    if (exists("allowed_strings")) {
-      if (is.character(allowed_strings) && length(allowed_strings) == 1) {
-        validator$agent <- pointblank::col_vals_regex(
+    if (exists("forbidden_values")){
+      # forbidden_values <- as.character(forbidden_values)
+      if (length(forbidden_values) > 1) {
+        validator$agent <- pointblank::col_vals_not_in_set(
           validator$agent,
           columns = tidyselect::all_of({{ i_col }}),
-          regex = allowed_strings,
-          label = sprintf("Column %s only contains allowed strings", {{ i_col }}),
-          na_pass = TRUE
+          set = forbidden_values,
+          label = sprintf("Column %s does not contain forbidden values", {{ i_col }})
         )
-      } else if (is.character(allowed_strings) && length(allowed_strings) > 1) {
-        validator$agent <- pointblank::col_vals_in_set(
+      } else if (length(forbidden_values) == 1) {
+        if (typeof(forbidden_values) != "character") {
+          # will handle cases where single forbidden value is numeric or date
+          forbidden_values <- as.character(forbidden_values)
+        }
+        validator$agent <- pointblank::col_vals_expr(
           validator$agent,
-          columns = tidyselect::all_of({{ i_col }}),
-          set = allowed_strings,
-          label = sprintf("Column %s only contains allowed strings", {{ i_col }})
+          expr = rlang::expr(!stringr::str_detect(.data[[!!{{ i_col }}]], !!forbidden_values)),
+          label = sprintf("Column %s does not contain forbidden values", {{ i_col }}),
+          na_pass = TRUE
         )
       }
     }
-  }
   return(validator)
 }
 
@@ -314,14 +326,14 @@ check_colnames <- function(validator) {
 
   # Check if column names contains symbols other than underscores
   validator$agent <- pointblank::specially(validator$agent,
-    fn = function(x) stringr::str_detect(colnames(x), "[^a-zA-Z0-9_]", negate = T),
-    label = "Column names contain no symbols other than underscores."
+                                           fn = function(x) stringr::str_detect(colnames(x), "[^a-zA-Z0-9_]", negate = T),
+                                           label = "Column names contain no symbols other than underscores."
   )
 
   # Check if column names contains capital letters
   validator$agent <- pointblank::specially(validator$agent,
-    fn = function(x) stringr::str_detect(colnames(x), "[A-Z]", negate = T),
-    label = "Column names contain no capital letters."
+                                           fn = function(x) stringr::str_detect(colnames(x), "[A-Z]", negate = T),
+                                           label = "Column names contain no capital letters."
   )
 
   # Extract mandatory columns from the schema
@@ -333,8 +345,8 @@ check_colnames <- function(validator) {
 
   # Check if all mandatory columns are present
   validator$agent <- pointblank::specially(validator$agent,
-    fn = function(x) length(dplyr::setdiff(mandatory_columns, colnames(x))) == 0,
-    label = "All mandatory columns are present."
+                                           fn = function(x) length(dplyr::setdiff(mandatory_columns, colnames(x))) == 0,
+                                           label = "All mandatory columns are present."
   )
 
   # Extract unexpected columns
@@ -343,8 +355,8 @@ check_colnames <- function(validator) {
 
   # Check that there are no expected columns
   validator$agent <- pointblank::specially(validator$agent,
-    fn = function(x) stringr::str_detect(colnames(x), unexpected_columns, negate = TRUE),
-    label = "There are no unexpected columns."
+                                           fn = function(x) stringr::str_detect(colnames(x), unexpected_columns, negate = TRUE),
+                                           label = "There are no unexpected columns."
   )
 
   validator$agent <- pointblank::interrogate(validator$agent, progress = FALSE)
@@ -531,47 +543,47 @@ hard_checks_status <- function(validator, hard_check){
 #' @return The updated `Validator` object with QA entries added for any issues found in the schema.
 #' @export
 check_schema_contents_against_df <- function(validator) {
-  valid_schema_entries = c("type", "allowed_strings", "forbidden_strings","optional","allow_na","class")
+  valid_schema_entries = c("type", "allowed_values", "forbidden_values","optional","allow_na","class")
   max_min_cols <- c("val", "string_length", "date", "datetime")
-    for (entry in max_min_cols) {
-      valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
-    }
+  for (entry in max_min_cols) {
+    valid_schema_entries <- c(valid_schema_entries, paste0("max_", entry), paste0("min_", entry))
+  }
 
   for (col in names(validator$schema$columns)) {
     column_schema = validator$schema$columns[[col]]
-    if ("allowed_strings" %in% names(column_schema) && "forbidden_strings" %in% names(column_schema)) {
-      validator$schema$columns[[col]] <- column_schema[!names(column_schema) %in% c("forbidden_strings")]
-      message = paste0("Column ", col, " allowed_strings and forbidden_strings cannot both be present. Using allowed_strings only.")
+    if ("allowed_values" %in% names(column_schema) && "forbidden_values" %in% names(column_schema)) {
+      validator$schema$columns[[col]] <- column_schema[!names(column_schema) %in% c("forbidden_values")]
+      message = paste0("Column ", col, " allowed_values and forbidden_values cannot both be present. Using allowed_values only.")
       validator <-add_qa_entry(
         validator = validator,
         description = message,
         outcome = NA,
         entry_type = "warning"
       )
-  }
-
-  unused_entries <- c()
-  for (entry in names(column_schema)) {
-    if (!entry %in% valid_schema_entries) {
-      unused_entries <- c(unused_entries,entry)
     }
-  }
-  if (length(unused_entries) > 0) {
-    validator <-add_qa_entry(
-      validator = validator,
-      description = paste0("Column ", col, " unused schema entries: ", paste(unused_entries, collapse = ", ")),
-      outcome = NA,
-      entry_type = "warning"
-    )
-  }
+
+    unused_entries <- c()
+    for (entry in names(column_schema)) {
+      if (!entry %in% valid_schema_entries) {
+        unused_entries <- c(unused_entries,entry)
+      }
+    }
+    if (length(unused_entries) > 0) {
+      validator <-add_qa_entry(
+        validator = validator,
+        description = paste0("Column ", col, " unused schema entries: ", paste(unused_entries, collapse = ", ")),
+        outcome = NA,
+        entry_type = "warning"
+      )
+    }
   }
 
   for (name_col in c("completeness_cols", "duplicate_cols")) {
-  if (name_col %in% names(validator$schema)) {
-    if (!(all(validator$schema[[name_col]] %in% colnames(validator$data)))) {
-      stop(paste0("All columns specified in ", name_col, " must be present in the data."))
+    if (name_col %in% names(validator$schema)) {
+      if (!(all(validator$schema[[name_col]] %in% colnames(validator$data)))) {
+        stop(paste0("All columns specified in ", name_col, " must be present in the data."))
+      }
     }
-  }
   }
   return(validator)
 }
