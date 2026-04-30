@@ -10,6 +10,7 @@
 #' @param hard_check logical. Optional - FALSE by default. If TRUE, raises an error if there are any failed checks. Otherwise, raises a warning.
 #' @param backseries A previous version of the data to check against (optional).
 #' @param name validator name - defaults to the name of the dataframe object supplied to "data" (Optional).
+#' Must be a single character string.
 #' @return The exported validation results.
 #' @export
 check_and_export <- function(data, schema, file, format, hard_check = FALSE, backseries = NULL, name = deparse(substitute(data))) {
