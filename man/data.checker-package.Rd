@@ -4,11 +4,11 @@
 \name{data.checker-package}
 \alias{data.checker}
 \alias{data.checker-package}
-\title{data.checker: What the Package Does (One Line, Title Case)}
+\title{data.checker: A Package for Validating Data Frames Against a Defined Schema}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-What the package does (one paragraph).
+A package for validating data frames against a defined schema. Produces a report of the checks performed and any issues found.
 }
 \seealso{
 Useful links:
@@ -18,7 +18,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Analysis Standards and Pipelines Team (ONS) \email{ASAP@ons.gov.uk}
+
+Other contributors:
+\itemize{
+  \item Crown Copyright [copyright holder]
+}
 
 }
 \keyword{internal}

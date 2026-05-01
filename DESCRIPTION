@@ -1,10 +1,11 @@
 Package: data.checker
-Title: What the Package Does (One Line, Title Case)
+Title: A Package for Validating Data Frames Against a Defined Schema
 Version: 1.0.0
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Authors@R: c(
+    person("Crown Copyright", , , , role = c("cph")),
+    person("Analysis Standards and Pipelines Team (ONS)", , , "ASAP@ons.gov.uk", role = c("cre", "aut"))
+  )
+Description: A package for validating data frames against a defined schema. Produces a report of the checks performed and any issues found.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
