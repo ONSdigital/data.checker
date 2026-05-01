@@ -1,11 +1,11 @@
 Package: data.checker
-Title: A Package for Validating Data Frames Against a Defined Schema
+Title: Data Checker for Validating Data Frames Against Defined Schemas
 Version: 1.0.0
 Authors@R: c(
     person("Crown Copyright", , , , role = c("cph")),
     person("Analysis Standards and Pipelines Team (ONS)", , , "ASAP@ons.gov.uk", role = c("cre", "aut"))
   )
-Description: A package for validating data frames against a defined schema. Produces a report of the checks performed and any issues found.
+Description: Data Checker for validating data frames against defined schemas. Produces a report of the checks performed and any issues found, with index and entry value where appropriate.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
