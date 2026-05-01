@@ -51,6 +51,7 @@ filepath and format for the report and the option for hardchecks into
 the `check_and_export` function.
 
 ``` r
+
 libary(data.checker)
 
 df <- data.frame(
@@ -87,22 +88,22 @@ causing a fail.
 These checks can be included in the lists for individual columns in your
 schema, depending on the data type.
 
-| Data Type        | Check Name                              | Parameter        | Check Definition                                                                                                                           |
-|------------------|-----------------------------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| integer / double | Minimum value                           | min_val          | Checks that all values are above or equal to the minimum value                                                                             |
-| integer / double | Maximum value                           | max_val          | Checks that all values are below or equal to the maximum value                                                                             |
-| integer / double | Interquartile range (IQR) outlier check | iqr_check        | Checks that all values fall within $Q1 - (IQR*multiplier)$ and $Q3 + (IQR*multiplier)$, where the $multiplier$ is given by `iqr_check`     |
-| integer / double | Maximum absolute z score                | max_z_score      | Checks that the absolute value of all z scores are below or equal to the maximum z score                                                   |
-| character        | Minimum length                          | min_length       | Checks that all strings have length are above or equal to the minimum length                                                               |
-| character        | Maximum length                          | max_length       | Checks that all strings have length below or equal to the maximum length                                                                   |
-| date / datetime  | Minimum Date                            | min_date         | Checks that all dates are after the minimum date using the format “YYYY-MM-DD”                                                             |
-| date / datetime  | Maximum Date                            | max_date         | Checks that all dates are before the maximum date using the format “YYYY-MM-DD”                                                            |
-| date/ datetime   | Minimum Datetime                        | min_datetime     | Checks that all dates are after the minimum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS                                 |
-| date/ datetime   | Maximum Datetime                        | max_datetime     | Checks that all dates are before the maximum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS                                |
-| any              | allowed values                          | allowed_values   | Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead)        |
-| any              | forbidden values                        | forbidden_values | Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead) |
-| any              | Missing values check                    | allow_na         | Checks for missing or NA values in the column.                                                                                             |
-| any              | Class                                   | class            | Checks that column data Class matches the specified type                                                                                   |
+| Data Type | Check Name | Parameter | Check Definition |
+|----|----|----|----|
+| integer / double | Minimum value | min_val | Checks that all values are above or equal to the minimum value |
+| integer / double | Maximum value | max_val | Checks that all values are below or equal to the maximum value |
+| integer / double | Interquartile range (IQR) outlier check | iqr_check | Checks that all values fall within $`Q1 - (\text{IQR}\cdot\text{multiplier})`$ and $`Q3 + (\text{IQR}\cdot\text{multiplier})`$, where the multiplier is given by `iqr_check` |
+| integer / double | Maximum absolute z score | max_z_score | Checks that the absolute value of all z scores are below or equal to the maximum z score |
+| character | Minimum length | min_length | Checks that all strings have length are above or equal to the minimum length |
+| character | Maximum length | max_length | Checks that all strings have length below or equal to the maximum length |
+| date / datetime | Minimum Date | min_date | Checks that all dates are after the minimum date using the format “YYYY-MM-DD” |
+| date / datetime | Maximum Date | max_date | Checks that all dates are before the maximum date using the format “YYYY-MM-DD” |
+| date/ datetime | Minimum Datetime | min_datetime | Checks that all dates are after the minimum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS |
+| date/ datetime | Maximum Datetime | max_datetime | Checks that all dates are before the maximum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS |
+| any | allowed values | allowed_values | Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead) |
+| any | forbidden values | forbidden_values | Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead) |
+| any | Missing values check | allow_na | Checks for missing or NA values in the column. |
+| any | Class | class | Checks that column data Class matches the specified type |
 
 ## Adding Custom Checks
 
@@ -120,6 +121,7 @@ The example below demonstrates how to incorporate both pre-defined and
 custom checks into your validation.
 
 ``` r
+
 df <- data.frame(
   id = 1:10,
   age = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100),

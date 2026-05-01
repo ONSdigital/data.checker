@@ -13,7 +13,8 @@ check_and_export(
   file,
   format,
   hard_check = FALSE,
-  backseries = NULL
+  backseries = NULL,
+  name = deparse(substitute(data))
 )
 ```
 
@@ -43,6 +44,11 @@ check_and_export(
 - backseries:
 
   A previous version of the data to check against (optional).
+
+- name:
+
+  validator name - defaults to the name of the dataframe object supplied
+  to "data" (Optional). Must be a single character string.
 
 ## Value
 

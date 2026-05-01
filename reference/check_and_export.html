@@ -51,7 +51,8 @@ and exports the validation results to a specified file in a given format.</p>
 <span>  <span class="va">file</span>,</span>
 <span>  <span class="va">format</span>,</span>
 <span>  hard_check <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  backseries <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  backseries <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/deparse.html" class="external-link">deparse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">substitute</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -81,6 +82,11 @@ and exports the validation results to a specified file in a given format.</p>
 
 <dt id="arg-backseries">backseries<a class="anchor" aria-label="anchor" href="#arg-backseries"></a></dt>
 <dd><p>A previous version of the data to check against (optional).</p></dd>
+
+
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
+<dd><p>validator name - defaults to the name of the dataframe object supplied to "data" (Optional).
+Must be a single character string.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -23,6 +23,7 @@ checker what sorts of columns and values to expect.
 ### Example dataset:
 
 ``` r
+
 library(data.checker)
 
 df <- data.frame(
@@ -44,6 +45,7 @@ df
 ### Example schema:
 
 ``` r
+
 schema <- list(
   check_duplicates = FALSE,
   check_completeness = FALSE,
@@ -82,6 +84,7 @@ schema
 Running the `new_validator` function will create a `Validator` object.
 
 ``` r
+
 validator <- data.checker::new_validator(
   data = df,
   schema = schema
@@ -89,6 +92,7 @@ validator <- data.checker::new_validator(
 ```
 
 ``` r
+
 print(validator)
 #>  System information                                                                                                                                                                                                     
 #>  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -119,6 +123,7 @@ The `check` function will run the full suite of checks on your
 `Validator` object and add them to the log.
 
 ``` r
+
 check_results <- data.checker::check(validator)
 
 print(check_results)
@@ -137,15 +142,14 @@ print(check_results)
 #> R version : R version 4.5.1 (2025-06-13 ucrt)
 #> data.checker version: 0.0.0.9000  
 #> 
-#>  Timestamp          Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
-#> -----------------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
-#> 1777476759.92615   Column names contain no symbols other than underscores.                   pass                    0           error      
-#> 1777476759.96194   Column names contain no capital letters.                                  pass                    0           error      
-#> 1777476759.97183   All mandatory columns are present.                                        pass                    0           error      
-#> 1777476759.98646   There are no unexpected columns.                                          pass                    0           error      
-#> 15:32:39           Removed schema information for optional columns that aren't in the data                           N/A         info       
-#> 1777476760.05563   Correct column types                                                      fail                    1           error      
-#> 1777476760.06501   Correct column classes                                                    pass                    0           error
+#>  Timestamp   Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
+#> ----------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
+#> 11:55:20    Column names contain no symbols other than underscores.                   pass                    0           error      
+#> 11:55:20    Column names contain no capital letters.                                  pass                    0           error      
+#> 11:55:20    All mandatory columns are present.                                        pass                    0           error      
+#> 11:55:20    There are no unexpected columns.                                          pass                    0           error      
+#> 11:55:19    Removed schema information for optional columns that aren't in the data                           N/A         info       
+#> 11:55:20    Correct column types                                                      fail      1             1           error
 ```
 
 ### Exporting your log
@@ -156,6 +160,7 @@ outputs so you have a record of which automated checks were done and
 what they found.
 
 ``` r
+
 data.checker::export(check_results, file = "example.html", format = "html")
 ```
 
@@ -163,8 +168,19 @@ Alternatively, you can use the `validate` function to run the full
 process.
 
 ``` r
+
 data.checker::check_and_export(df, schema, file = "example.html", format = "html", hard_check = FALSE)
 ```
+
+## Optional function arguments
+
+Some additional arguments you can use when running `check_and_export`
+include:
+
+- backseries (data.frame): previous version of the data to compare
+  against.
+- name (character): name to give the produced report. If left blank this
+  defaults to “data”
 
 ## Setting up the schema
 
@@ -181,7 +197,8 @@ for each column.
 For each column, you should include a type (“character”, “integer”,
 “double”, “logical”). You also need an “optional” setting (TRUE or
 FALSE) if TRUE the checker will raise an error if the column is missing.
-If FALSE the checker data will not raise an error if it’s missing.
+If FALSE the checker data will not raise an error if it’s missing. At
+least one column in your schema must have optional = TRUE.
 
 You can also optionally define a class if you want it to be checked.
 There are three special types you can choose - “Date”, “datetime” and
@@ -198,12 +215,23 @@ type. In the scheme, these should form part of the `columns` list.
   - allow_na (TRUE/FALSE): checks if there are any missing values
   - class (character vector of any length): checks class of column
   - allowed_values (character or list): either a list of allowed strings
-    or a regular expression (see regular expression guide below)
+    / values, or a regular expression (see regular expression guide
+    below)
   - forbidden_values (character or list): either a list of forbidden
-    strings or a regular expression
+    strings / values, or a regular expression
 - integer/double checks:
   - min_val (numeric): minimum value
   - max_val (numeric): maximum value
+  - iqr_check (numeric): checks that all values fall within
+    $`Q1 - (\text{IQR} \cdot \text{multiplier})`$ and
+    $`Q3 + (\text{IQR} \cdot \text{multiplier})`$, where IQR is the
+    inter-quartile range. The multiplier is the value set by this
+    parameter.
+  - max_z_score (numeric): Checks that the absolute value of all z
+    scores are below or equal to the maximum z score set by this
+    parameter.
+- factor checks:
+  - expected_levels (character vector): expected levels for the factor
 - character checks:
   - min_length (numeric): minimum number of characters
   - max_length (numeric): maximum number of characters
@@ -228,6 +256,7 @@ instead. You can then supply `new_validator` with the file path, and the
 package will do the rest.
 
 ``` r
+
 df <- data.frame(
   id = 1:10,
   age = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100),
@@ -254,6 +283,7 @@ data_check_results <- data.checker::new_validator(schema = "example_schema.yaml"
 ```
 
 ``` r
+
 print(data_check_results)
 #>  System information                                                                                                                                                                                                     
 #>  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -270,38 +300,43 @@ print(data_check_results)
 #> R version : R version 4.5.1 (2025-06-13 ucrt)
 #> data.checker version: 0.0.0.9000  
 #> 
-#>  Timestamp          Description                                                                 Outcome   Failing Ids   n Failing   Entry Type 
-#> -----------------  --------------------------------------------------------------------------  --------  ------------  ----------  -----------
-#> 15:32:40           Column sex unused schema entries: min_length, max_length, allowed_strings                           N/A         warning    
-#> 15:32:40           Column country unused schema entries: levels                                                        N/A         warning    
-#> 1777476760.47757   Column names contain no symbols other than underscores.                     pass                    0           error      
-#> 1777476760.49173   Column names contain no capital letters.                                    pass                    0           error      
-#> 1777476760.50141   All mandatory columns are present.                                          pass                    0           error      
-#> 1777476760.51083   There are no unexpected columns.                                            pass                    0           error      
-#> 15:32:40           Removed schema information for optional columns that aren't in the data                             N/A         info       
-#> 1777476760.58052   Correct column types                                                        pass                    0           error      
-#> 1777476760.59024   Correct column classes                                                      pass                    0           error      
-#> 1777476760.70416   description                                                                 pass                    0           error      
-#> 1777476760.8164    Column id: values are above or equal to 0                                   pass                    0           error      
-#> 1777476760.83316   Column id: values are below or equal to 1000                                pass                    0           error      
-#> 1777476761.00248   Column age: values are above or equal to 0                                  pass                    0           error      
-#> 1777476761.01637   Column age: values are below or equal to 120                                pass                    0           error      
-#> 1777476761.59393   Column date: dates are after 2020-01-01                                     pass                    0           error      
-#> 1777476761.60761   Column date: dates are before 2023-12-31                                    pass                    0           error
+#>  Timestamp   Description                                                                 Outcome   Failing Ids   n Failing   Entry Type 
+#> ----------  --------------------------------------------------------------------------  --------  ------------  ----------  -----------
+#> 11:55:19    Column sex unused schema entries: min_length, max_length, allowed_strings                           N/A         warning    
+#> 11:55:19    Column country unused schema entries: levels                                                        N/A         warning    
+#> 11:55:20    Column names contain no symbols other than underscores.                     pass                    0           error      
+#> 11:55:20    Column names contain no capital letters.                                    pass                    0           error      
+#> 11:55:20    All mandatory columns are present.                                          pass                    0           error      
+#> 11:55:20    There are no unexpected columns.                                            pass                    0           error      
+#> 11:55:19    Removed schema information for optional columns that aren't in the data                             N/A         info       
+#> 11:55:20    Correct column types                                                        pass                    0           error      
+#> 11:55:20    Correct column classes                                                      pass                    0           error      
+#> 11:55:20    Column id contains no missing values                                        pass                    0           error      
+#> 11:55:20    Column id: values are above or equal to 0                                   pass                    0           error      
+#> 11:55:20    Column id: values are below or equal to 1000                                pass                    0           error      
+#> 11:55:20    Column age contains no missing values                                       pass                    0           error      
+#> 11:55:20    Column age: values are above or equal to 0                                  pass                    0           error      
+#> 11:55:20    Column age: values are below or equal to 120                                pass                    0           error      
+#> 11:55:20    Column sex contains no missing values                                       pass                    0           error      
+#> 11:55:20    Column country contains no missing values                                   pass                    0           error      
+#> 11:55:20    Column date contains no missing values                                      pass                    0           error      
+#> 11:55:20    Column date: dates are after 2020-01-01                                     pass                    0           error      
+#> 11:55:20    Column date: dates are before 2023-12-31                                    pass                    0           error
 ```
 
 ### Custom checks
 
-You can write your own checks using the `add_custom_check` function.
-This is particularly useful for checks involving more than one column,
-which cannot be configured using the standard template. The checks are
-done in the context of the original data, meaning you can reference
-columns as if they are variables in the environment (similar to tidy
-evaluation). This is recommended because it guarantees the checks are
-done on the correct data only. Alternatively, you can use standard
-evaluation (see example below).
+You can write your own checks using the `add_check` function. This is
+particularly useful for checks involving more than one column, which
+cannot be configured using the standard template. The checks are done in
+the context of the original data, meaning you can reference columns as
+if they are variables in the environment (similar to tidy evaluation).
+This is recommended because it guarantees the checks are done on the
+correct data only. Alternatively, you can use standard evaluation (see
+example below).
 
 ``` r
+
 df <- data.frame(
   id = 1:10,
   age = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100),
@@ -325,10 +360,12 @@ data_check_results <- data.checker::new_validator(df, schema) |>
 ```
 
 ``` r
+
 data_check_results <- anonymise_validator(data_check_results)
 ```
 
 ``` r
+
 print(data_check_results)
 #>  System information                                                                                                                                                                                                     
 #>  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -345,16 +382,16 @@ print(data_check_results)
 #> R version : R version 4.5.1 (2025-06-13 ucrt)
 #> data.checker version: 0.0.0.9000  
 #> 
-#>  Timestamp          Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
-#> -----------------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
-#> 1777476761.85511   Column names contain no symbols other than underscores.                   pass                    0           error      
-#> 1777476761.86496   Column names contain no capital letters.                                  pass                    0           error      
-#> 1777476761.87813   All mandatory columns are present.                                        pass                    0           error      
-#> 1777476761.8873    There are no unexpected columns.                                          pass                    0           error      
-#> 15:32:41           Removed schema information for optional columns that aren't in the data                           N/A         info       
-#> 1777476761.95513   Correct column types                                                      fail                    1           error      
-#> 1777476761.96862   Correct column classes                                                    pass                    0           error      
-#> 1777476762.1113    description                                                               pass                    0           error
+#>  Timestamp   Description                                                               Outcome   Failing Ids   n Failing   Entry Type 
+#> ----------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------
+#> 11:55:22    Column names contain no symbols other than underscores.                   pass                    0           error      
+#> 11:55:22    Column names contain no capital letters.                                  pass                    0           error      
+#> 11:55:22    All mandatory columns are present.                                        pass                    0           error      
+#> 11:55:22    There are no unexpected columns.                                          pass                    0           error      
+#> 11:55:21    Removed schema information for optional columns that aren't in the data                           N/A         info       
+#> 11:55:22    Correct column types                                                      fail      1             1           error      
+#> 11:55:22    There are no males over 90 (tidy evaluation)                              pass                    0           error      
+#> 11:55:22    There are no males over 90 (standard evaluation)                          pass                    0           error
 ```
 
 ### Custom log entries
@@ -373,6 +410,7 @@ the first argument and a description. You can also optionally add:
   to “info”.
 
 ``` r
+
 df <- data.frame(
   age = c(10, 11, 13, 15, 22, 34, 80),
   sex = c("M", "F", "M", "F", "M", "F", "M")
@@ -397,10 +435,12 @@ validator <- data.checker::add_qa_entry(
 ```
 
 ``` r
+
 validator <- anonymise_validator(validator)
 ```
 
 ``` r
+
 print(validator)
 #>  System information                                                                                                                                                                                                     
 #>  -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -419,5 +459,5 @@ print(validator)
 #> 
 #>  Timestamp   Description                Outcome   Failing Ids   n Failing   Entry Type 
 #> ----------  -------------------------  --------  ------------  ----------  -----------
-#> 15:32:42    Example custom log entry                           N/A         info
+#> 11:55:21    Example custom log entry                           N/A         info
 ```

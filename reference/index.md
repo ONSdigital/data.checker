@@ -4,61 +4,95 @@
 
 - [`add_check()`](https://onsdigital.github.io/data.checker/reference/add_check.md)
   : Add a custom check to the validator
+
 - [`add_check_custom()`](https://onsdigital.github.io/data.checker/reference/add_check_custom.md)
   : Add a custom check to the validator
+
 - [`add_qa_entry()`](https://onsdigital.github.io/data.checker/reference/add_qa_entry.md)
   : Add a QA Entry to the validator's QA Log
+
 - [`check()`](https://onsdigital.github.io/data.checker/reference/check.md)
   : Validate a Validator Object
+
 - [`check_and_export()`](https://onsdigital.github.io/data.checker/reference/check_and_export.md)
   : Validate data against a schema and output results
+
 - [`check_backseries()`](https://onsdigital.github.io/data.checker/reference/check_backseries.md)
   : Check backseries consistency
+
 - [`check_colnames()`](https://onsdigital.github.io/data.checker/reference/check_colnames.md)
   : Check Column Names against schema
+
 - [`check_column_contents()`](https://onsdigital.github.io/data.checker/reference/check_column_contents.md)
   : Check Column Contents against schema and checks
+
 - [`check_completeness()`](https://onsdigital.github.io/data.checker/reference/check_completeness.md)
   : Check dataset for missing columns
+
 - [`check_duplicates()`](https://onsdigital.github.io/data.checker/reference/check_duplicates.md)
-  : Check for duplicate rows
+  :
+
+  Check for duplicate rows. Can use subset of columns to check for
+  duplicates if `duplicates_cols` is specified in the schema. Otherwise,
+  all columns are used for duplicate check.
+
 - [`check_schema_contents_against_df()`](https://onsdigital.github.io/data.checker/reference/check_schema_contents_against_df.md)
   : Check schema contents against the data frame provided
+
 - [`check_types()`](https://onsdigital.github.io/data.checker/reference/check_types.md)
   : Check Column Types and Classes
+
 - [`export()`](https://onsdigital.github.io/data.checker/reference/export.md)
   : Generic export function
+
 - [`export(`*`<Validator>`*`)`](https://onsdigital.github.io/data.checker/reference/export.Validator.md)
   : Export Validator Log
+
 - [`hard_checks_status()`](https://onsdigital.github.io/data.checker/reference/hard_checks_status.md)
   : Check the status of errors and warnings in the validator log
+
 - [`iqr_bounds()`](https://onsdigital.github.io/data.checker/reference/iqr_bounds.md)
   : Flag outliers based on Interquartile Range (IQR). Outliers are
   flagged if they are below Q1 - (mulitplier \* IQR) or above Q3 +
   (multiplier \* IQR).
+
 - [`is_column_contents_valid()`](https://onsdigital.github.io/data.checker/reference/is_column_contents_valid.md)
   : Check column contents valid
+
+- [`is_type_valid()`](https://onsdigital.github.io/data.checker/reference/is_type_valid.md)
+  : Check type of column in schema is valid
+
 - [`is_valid_column_values()`](https://onsdigital.github.io/data.checker/reference/is_valid_column_values.md)
   : Check that max values are not less than min values in column schema
+
 - [`is_valid_schema()`](https://onsdigital.github.io/data.checker/reference/is_valid_schema.md)
   : Check if the schema is valid
+
 - [`log_html()`](https://onsdigital.github.io/data.checker/reference/log_html.md)
   : Generate HTML Representation of a Log
+
 - [`log_pointblank_outcomes()`](https://onsdigital.github.io/data.checker/reference/log_pointblank_outcomes.md)
   : Log pointblank validation outcomes to a validator log
+
 - [`log_to_table()`](https://onsdigital.github.io/data.checker/reference/log_to_table.md)
   : Convert Validator Log to Table
+
 - [`new_validator()`](https://onsdigital.github.io/data.checker/reference/new_validator.md)
   : Validator Constructor
+
 - [`print(`*`<Validator>`*`)`](https://onsdigital.github.io/data.checker/reference/print.Validator.md)
   : Print Validator Log
+
 - [`run_checks()`](https://onsdigital.github.io/data.checker/reference/run_checks.md)
   : Run column checks
+
 - [`types_to_classes()`](https://onsdigital.github.io/data.checker/reference/types_to_classes.md)
   : Convert complex types to the correct types and classes
+
 - [`validate_and_convert_date_formats()`](https://onsdigital.github.io/data.checker/reference/validate_and_convert_date_formats.md)
   : Validate date formats in the schema This function checks that any
   date formats specified in the schema are valid and can be parsed
   correctly.
+
 - [`z_score()`](https://onsdigital.github.io/data.checker/reference/z_score.md)
   : Check Z Score of Numeric Columns

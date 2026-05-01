@@ -136,93 +136,93 @@
 <col width="20%">
 <col width="39%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Data Type</th>
 <th>Check Name</th>
 <th>Parameter</th>
 <th>Check Definition</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>integer / double</td>
 <td>Minimum value</td>
 <td>min_val</td>
 <td>Checks that all values are above or equal to the minimum value</td>
 </tr>
-<tr class="even">
+<tr>
 <td>integer / double</td>
 <td>Maximum value</td>
 <td>max_val</td>
 <td>Checks that all values are below or equal to the maximum value</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>integer / double</td>
 <td>Interquartile range (IQR) outlier check</td>
 <td>iqr_check</td>
-<td>Checks that all values fall within <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mn>1</mn><mo>−</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mi>Q</mi><mi>R</mi><mo>*</mo><mi>m</mi><mi>u</mi><mi>l</mi><mi>t</mi><mi>i</mi><mi>p</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q1 - (IQR*multiplier)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mn>3</mn><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>I</mi><mi>Q</mi><mi>R</mi><mo>*</mo><mi>m</mi><mi>u</mi><mi>l</mi><mi>t</mi><mi>i</mi><mi>p</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Q3 + (IQR*multiplier)</annotation></semantics></math>, where the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi>u</mi><mi>l</mi><mi>t</mi><mi>i</mi><mi>p</mi><mi>l</mi><mi>i</mi><mi>e</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">multiplier</annotation></semantics></math> is given by <code>iqr_check</code>
+<td>Checks that all values fall within <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mn>1</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">IQR</mtext><mo>⋅</mo><mtext mathvariant="normal">multiplier</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Q1 - (\text{IQR}\cdot\text{multiplier})</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mn>3</mn><mo>+</mo><mo stretchy="false" form="prefix">(</mo><mtext mathvariant="normal">IQR</mtext><mo>⋅</mo><mtext mathvariant="normal">multiplier</mtext><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">Q3 + (\text{IQR}\cdot\text{multiplier})</annotation></semantics></math>, where the multiplier is given by <code>iqr_check</code>
 </td>
 </tr>
-<tr class="even">
+<tr>
 <td>integer / double</td>
 <td>Maximum absolute z score</td>
 <td>max_z_score</td>
 <td>Checks that the absolute value of all z scores are below or equal to the maximum z score</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>character</td>
 <td>Minimum length</td>
 <td>min_length</td>
 <td>Checks that all strings have length are above or equal to the minimum length</td>
 </tr>
-<tr class="even">
+<tr>
 <td>character</td>
 <td>Maximum length</td>
 <td>max_length</td>
 <td>Checks that all strings have length below or equal to the maximum length</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>date / datetime</td>
 <td>Minimum Date</td>
 <td>min_date</td>
 <td>Checks that all dates are after the minimum date using the format “YYYY-MM-DD”</td>
 </tr>
-<tr class="even">
+<tr>
 <td>date / datetime</td>
 <td>Maximum Date</td>
 <td>max_date</td>
 <td>Checks that all dates are before the maximum date using the format “YYYY-MM-DD”</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>date/ datetime</td>
 <td>Minimum Datetime</td>
 <td>min_datetime</td>
 <td>Checks that all dates are after the minimum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS</td>
 </tr>
-<tr class="even">
+<tr>
 <td>date/ datetime</td>
 <td>Maximum Datetime</td>
 <td>max_datetime</td>
 <td>Checks that all dates are before the maximum datetime. Accepted formats: Y, YM, YMD, YMDH, YMDHM and YMDHMS</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>any</td>
 <td>allowed values</td>
 <td>allowed_values</td>
 <td>Validates that entries match a set of permitted values, list or regex can be used. (Optional and can use forbidden strings instead)</td>
 </tr>
-<tr class="even">
+<tr>
 <td>any</td>
 <td>forbidden values</td>
 <td>forbidden_values</td>
 <td>Validates that entries do not contain a set of forbidden values, list or regex can be used. (Optional and can use allowed strings instead)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>any</td>
 <td>Missing values check</td>
 <td>allow_na</td>
 <td>Checks for missing or NA values in the column.</td>
 </tr>
-<tr class="even">
+<tr>
 <td>any</td>
 <td>Class</td>
 <td>class</td>

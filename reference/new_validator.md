@@ -21,7 +21,9 @@ new_validator(
 
 - schema:
 
-  A schema object that defines the validation rules.
+  A schema object that defines the validation rules. See the vignette
+  for more details on schema structure. This can also be a file path to
+  a JSON, YAML, or TOML file containing the schema.
 
 - backseries:
 
@@ -29,8 +31,8 @@ new_validator(
 
 - name:
 
-  Optional validator name - defaults to the name of the dataframe object
-  supplied to "data". Must be a single character string.
+  validator name - defaults to the name of the dataframe object supplied
+  to "data" (optional). Must be a single character string.
 
 ## Value
 
