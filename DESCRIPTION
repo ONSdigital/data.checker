@@ -25,7 +25,8 @@ Imports:
     pointblank,
     tidyselect,
     tidyr,
-    stringr
+    stringr,
+    hms
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)

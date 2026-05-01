@@ -100,7 +100,7 @@ test_that("unused schema args are put into the log", {
 df = data.frame(a = "hello!")
 schema = list(
     columns = list(
-      a = list(type = "character", accepted_strings = c("a","b"), optional = FALSE)
+      a = list(type = "character", accepted_strings = c("a","b"), optional = FALSE) #accepted_strings is not a valid arg - should not be used by the validator
       ),
     check_duplicates = TRUE,
     check_completeness = TRUE

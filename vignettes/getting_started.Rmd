@@ -60,8 +60,6 @@ schema
 
 Running the `new_validator` function will create a `Validator` object.
 
-
-
 ```{r}
 validator <- data.checker::new_validator(
   data = df,
@@ -111,6 +109,14 @@ Alternatively, you can use the `validate` function to run the full process.
 data.checker::check_and_export(df, schema, file = "example.html", format = "html", hard_check = FALSE)
 ```
 
+## Optional function arguments
+
+Some additional arguments you can use when running `check_and_export` include:
+
+-   backseries (data.frame): previous version of the data to compare against. 
+-   name (character): name to give the produced report. If left blank this defaults to "data"
+
+
 ## Setting up the schema
 
 The schema has certain mandatory and optional fields.
@@ -119,7 +125,7 @@ The schema has certain mandatory and optional fields.
 
 `check_duplicates`: TRUE or FALSE. If TRUE, the dataset will be checked for duplicate rows. `check_completeness`: TRUE or FALSE. If TRUE, the dataset will be checked to ensure there is at least one row for all combinations of factors. `columns`: a list of column names with an entry for each column.
 
-For each column, you should include a type ("character", "integer", "double", "logical"). You also need an "optional" setting (TRUE or FALSE) if TRUE the checker will raise an error if the column is missing. If FALSE the checker data will not raise an error if it's missing.
+For each column, you should include a type ("character", "integer", "double", "logical"). You also need an "optional" setting (TRUE or FALSE) if TRUE the checker will raise an error if the column is missing. If FALSE the checker data will not raise an error if it's missing. At least one column in your schema must have optional = TRUE.
 
 You can also optionally define a class if you want it to be checked. There are three special types you can choose - "Date", "datetime" and "factor". In R, these are implemented as a specific combination of types and classes, but the data checker simplifies this for you by setting up those parts of the schema for you.
 
@@ -130,11 +136,15 @@ Optional checks can be applied to each column depending on the column type. In t
 -   all types:
     -   allow_na (TRUE/FALSE): checks if there are any missing values
     -   class (character vector of any length): checks class of column
-    -   allowed_values (character or list): either a list of allowed strings or a regular expression (see regular expression guide below)
-    -   forbidden_values (character or list): either a list of forbidden strings or a regular expression
+    -   allowed_values (character or list): either a list of allowed strings / values, or a regular expression (see regular expression guide below)
+    -   forbidden_values (character or list): either a list of forbidden strings / values, or a regular expression
 -   integer/double checks:
     -   min_val (numeric): minimum value
     -   max_val (numeric): maximum value
+    -   iqr_check (numeric): checks that all values fall within $Q1 - (\text{IQR} \cdot \text{multiplier})$ and $Q3 + (\text{IQR} \cdot \text{multiplier})$, where IQR is the inter-quartile range. The multiplier is the value set by this parameter.
+    -   max_z_score (numeric): Checks that the absolute value of all z scores are below or equal to the maximum z score set by this parameter.
+-   factor checks:
+    -   expected_levels (character vector): expected levels for the factor
 -   character checks:
     -   min_length (numeric): minimum number of characters
     -   max_length (numeric): maximum number of characters
@@ -185,7 +195,7 @@ print(data_check_results)
 
 ### Custom checks
 
-You can write your own checks using the `add_custom_check` function. This is particularly useful for checks involving more than one column, which cannot be configured using the standard template. The checks are done in the context of the original data, meaning you can reference columns as if they are variables in the environment (similar to tidy evaluation). This is recommended because it guarantees the checks are done on the correct data only. Alternatively, you can use standard evaluation (see example below).
+You can write your own checks using the `add_check` function. This is particularly useful for checks involving more than one column, which cannot be configured using the standard template. The checks are done in the context of the original data, meaning you can reference columns as if they are variables in the environment (similar to tidy evaluation). This is recommended because it guarantees the checks are done on the correct data only. Alternatively, you can use standard evaluation (see example below).
 
 ```{r}
 df <- data.frame(

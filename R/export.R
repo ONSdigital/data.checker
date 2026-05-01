@@ -46,7 +46,11 @@ export.Validator <- function(object, file, format = c("yaml", "json", "html", "c
 #' @export
 log_to_table <- function(log) {
   table <- lapply(log, function(x) {
-    x$failing_ids <- paste0(x$failing_ids, collapse = ", ")
+    if (!any(is.null(x$failing_ids)) && !any(is.na(x$failing_ids)) && length(x$failing_ids) > 10) {
+      x$failing_ids <- paste0(head(x$failing_ids, 10), collapse = ", ") |> paste0(" (+ ", length(x$failing_ids) - 10, ")")
+    } else {
+      x$failing_ids <- paste0(x$failing_ids, collapse = ", ")
+    }
     x[is.na(x) | x == "NA"] <- ""
     data.frame(x)
   })
@@ -172,13 +176,18 @@ log_pointblank_outcomes <- function(validator){
 
   hashed_log <- vapply(validator$log, log_hash_key, character(1))
 
-  entries <- apply(validator$agent$validation_set, 1, function(x) {
+  validation_set <- as.data.frame(validator$agent$validation_set)
+  validation_set$time_processed <- validation_set$time_processed |> hms::as_hms() |> hms::round_hms(2) |> as.character()
+
+  entries <- apply(validation_set, 1, function(x) {
     outcome <- ifelse(x$all_passed, "pass", "fail")
 
-    if (outcome == "fail" & is.null(x$tbl_checked)) {
+    tbl_checked <- as.data.frame(x$tbl_checked)
+
+    if (!is.na(outcome) && outcome == "fail" && is.null(tbl_checked)) {
       failing_ids <- ifelse(is.null(x$column), NA, x$column)
-    } else if (outcome == "fail" && nrow(x$tbl_checked[[1]]) > 1 && x$label != "Column names match previous data") {
-      failing_ids <- which(x$tbl_checked[[1]]$pb_is_good_ == FALSE)
+    } else if (!is.na(outcome) && outcome == "fail" && nrow(tbl_checked) > 1 && x$label != "Column names match previous data") {
+      failing_ids <- which(tbl_checked$pb_is_good_ == FALSE)
     } else {
       failing_ids <- NA
     }
