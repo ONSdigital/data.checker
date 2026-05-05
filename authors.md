@@ -2,19 +2,20 @@
 
 ## Authors
 
-- **First Last**. Author, maintainer.
-  [](https://orcid.org/YOUR-ORCID-ID)
+- **Crown Copyright**. Copyright holder.
+
+- **Analysis Standards and Pipelines Team (ONS)**. Maintainer, author.
 
 ## Citation
 
-Last F (2026). *data.checker: What the Package Does (One Line, Title
-Case)*. R package version 1.0.0,
-<https://onsdigital.github.io/data.checker/>.
+Analysis Standards and Pipelines Team (ONS) (2026). *data.checker: Data
+Checker for Validating Data Frames Against Defined Schemas*. R package
+version 2.0.0, <https://onsdigital.github.io/data.checker/>.
 
     @Manual{,
-      title = {data.checker: What the Package Does (One Line, Title Case)},
-      author = {First Last},
+      title = {data.checker: Data Checker for Validating Data Frames Against Defined Schemas},
+      author = {{Analysis Standards and Pipelines Team (ONS)}},
       year = {2026},
-      note = {R package version 1.0.0},
+      note = {R package version 2.0.0},
       url = {https://onsdigital.github.io/data.checker/},
     }

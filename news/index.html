@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">data.checker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,34 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.0" id="datachecker-200">data.checker 2.0.0<a class="anchor" aria-label="anchor" href="#datachecker-200"></a></h2>
+<div class="section level3">
+<h3 id="added-2-0-0">Added<a class="anchor" aria-label="anchor" href="#added-2-0-0"></a></h3>
+<ul><li>Support for SparklyR</li>
+<li>Extended schema checks for types and expected checks based on type</li>
+<li>Backseries checks</li>
+<li>Interquartile range checks</li>
+<li>Z score check</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changed-2-0-0">Changed<a class="anchor" aria-label="anchor" href="#changed-2-0-0"></a></h3>
+<ul><li>Rewrote backend for checks, now using pointblank for validation</li>
+<li>
+<code>allowed_strings</code> renamed <code>allowed_values</code> and now works for all data types</li>
+<li>
+<code>forbidden_strings</code> renamed <code>forbidden_values</code> and now works for all data types</li>
+</ul></div>
+<div class="section level3">
+<h3 id="removed-2-0-0">Removed<a class="anchor" aria-label="anchor" href="#removed-2-0-0"></a></h3>
+<ul><li>Number of decimal place checks</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixed-2-0-0">Fixed<a class="anchor" aria-label="anchor" href="#fixed-2-0-0"></a></h3>
+<ul><li>misc bugs</li>
+<li>issue where using a column named <code>i</code> would cause unexpected failures with unclear error message</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="datachecker-100">data.checker 1.0.0<a class="anchor" aria-label="anchor" href="#datachecker-100"></a></h2>
 <ul><li><p>Package release</p></li>
 <li><p>Added documentation and vignettes</p></li>
@@ -49,7 +77,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by First Last.</p>
+  <p>Developed by Analysis Standards and Pipelines Team (ONS).</p>
 </div>
 
 <div class="pkgdown-footer-right">

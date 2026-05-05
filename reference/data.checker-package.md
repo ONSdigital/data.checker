@@ -1,6 +1,8 @@
-# data.checker: What the Package Does (One Line, Title Case)
+# data.checker: Data Checker for Validating Data Frames Against Defined Schemas
 
-What the package does (one paragraph).
+Data Checker for validating data frames against defined schemas.
+Produces a report of the checks performed and any issues found, with
+index and entry value where appropriate.
 
 ## See also
 
@@ -10,5 +12,9 @@ Useful links:
 
 ## Author
 
-**Maintainer**: First Last <first.last@example.com>
-([ORCID](https://orcid.org/YOUR-ORCID-ID))
+**Maintainer**: Analysis Standards and Pipelines Team (ONS)
+<ASAP@ons.gov.uk>
+
+Other contributors:
+
+- Crown Copyright \[copyright holder\]
