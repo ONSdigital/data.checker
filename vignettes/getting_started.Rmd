@@ -123,7 +123,7 @@ The schema has certain mandatory and optional fields.
 
 ### Mandatory fields
 
-`check_duplicates`: TRUE or FALSE. If TRUE, the dataset will be checked for duplicate rows. `check_completeness`: TRUE or FALSE. If TRUE, the dataset will be checked to ensure there is at least one row for all combinations of factors. `columns`: a list of column names with an entry for each column.
+`check_duplicates`: TRUE or FALSE. If TRUE, the dataset will be checked for duplicate rows. `check_completeness`: TRUE or FALSE. If TRUE, the dataset will be checked to ensure there is at least one row for all combinations of factors. `columns`: a list of column names with an entry for each column. To create a subset for either checking completeness or duplicates, you can use the `duplicate_cols` or `completeness_cols` field and provide a list of columns to check.
 
 For each column, you should include a type ("character", "integer", "double", "logical"). You also need an "optional" setting (TRUE or FALSE) if TRUE the checker will raise an error if the column is missing. If FALSE the checker data will not raise an error if it's missing. At least one column in your schema must have optional = TRUE.
 
