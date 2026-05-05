@@ -1,6 +1,6 @@
 Package: data.checker
 Title: Data Checker for Validating Data Frames Against Defined Schemas
-Version: 1.0.0
+Version: 2.0.0
 Authors@R: c(
     person("Crown Copyright", , , , role = c("cph")),
     person("Analysis Standards and Pipelines Team (ONS)", , , "ASAP@ons.gov.uk", role = c("cre", "aut"))
