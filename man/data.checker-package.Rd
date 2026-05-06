@@ -4,11 +4,11 @@
 \name{data.checker-package}
 \alias{data.checker}
 \alias{data.checker-package}
-\title{data.checker: Data Checker for Validating Data Frames Against Defined Schemas}
+\title{data.checker: Data Checker for Validating Data Frames Against Defined Schema}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Data Checker for validating data frames against defined schemas. Produces a report of the checks performed and any issues found, with index and entry value where appropriate.
+Validates data frames against a defined schema. Produces a report of the checks performed and any issues found, with index and entry value where appropriate.
 }
 \seealso{
 Useful links:

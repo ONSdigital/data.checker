@@ -123,7 +123,7 @@ check_column_contents <- function(validator) {
 run_checks <- function(validator, i_col) {
   # Unpack all column configurations into functions scope
 
-  list2env(validator$schema$columns[[{{ i_col }}]], env = environment())
+  list2env(validator$schema$columns[[{{ i_col }}]], envir = environment())
   # Store names of loaded variables
   loaded_vars <- names(validator$schema$columns[[{{ i_col }}]])
 
@@ -476,23 +476,12 @@ add_check_custom <- function(validator, description, outcome, type = c("error", 
   if (!is.logical(outcome)) {
     stop("Outcome must be a logical value (TRUE/FALSE)")
   }
-
-  if (rowwise) {
-    validator <- add_qa_entry(
-      validator,
-      description = description,
-      failing_ids = which(!outcome),
-      outcome = length(which(!outcome)) == 0,
-      entry_type = match.arg(type)
-    )
-  } else {
-    validator <- add_qa_entry(
-      validator,
-      description = description,
-      outcome = outcome,
-      entry_type = match.arg(type)
-    )
-  }
+  validator <- add_qa_entry(
+    validator,
+    description = description,
+    outcome = outcome,
+    entry_type = match.arg(type)
+  )
 
   return(validator)
 }
@@ -629,8 +618,8 @@ check_backseries <- function(validator) {
   for (value_col in names(backseries_schema$check_cols)) {
     schema <- backseries_schema$check_cols[[value_col]]
     match_cols <- schema$match_cols
-    data_subset <- dplyr::select(validator$data, all_of(c(match_cols, value_col)))
-    backseries_subset <- dplyr::select(validator$backseries, all_of(c(match_cols, value_col)))
+    data_subset <- dplyr::select(validator$data, tidyselect::all_of(c(match_cols, value_col)))
+    backseries_subset <- dplyr::select(validator$backseries, tidyselect::all_of(c(match_cols, value_col)))
 
     merged <- dplyr::inner_join(
       data_subset,
