@@ -47,7 +47,7 @@ export.Validator <- function(object, file, format = c("yaml", "json", "html", "c
 log_to_table <- function(log) {
   table <- lapply(log, function(x) {
     if (!any(is.null(x$failing_ids)) && !any(is.na(x$failing_ids)) && length(x$failing_ids) > 10) {
-      x$failing_ids <- paste0(head(x$failing_ids, 10), collapse = ", ") |> paste0(" (+ ", length(x$failing_ids) - 10, ")")
+      x$failing_ids <- paste0(utils::head(x$failing_ids, 10), collapse = ", ") |> paste0(" (+ ", length(x$failing_ids) - 10, ")")
     } else {
       x$failing_ids <- paste0(x$failing_ids, collapse = ", ")
     }
@@ -82,7 +82,7 @@ print.Validator <- function(x, ...) {
     text_log <- ""
   }
 
-  info <- knitr::kable( x$log[[1]]$description, col.names = "System information", format  = "simple") |>
+  info <- knitr::kable(x$log[[1]]$description, col.names = "System information", format = "simple") |>
     as.character() |>
     paste0(collapse = "\n")
   cat(info, "\n\n", text_log, "\n")
@@ -166,7 +166,7 @@ log_html <- function(validator) {
 #' @param validator A list containing a pointblank agent and a log. The agent should have a validation_set from a pointblank interrogation.
 #' @return The updated validator list with new log entries appended.
 #' @details Each entry in the log will contain the timestamp, description, outcome, failing row indices, number of failures, and entry type for each validation step.
-log_pointblank_outcomes <- function(validator){
+log_pointblank_outcomes <- function(validator) {
   # Avoid duplicates by hashing stable fields only (exclude timestamp).
   log_hash_key <- function(entry) {
     key <- entry[c("description", "outcome", "failing_ids", "n_failing", "entry_type")]
@@ -177,7 +177,10 @@ log_pointblank_outcomes <- function(validator){
   hashed_log <- vapply(validator$log, log_hash_key, character(1))
 
   validation_set <- as.data.frame(validator$agent$validation_set)
-  validation_set$time_processed <- validation_set$time_processed |> hms::as_hms() |> hms::round_hms(2) |> as.character()
+  validation_set$time_processed <- validation_set$time_processed |>
+    hms::as_hms() |>
+    hms::round_hms(2) |>
+    as.character()
 
   entries <- apply(validation_set, 1, function(x) {
     outcome <- ifelse(x$all_passed, "pass", "fail")
