@@ -123,7 +123,7 @@ check_column_contents <- function(validator) {
 run_checks <- function(validator, i_col) {
   # Unpack all column configurations into functions scope
 
-  list2env(validator$schema$columns[[{{ i_col }}]], env = environment())
+  list2env(validator$schema$columns[[{{ i_col }}]], envir = environment())
   # Store names of loaded variables
   loaded_vars <- names(validator$schema$columns[[{{ i_col }}]])
 
