@@ -150,7 +150,7 @@ print(data_check_results)
 
 We always welcome contributions and suggestions to improve functionality
 of our products. Feel free to open an issue using the [issue
-tab](https://gitlab-app-l-01/ASAP/data.checker/-/issues). If you wish to
+tab](https://github.com/ONSdigital/data.checker/issues). If you wish to
 make a direct contribution, please fork the repository, make your
 changes and raise a pull request and we can review and merge your
 changes.
