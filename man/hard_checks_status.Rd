@@ -9,10 +9,11 @@ hard_checks_status(validator, hard_check)
 \arguments{
 \item{validator}{A \code{Validator} object to check the log.}
 
-\item{hard_check}{A logical value indicating whether to perform hard checks (default is TRUE).
-
+\item{hard_check}{A logical value indicating whether to perform hard checks (default is TRUE).}
+}
+\value{
 Warning if there are any warnings or errors in the log when \code{hard_check} is FALSE.
-Error if there are any errors and \code{hard_check} is TRUE.}
+Error if there are any errors and \code{hard_check} is TRUE.
 }
 \description{
 This function raises errors or warnings if any checks flagged as error or warnings fail.

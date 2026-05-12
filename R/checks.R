@@ -4,7 +4,7 @@
 #'
 #' @param validator `Validator` object
 #'
-#' @return NULL
+#' @return The updated validator object with new log entries appended.
 #' @export
 check_duplicates <- function(validator) {
   cols <- validator$schema$duplicates_cols
@@ -28,7 +28,7 @@ check_duplicates <- function(validator) {
 #'
 #' @param validator data `Validator` object
 #'
-#' @return NULL
+#' @return The updated validator object with new log entries appended.
 #' @export
 check_completeness <- function(validator) {
   cols <- validator$schema$completeness_cols
@@ -493,7 +493,7 @@ add_check_custom <- function(validator, description, outcome, type = c("error", 
 #' @param validator A `Validator` object to check the log.
 #' @param hard_check A logical value indicating whether to perform hard checks (default is TRUE).
 #'
-#' Warning if there are any warnings or errors in the log when `hard_check` is FALSE.
+#' @return Warning if there are any warnings or errors in the log when `hard_check` is FALSE.
 #' Error if there are any errors and `hard_check` is TRUE.
 #' @export
 hard_checks_status <- function(validator, hard_check){

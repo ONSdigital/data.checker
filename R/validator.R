@@ -12,6 +12,30 @@
 #' @param name validator name - defaults to the name of the dataframe object supplied to "data" (Optional).
 #' Must be a single character string.
 #' @return The exported validation results.
+#' @examples
+#' # create schema
+#' schema <- list(
+#'   check_duplicates = FALSE,
+#'   check_completeness = FALSE,
+#'   columns = list(
+#'     age = list(type = "integer", optional = FALSE),
+#'     sex = list(type = "character", optional = FALSE)
+#'   )
+#' )
+#'
+#' # create dataframe
+#' df <- data.frame(
+#'   age = c(10, 11, 13, 15, 22, 34, 80),
+#'   sex = c("M", "F", "M", "F", "M", "F", "M")
+#' )
+#'
+#' # validate and export log
+#' check_and_export(
+#'   data = df,
+#'   schema = schema,
+#'   file = paste0(tempdir(),"\\validation_results_example.html"),
+#'   format = "html"
+#' )
 #' @export
 check_and_export <- function(data, schema, file, format, hard_check = FALSE, backseries = NULL, name = deparse(substitute(data))) {
   validator <- new_validator(data, schema, backseries = backseries, name = name) |>
@@ -30,7 +54,30 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 #' @param name validator name - defaults to the name of the dataframe object supplied to "data" (optional). 
 #' Must be a single character string.
 #' @return An object of class `Validator`.
+#' @examples
+#' # create schema
+#' schema <- list(
+#'   check_duplicates = FALSE,
+#'   check_completeness = FALSE,
+#'   columns = list(
+#'     age = list(type = "integer", optional = FALSE),
+#'     sex = list(type = "character", optional = FALSE)
+#'   )
+#' )
 #'
+#' # create dataframe
+#' df <- data.frame(
+#'   age = c(10, 11, 13, 15, 22, 34, 80),
+#'   sex = c("M", "F", "M", "F", "M", "F", "M")
+#' )
+#'
+#' # create validator object
+#' validator <- new_validator(
+#'   data = df,
+#'   schema = schema,
+#'   file = NULL,
+#'   format = "NULL"
+#' )
 #' @export
 new_validator <- function(data, schema, backseries = NULL, name = deparse(substitute(data))) {
   if (!is.null(name) && (!is.character(name) || length(name) != 1 || is.na(name))) {

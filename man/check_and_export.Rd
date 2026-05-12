@@ -37,3 +37,28 @@ The exported validation results.
 This function validates data against a given schema, performs checks,
 and exports the validation results to a specified file in a given format.
 }
+\examples{
+# create schema
+schema <- list(
+  check_duplicates = FALSE,
+  check_completeness = FALSE,
+  columns = list(
+    age = list(type = "integer", optional = FALSE),
+    sex = list(type = "character", optional = FALSE)
+  )
+)
+
+# create dataframe
+df <- data.frame(
+  age = c(10, 11, 13, 15, 22, 34, 80),
+  sex = c("M", "F", "M", "F", "M", "F", "M")
+)
+
+# validate and export log
+check_and_export(
+  data = df,
+  schema = schema,
+  file = paste0(tempdir(),"\\\\validation_results_example.html"),
+  format = "html"
+)
+}
