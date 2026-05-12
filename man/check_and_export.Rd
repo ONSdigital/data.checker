@@ -43,7 +43,7 @@ schema <- list(
   check_duplicates = FALSE,
   check_completeness = FALSE,
   columns = list(
-    age = list(type = "integer", optional = FALSE),
+    age = list(type = "double", optional = FALSE),
     sex = list(type = "character", optional = FALSE)
   )
 )
@@ -59,6 +59,7 @@ check_and_export(
   data = df,
   schema = schema,
   file = paste0(tempdir(),"\\\\validation_results_example.html"),
-  format = "html"
+  format = "html",
+  hard_check = TRUE
 )
 }

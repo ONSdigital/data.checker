@@ -34,7 +34,7 @@ schema <- list(
   check_duplicates = FALSE,
   check_completeness = FALSE,
   columns = list(
-    age = list(type = "integer", optional = FALSE),
+    age = list(type = "double", optional = FALSE),
     sex = list(type = "character", optional = FALSE)
   )
 )
@@ -48,8 +48,6 @@ df <- data.frame(
 # create validator object
 validator <- new_validator(
   data = df,
-  schema = schema,
-  file = NULL,
-  format = "NULL"
+  schema = schema
 )
 }

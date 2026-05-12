@@ -18,7 +18,7 @@
 #'   check_duplicates = FALSE,
 #'   check_completeness = FALSE,
 #'   columns = list(
-#'     age = list(type = "integer", optional = FALSE),
+#'     age = list(type = "double", optional = FALSE),
 #'     sex = list(type = "character", optional = FALSE)
 #'   )
 #' )
@@ -34,7 +34,8 @@
 #'   data = df,
 #'   schema = schema,
 #'   file = paste0(tempdir(),"\\validation_results_example.html"),
-#'   format = "html"
+#'   format = "html",
+#'   hard_check = TRUE
 #' )
 #' @export
 check_and_export <- function(data, schema, file, format, hard_check = FALSE, backseries = NULL, name = deparse(substitute(data))) {
@@ -60,7 +61,7 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 #'   check_duplicates = FALSE,
 #'   check_completeness = FALSE,
 #'   columns = list(
-#'     age = list(type = "integer", optional = FALSE),
+#'     age = list(type = "double", optional = FALSE),
 #'     sex = list(type = "character", optional = FALSE)
 #'   )
 #' )
@@ -74,9 +75,7 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 #' # create validator object
 #' validator <- new_validator(
 #'   data = df,
-#'   schema = schema,
-#'   file = NULL,
-#'   format = "NULL"
+#'   schema = schema
 #' )
 #' @export
 new_validator <- function(data, schema, backseries = NULL, name = deparse(substitute(data))) {
@@ -185,6 +184,31 @@ is_type_valid <- function(schema) {
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return The validated `Validator` object if all checks pass. If any check fails, an error is thrown.
+#'
+#' @examples
+#' # create schema
+#' schema <- list(
+#'   check_duplicates = FALSE,
+#'   check_completeness = FALSE,
+#'   columns = list(
+#'     age = list(type = "double", optional = FALSE),
+#'     sex = list(type = "character", optional = FALSE)
+#'   )
+#' )
+#'
+#' # create dataframe
+#' df <- data.frame(
+#'   age = c(10, 11, 13, 15, 22, 34, 80),
+#'   sex = c("M", "F", "M", "F", "M", "F", "M")
+#' )
+#'
+#' # create validator object
+#' validator <- new_validator(
+#'   data = df,
+#'   schema = schema
+#' )
+#' # validate the data
+#' validator <- check(validator)
 #'
 #' @export
 check <- function(validator, ...) {
