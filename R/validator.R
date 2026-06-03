@@ -37,6 +37,9 @@
 #'   format = "html",
 #'   hard_check = TRUE
 #' )
+#' \dontshow{
+#' file.remove(paste0(tempdir(),"\\validation_results_example.html"))
+#' }
 #' @export
 check_and_export <- function(data, schema, file, format, hard_check = FALSE, backseries = NULL, name = deparse(substitute(data))) {
   validator <- new_validator(data, schema, backseries = backseries, name = name) |>
@@ -49,10 +52,10 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 #'
 #' Creates a `Validator` object to validate data against a given schema.
 #' @param data A data frame to validate against the schema.
-#' @param schema A schema object that defines the validation rules. See the vignette for more details on schema structure. 
+#' @param schema A schema object that defines the validation rules. See the vignette for more details on schema structure.
 #' This can also be a file path to a JSON, YAML, or TOML file containing the schema.
 #' @param backseries A previous version of the data to check against (optional).
-#' @param name validator name - defaults to the name of the dataframe object supplied to "data" (optional). 
+#' @param name validator name - defaults to the name of the dataframe object supplied to "data" (optional).
 #' Must be a single character string.
 #' @return An object of class `Validator`.
 #' @examples
@@ -81,7 +84,7 @@ check_and_export <- function(data, schema, file, format, hard_check = FALSE, bac
 new_validator <- function(data, schema, backseries = NULL, name = deparse(substitute(data))) {
   if (!is.null(name) && (!is.character(name) || length(name) != 1 || is.na(name))) {
     stop("name must be a single character string.")
-  } 
+  }
 
   if (is.character(schema)) {
     if (grepl("\\.json$", schema)) {
@@ -149,11 +152,11 @@ new_validator <- function(data, schema, backseries = NULL, name = deparse(substi
 }
 
 #' Check column contents valid
-#' 
-#' This wrapper calls is_valid_column_values for each column in the schema 
-#' 
-#' @param schema the validator schema 
-#' 
+#'
+#' This wrapper calls is_valid_column_values for each column in the schema
+#'
+#' @param schema the validator schema
+#'
 #' @return `TRUE` if all column values are valid, otherwise an error is raised.
 is_column_contents_valid <- function(schema) {
   for (col in names(schema$columns)) {
@@ -162,8 +165,8 @@ is_column_contents_valid <- function(schema) {
   return(TRUE)
 }
 
-#' Check type of column in schema is valid 
-#' 
+#' Check type of column in schema is valid
+#'
 #' @param schema the validator schema
 #' @return `TRUE` if all column types are valid, otherwise an error is raised.
 is_type_valid <- function(schema) {
@@ -262,12 +265,12 @@ is_valid_schema <- function(schema) {
 }
 
 #' Check that max values are not less than min values in column schema
-#' 
-#' This function checks that for any column schema, the max values 
-#' (e.g., max_string_length, max_date) are not less than the corresponding min values 
-#' (e.g., min_string_length, min_date). If any such inconsistency is found, an error 
+#'
+#' This function checks that for any column schema, the max values
+#' (e.g., max_string_length, max_date) are not less than the corresponding min values
+#' (e.g., min_string_length, min_date). If any such inconsistency is found, an error
 #' is raised with a descriptive message.
-#' 
+#'
 #' @param column_schema A list representing the schema for a specific column, which may contain max and min value specifications.
 #' @param col_name The name of the column being checked, used for error messages.
 #' @return `TRUE` if all max values are greater than or equal to their corresponding min values, otherwise an error is raised.
@@ -285,7 +288,7 @@ is_valid_column_values <- function(column_schema, col_name){
         stop(paste0("Column ", col_name, " ", max_col, " and ", min_col, " must be of the same type."))
       }
     }
-  }    
+  }
 
   if (!("optional" %in% names(column_schema))) {
     stop(paste0("Column ", col_name, " must have an 'optional' field set to either TRUE or FALSE"))

@@ -62,4 +62,7 @@ check_and_export(
   format = "html",
   hard_check = TRUE
 )
+\dontshow{
+file.remove(paste0(tempdir(),"\\\\validation_results_example.html"))
+}
 }
