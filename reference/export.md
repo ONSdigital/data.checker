@@ -18,3 +18,7 @@ export(object, ...)
 - ...:
 
   Additional arguments passed to specific methods.
+
+## Value
+
+The result of the export operation, specific to the object type.

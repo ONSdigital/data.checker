@@ -20,6 +20,7 @@ hard_checks_status(validator, hard_check)
   A logical value indicating whether to perform hard checks (default is
   TRUE).
 
-  Warning if there are any warnings or errors in the log when
-  `hard_check` is FALSE. Error if there are any errors and `hard_check`
-  is TRUE.
+## Value
+
+Warning if there are any warnings or errors in the log when `hard_check`
+is FALSE. Error if there are any errors and `hard_check` is TRUE.

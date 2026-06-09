@@ -53,3 +53,32 @@ check_and_export(
 ## Value
 
 The exported validation results.
+
+## Examples
+
+``` r
+# create schema
+schema <- list(
+  check_duplicates = FALSE,
+  check_completeness = FALSE,
+  columns = list(
+    age = list(type = "double", optional = FALSE),
+    sex = list(type = "character", optional = FALSE)
+  )
+)
+
+# create dataframe
+df <- data.frame(
+  age = c(10, 11, 13, 15, 22, 34, 80),
+  sex = c("M", "F", "M", "F", "M", "F", "M")
+)
+
+# validate and export log
+check_and_export(
+  data = df,
+  schema = schema,
+  file = paste0(tempdir(),"\\validation_results_example.html"),
+  format = "html",
+  hard_check = TRUE
+)
+```

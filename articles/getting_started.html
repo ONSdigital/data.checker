@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Data checker">
@@ -203,12 +203,12 @@ your <code>Validator</code> object and add them to the log.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Timestamp   Description                                                               Outcome   Failing Ids   n Failing   Entry Type </span></span>
 <span><span class="co">#&gt; ----------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------</span></span>
-<span><span class="co">#&gt; 12:33:32    Column names contain no symbols other than underscores.                   pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Column names contain no capital letters.                                  pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    All mandatory columns are present.                                        pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    There are no unexpected columns.                                          pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Removed schema information for optional columns that aren't in the data                           N/A         info       </span></span>
-<span><span class="co">#&gt; 12:33:32    Correct column types                                                      fail      1             1           error</span></span></code></pre></div>
+<span><span class="co">#&gt; 07:19:44    Column names contain no symbols other than underscores.                   pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:44    Column names contain no capital letters.                                  pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:44    All mandatory columns are present.                                        pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:44    There are no unexpected columns.                                          pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:44    Removed schema information for optional columns that aren't in the data                           N/A         info       </span></span>
+<span><span class="co">#&gt; 07:19:46    Correct column types                                                      fail      1             1           error</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="exporting-your-log">Exporting your log<a class="anchor" aria-label="anchor" href="#exporting-your-log"></a>
@@ -378,26 +378,26 @@ path, and the package will do the rest.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Timestamp   Description                                                                 Outcome   Failing Ids   n Failing   Entry Type </span></span>
 <span><span class="co">#&gt; ----------  --------------------------------------------------------------------------  --------  ------------  ----------  -----------</span></span>
-<span><span class="co">#&gt; 12:33:32    Column sex unused schema entries: min_length, max_length, allowed_strings                           N/A         warning    </span></span>
-<span><span class="co">#&gt; 12:33:32    Column country unused schema entries: levels                                                        N/A         warning    </span></span>
-<span><span class="co">#&gt; 12:33:32    Column names contain no symbols other than underscores.                     pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Column names contain no capital letters.                                    pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    All mandatory columns are present.                                          pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    There are no unexpected columns.                                            pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Removed schema information for optional columns that aren't in the data                             N/A         info       </span></span>
-<span><span class="co">#&gt; 12:33:32    Correct column types                                                        pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Correct column classes                                                      pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Column id contains no missing values                                        pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Column id: values are above or equal to 0                                   pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Column id: values are below or equal to 1000                                pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:32    Column age contains no missing values                                       pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column age: values are above or equal to 0                                  pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column age: values are below or equal to 120                                pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column sex contains no missing values                                       pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column country contains no missing values                                   pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column date contains no missing values                                      pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column date: dates are after 2020-01-01                                     pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column date: dates are before 2023-12-31                                    pass                    0           error</span></span></code></pre></div>
+<span><span class="co">#&gt; 07:19:45    Column sex unused schema entries: min_length, max_length, allowed_strings                           N/A         warning    </span></span>
+<span><span class="co">#&gt; 07:19:45    Column country unused schema entries: levels                                                        N/A         warning    </span></span>
+<span><span class="co">#&gt; 07:19:46    Column names contain no symbols other than underscores.                     pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column names contain no capital letters.                                    pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    All mandatory columns are present.                                          pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    There are no unexpected columns.                                            pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:45    Removed schema information for optional columns that aren't in the data                             N/A         info       </span></span>
+<span><span class="co">#&gt; 07:19:46    Correct column types                                                        pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Correct column classes                                                      pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column id contains no missing values                                        pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column id: values are above or equal to 0                                   pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column id: values are below or equal to 1000                                pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column age contains no missing values                                       pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column age: values are above or equal to 0                                  pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column age: values are below or equal to 120                                pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column sex contains no missing values                                       pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column country contains no missing values                                   pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column date contains no missing values                                      pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column date: dates are after 2020-01-01                                     pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column date: dates are before 2023-12-31                                    pass                    0           error</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="custom-checks">Custom checks<a class="anchor" aria-label="anchor" href="#custom-checks"></a>
@@ -452,14 +452,14 @@ standard evaluation (see example below).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Timestamp   Description                                                               Outcome   Failing Ids   n Failing   Entry Type </span></span>
 <span><span class="co">#&gt; ----------  ------------------------------------------------------------------------  --------  ------------  ----------  -----------</span></span>
-<span><span class="co">#&gt; 12:33:34    Column names contain no symbols other than underscores.                   pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Column names contain no capital letters.                                  pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    All mandatory columns are present.                                        pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    There are no unexpected columns.                                          pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    Removed schema information for optional columns that aren't in the data                           N/A         info       </span></span>
-<span><span class="co">#&gt; 12:33:34    Correct column types                                                      fail      1             1           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    There are no males over 90 (tidy evaluation)                              pass                    0           error      </span></span>
-<span><span class="co">#&gt; 12:33:34    There are no males over 90 (standard evaluation)                          pass                    0           error</span></span></code></pre></div>
+<span><span class="co">#&gt; 07:19:46    Column names contain no symbols other than underscores.                   pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Column names contain no capital letters.                                  pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    All mandatory columns are present.                                        pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    There are no unexpected columns.                                          pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    Removed schema information for optional columns that aren't in the data                           N/A         info       </span></span>
+<span><span class="co">#&gt; 07:19:46    Correct column types                                                      fail      1             1           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    There are no males over 90 (tidy evaluation)                              pass                    0           error      </span></span>
+<span><span class="co">#&gt; 07:19:46    There are no males over 90 (standard evaluation)                          pass                    0           error</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="custom-log-entries">Custom log entries<a class="anchor" aria-label="anchor" href="#custom-log-entries"></a>
@@ -524,7 +524,7 @@ Defaults to “info”.</li>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  Timestamp   Description                Outcome   Failing Ids   n Failing   Entry Type </span></span>
 <span><span class="co">#&gt; ----------  -------------------------  --------  ------------  ----------  -----------</span></span>
-<span><span class="co">#&gt; 12:33:34    Example custom log entry                           N/A         info</span></span></code></pre></div>
+<span><span class="co">#&gt; 07:19:47    Example custom log entry                           N/A         info</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

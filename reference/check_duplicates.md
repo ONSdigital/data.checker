@@ -15,3 +15,7 @@ check_duplicates(validator)
 - validator:
 
   `Validator` object
+
+## Value
+
+The updated validator object with new log entries appended.

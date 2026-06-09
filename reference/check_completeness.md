@@ -13,3 +13,7 @@ check_completeness(validator)
 - validator:
 
   data `Validator` object
+
+## Value
+
+The updated validator object with new log entries appended.

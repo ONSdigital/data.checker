@@ -2,7 +2,10 @@
 
 Validates data frames against a defined schema. Produces a report of the
 checks performed and any issues found, with index and entry value where
-appropriate.
+appropriate. Backend checks are performed using pointblank Richard
+Iannone et al (2025)
+[doi:10.32614/CRAN.package.pointblank](https://doi.org/10.32614/CRAN.package.pointblank)
+.
 
 ## See also
 
