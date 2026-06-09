@@ -11,6 +11,9 @@ check_duplicates(validator)
 \arguments{
 \item{validator}{\code{Validator} object}
 }
+\value{
+The updated validator object with new log entries appended.
+}
 \description{
 Check for duplicate rows. Can use subset of columns to check for
 duplicates if \code{duplicates_cols} is specified in the schema.

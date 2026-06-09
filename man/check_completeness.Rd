@@ -9,6 +9,9 @@ check_completeness(validator)
 \arguments{
 \item{validator}{data \code{Validator} object}
 }
+\value{
+The updated validator object with new log entries appended.
+}
 \description{
 Check dataset for missing columns
 }

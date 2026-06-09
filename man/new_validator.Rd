@@ -28,3 +28,26 @@ An object of class \code{Validator}.
 \description{
 Creates a \code{Validator} object to validate data against a given schema.
 }
+\examples{
+# create schema
+schema <- list(
+  check_duplicates = FALSE,
+  check_completeness = FALSE,
+  columns = list(
+    age = list(type = "double", optional = FALSE),
+    sex = list(type = "character", optional = FALSE)
+  )
+)
+
+# create dataframe
+df <- data.frame(
+  age = c(10, 11, 13, 15, 22, 34, 80),
+  sex = c("M", "F", "M", "F", "M", "F", "M")
+)
+
+# create validator object
+validator <- new_validator(
+  data = df,
+  schema = schema
+)
+}

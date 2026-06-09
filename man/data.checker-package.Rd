@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Validates data frames against a defined schema. Produces a report of the checks performed and any issues found, with index and entry value where appropriate.
+Validates data frames against a defined schema. Produces a report of the checks performed and any issues found, with index and entry value where appropriate. Backend checks are performed using pointblank Richard Iannone et al (2025) \doi{10.32614/CRAN.package.pointblank}.
 }
 \seealso{
 Useful links:

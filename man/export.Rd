@@ -11,6 +11,9 @@ export(object, ...)
 
 \item{...}{Additional arguments passed to specific methods.}
 }
+\value{
+The result of the export operation, specific to the object type.
+}
 \description{
 This function exists For ease of use - see export.Validator() for details.
 }
